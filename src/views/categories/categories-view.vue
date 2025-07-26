@@ -9,50 +9,22 @@
       </div>
       <div class="card-body">
         <!-- 分类统计 -->
-        <div
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-          "
-        >
-          <div
-            style="
-              background: rgba(33, 150, 243, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--info-color)">
+        <div class="stats-container">
+          <div class="stat-card stat-info">
+            <div class="stat-number">
               {{ categoryList.length }}
             </div>
-            <div style="font-size: 12px; color: var(--text-secondary)">分类总数</div>
+            <div class="stat-label">分类总数</div>
           </div>
-          <div
-            style="
-              background: rgba(76, 175, 80, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--success-color)">
+          <div class="stat-card stat-success">
+            <div class="stat-number">
               {{ categoryList.filter(item => item.status === 'active').length }}
             </div>
-            <div style="font-size: 12px; color: var(--text-secondary)">启用分类</div>
+            <div class="stat-label">启用分类</div>
           </div>
-          <div
-            style="
-              background: rgba(244, 67, 54, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--error-color)">2</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">禁用分类</div>
+          <div class="stat-card stat-error">
+            <div class="stat-number">2</div>
+            <div class="stat-label">禁用分类</div>
           </div>
         </div>
 
@@ -94,108 +66,25 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>美式咖啡</td>
-              <td>12</td>
-              <td>1</td>
+            <tr v-for="item in categoryList" :key="item.id">
+              <td>{{ item.category_name }}</td>
+              <td>{{ item.product_count }}</td>
+              <td>{{ item.sort_order }}</td>
               <td>
-                <span class="status-badge status-success">已启用</span>
+                <span
+                  class="status-badge"
+                  :class="{
+                    'status-success': item.status === 'active',
+                    'status-error': item.status === 'inactive'
+                  }"
+                >
+                  {{ item.status === 'active' ? '已启用' : '已禁用' }}
+                </span>
               </td>
-              <td>2023-05-20</td>
+              <td>{{ item.created_at }}</td>
               <td>
-                <button class="btn btn-secondary btn-sm" onclick="editCategory(this)">编辑</button>
+                <button class="btn btn-secondary btn-sm" @click="editCategory(item)">编辑</button>
                 <button class="btn btn-warning btn-sm">禁用</button>
-              </td>
-            </tr>
-            <tr>
-              <td>拿铁系列</td>
-              <td>8</td>
-              <td>2</td>
-              <td>
-                <span class="status-badge status-success">已启用</span>
-              </td>
-              <td>2023-05-20</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="editCategory(this)">编辑</button>
-                <button class="btn btn-warning btn-sm">禁用</button>
-              </td>
-            </tr>
-            <tr>
-              <td>卡布奇诺</td>
-              <td>6</td>
-              <td>3</td>
-              <td>
-                <span class="status-badge status-success">已启用</span>
-              </td>
-              <td>2023-05-20</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="editCategory(this)">编辑</button>
-                <button class="btn btn-warning btn-sm">禁用</button>
-              </td>
-            </tr>
-            <tr>
-              <td>意式咖啡</td>
-              <td>5</td>
-              <td>4</td>
-              <td>
-                <span class="status-badge status-success">已启用</span>
-              </td>
-              <td>2023-05-20</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="editCategory(this)">编辑</button>
-                <button class="btn btn-warning btn-sm">禁用</button>
-              </td>
-            </tr>
-            <tr>
-              <td>冷萄咖啡</td>
-              <td>7</td>
-              <td>5</td>
-              <td>
-                <span class="status-badge status-success">已启用</span>
-              </td>
-              <td>2023-06-15</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="editCategory(this)">编辑</button>
-                <button class="btn btn-warning btn-sm">禁用</button>
-              </td>
-            </tr>
-            <tr>
-              <td>特调饮品</td>
-              <td>4</td>
-              <td>6</td>
-              <td>
-                <span class="status-badge status-success">已启用</span>
-              </td>
-              <td>2023-07-01</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="editCategory(this)">编辑</button>
-                <button class="btn btn-warning btn-sm">禁用</button>
-              </td>
-            </tr>
-            <tr>
-              <td>甜品配对</td>
-              <td>3</td>
-              <td>7</td>
-              <td>
-                <span class="status-badge status-danger">已禁用</span>
-              </td>
-              <td>2023-04-10</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="editCategory(this)">编辑</button>
-                <button class="btn btn-success btn-sm">启用</button>
-              </td>
-            </tr>
-            <tr>
-              <td>酒精饮品</td>
-              <td>0</td>
-              <td>8</td>
-              <td>
-                <span class="status-badge status-danger">已禁用</span>
-              </td>
-              <td>2023-03-15</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="editCategory(this)">编辑</button>
-                <button class="btn btn-success btn-sm">启用</button>
               </td>
             </tr>
           </tbody>
@@ -207,149 +96,36 @@
     <div class="content-card">
       <div class="card-header">
         <div class="card-title">分类排序管理</div>
-        <div style="color: var(--text-secondary); font-size: 14px">
-          调整分类在小程序中的显示顺序
-        </div>
+        <div class="card-subtitle">调整分类在小程序中的显示顺序</div>
       </div>
       <div class="card-body">
-        <div
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-          "
-        >
+        <div class="sort-container">
           <div
-            style="
-              border: 2px solid var(--info-color);
-              border-radius: var(--radius);
-              padding: 16px;
-              background: rgba(33, 150, 243, 0.05);
-              cursor: move;
-            "
+            v-for="(item, index) in categoryList"
+            :key="item.id"
+            class="sort-card sort-info"
+            :class="{
+              'sort-warning': index % 1 === 0,
+              'sort-success': index % 2 === 0,
+              'sort-primary': index % 3 === 0,
+              'sort-default': index % 4 === 0
+            }"
           >
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px">
+            <div class="sort-content">
               <div>
-                <div style="font-weight: 600">美式咖啡</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">排序: 1</div>
+                <div class="sort-name">{{ item.category_name }}</div>
+                <div class="sort-order">排序: {{ item.sort_order }}</div>
               </div>
             </div>
-            <div style="display: flex; gap: 8px">
-              <button class="btn btn-secondary btn-sm">↑ 上移</button>
-              <button class="btn btn-secondary btn-sm">↓ 下移</button>
-            </div>
-          </div>
-
-          <div
-            style="
-              border: 2px solid var(--warning-color);
-              border-radius: var(--radius);
-              padding: 16px;
-              background: rgba(255, 193, 7, 0.05);
-              cursor: move;
-            "
-          >
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px">
-              <div>
-                <div style="font-weight: 600">拿铁系列</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">排序: 2</div>
-              </div>
-            </div>
-            <div style="display: flex; gap: 8px">
-              <button class="btn btn-secondary btn-sm">↑ 上移</button>
-              <button class="btn btn-secondary btn-sm">↓ 下移</button>
-            </div>
-          </div>
-
-          <div
-            style="
-              border: 2px solid var(--success-color);
-              border-radius: var(--radius);
-              padding: 16px;
-              background: rgba(76, 175, 80, 0.05);
-              cursor: move;
-            "
-          >
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px">
-              <div>
-                <div style="font-weight: 600">卡布奇诺</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">排序: 3</div>
-              </div>
-            </div>
-            <div style="display: flex; gap: 8px">
-              <button class="btn btn-secondary btn-sm">↑ 上移</button>
-              <button class="btn btn-secondary btn-sm">↓ 下移</button>
-            </div>
-          </div>
-
-          <div
-            style="
-              border: 2px solid var(--primary-color);
-              border-radius: var(--radius);
-              padding: 16px;
-              background: var(--secondary-color);
-              cursor: move;
-            "
-          >
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px">
-              <div>
-                <div style="font-weight: 600">意式咖啡</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">排序: 4</div>
-              </div>
-            </div>
-            <div style="display: flex; gap: 8px">
-              <button class="btn btn-secondary btn-sm">↑ 上移</button>
-              <button class="btn btn-secondary btn-sm">↓ 下移</button>
-            </div>
-          </div>
-
-          <div
-            style="
-              border: 2px solid var(--border-color);
-              border-radius: var(--radius);
-              padding: 16px;
-              background: var(--bg-gray);
-              cursor: move;
-            "
-          >
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px">
-              <div>
-                <div style="font-weight: 600">冷萄咖啡</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">排序: 5</div>
-              </div>
-            </div>
-            <div style="display: flex; gap: 8px">
-              <button class="btn btn-secondary btn-sm">↑ 上移</button>
-              <button class="btn btn-secondary btn-sm">↓ 下移</button>
-            </div>
-          </div>
-
-          <div
-            style="
-              border: 2px solid var(--border-color);
-              border-radius: var(--radius);
-              padding: 16px;
-              background: var(--bg-gray);
-              cursor: move;
-            "
-          >
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px">
-              <div>
-                <div style="font-weight: 600">特调饮品</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">排序: 6</div>
-              </div>
-            </div>
-            <div style="display: flex; gap: 8px">
+            <div class="sort-actions">
               <button class="btn btn-secondary btn-sm">↑ 上移</button>
               <button class="btn btn-secondary btn-sm">↓ 下移</button>
             </div>
           </div>
         </div>
 
-        <div style="text-align: center; margin-top: 20px">
-          <button class="btn btn-primary" style="padding: 12px 32px; font-size: 16px">
-            保存排序
-          </button>
+        <div class="save-container">
+          <button class="btn btn-primary save-button">保存排序</button>
         </div>
       </div>
     </div>
@@ -365,7 +141,130 @@ import { reqGetAllCategory } from '@/api/supabase'
 const categoryList = ref<ProductCategory[]>([])
 
 onMounted(async () => {
+  // 获取分类列表
   categoryList.value = await reqGetAllCategory()
-  console.log(categoryList.value)
 })
+
+// 编辑分类
+const editCategory = (item: ProductCategory) => {
+  console.log(item)
+}
 </script>
+
+<style scoped lang="scss">
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .stat-card {
+    padding: 16px;
+    border-radius: var(--radius);
+    text-align: center;
+
+    &.stat-info {
+      background: rgba(33, 150, 243, 0.1);
+    }
+
+    &.stat-success {
+      background: rgba(76, 175, 80, 0.1);
+    }
+
+    &.stat-error {
+      background: rgba(244, 67, 54, 0.1);
+    }
+
+    .stat-number {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--info-color);
+    }
+
+    &.stat-success .stat-number {
+      color: var(--success-color);
+    }
+
+    &.stat-error .stat-number {
+      color: var(--error-color);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+  }
+}
+
+.card-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.sort-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+
+  .sort-card {
+    border: 2px solid var(--info-color);
+    border-radius: var(--radius);
+    padding: 16px;
+    background: rgba(33, 150, 243, 0.05);
+    cursor: move;
+
+    &.sort-warning {
+      border: 2px solid var(--warning-color);
+      background: rgba(255, 193, 7, 0.05);
+    }
+
+    &.sort-success {
+      border: 2px solid var(--success-color);
+      background: rgba(76, 175, 80, 0.05);
+    }
+
+    &.sort-primary {
+      border: 2px solid var(--primary-color);
+      background: var(--secondary-color);
+    }
+
+    &.sort-default {
+      border: 2px solid var(--border-color);
+      background: var(--bg-gray);
+    }
+
+    .sort-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+
+      > div {
+        .sort-name {
+          font-weight: 600;
+        }
+
+        .sort-order {
+          font-size: 12px;
+          color: var(--text-secondary);
+        }
+      }
+    }
+
+    .sort-actions {
+      display: flex;
+      gap: 8px;
+    }
+  }
+}
+
+.save-container {
+  text-align: center;
+  margin-top: 20px;
+
+  .save-button {
+    padding: 12px 32px;
+    font-size: 16px;
+  }
+}
+</style>
