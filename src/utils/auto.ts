@@ -1,4 +1,4 @@
-import { useErrorMessage, useSuccessMessage } from 'odos-ui'
+import { message } from 'ant-design-vue'
 import { supabase } from './supabase'
 import bcrypt from 'bcryptjs'
 import { formatDate } from './format'
@@ -41,7 +41,7 @@ export const SupabaseLogin = async (data: { username: string; password: string }
     .single()
 
   if (error || !user) {
-    useErrorMessage('账号名或密码错误')
+    message.error('账号名或密码错误')
     return null
   }
 
@@ -49,7 +49,7 @@ export const SupabaseLogin = async (data: { username: string; password: string }
   const isValidPassword = await verifyBcryptPassword(password, user.password_hash)
 
   if (!isValidPassword) {
-    useErrorMessage('账号名或密码错误')
+    message.error('账号名或密码错误')
     return null
   }
 
@@ -67,7 +67,7 @@ export const SupabaseLogin = async (data: { username: string; password: string }
     .update({ last_login_time: formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss') })
     .eq('id', user.id)
 
-  useSuccessMessage('登录成功')
+  message.success('登录成功')
 
   return {
     id: user.id as number,

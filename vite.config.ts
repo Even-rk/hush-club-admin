@@ -52,9 +52,6 @@ export default defineConfig({
         // 代码分割策略
         manualChunks: id => {
           if (id.includes('node_modules')) {
-            if (id.includes('odos-ui')) {
-              return 'vendor/odos-ui'
-            }
             if (id.includes('vue') || id.includes('vue-router')) {
               return 'vendor/vue'
             }
