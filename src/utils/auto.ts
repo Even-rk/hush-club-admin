@@ -2,7 +2,6 @@ import { useErrorMessage, useSuccessMessage } from 'odos-ui'
 import { supabase } from './supabase'
 import bcrypt from 'bcryptjs'
 import { formatDate } from './format'
-import { getUserPermission } from '@/api/Supabase'
 
 /**
  * 验证 bcrypt 密码哈希
@@ -70,13 +69,11 @@ export const SupabaseLogin = async (data: { username: string; password: string }
 
   useSuccessMessage('登录成功')
 
-  const permissionList = await getUserPermission(user.id)
-
   return {
+    id: user.id as number,
     token: token as string,
     last_login_time: user.last_login_time as string,
     real_name: user.real_name as string,
-    username: user.username as string,
-    permissionList: permissionList as string[]
+    username: user.username as string
   }
 }

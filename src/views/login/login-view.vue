@@ -40,7 +40,7 @@ const login = async () => {
   const data = await SupabaseLogin(loginForm.value)
   if (data) {
     setUserInfo(data)
-    router.push('/')
+    router.push('/dashboard')
   }
 }
 </script>

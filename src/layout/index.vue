@@ -11,6 +11,7 @@
         <div class="nav-section">
           <div class="nav-section-title">概览</div>
           <router-link
+            v-if="permissionList.includes('dashboard')"
             to="/dashboard"
             class="nav-item"
             :class="{ active: $route.name === 'dashboard' }"
@@ -23,6 +24,7 @@
         <div class="nav-section">
           <div class="nav-section-title">商品管理</div>
           <router-link
+            v-if="permissionList.includes('products')"
             to="/products"
             class="nav-item"
             :class="{ active: $route.name === 'products' }"
@@ -31,6 +33,7 @@
             商品列表
           </router-link>
           <router-link
+            v-if="permissionList.includes('categories')"
             to="/categories"
             class="nav-item"
             :class="{ active: $route.name === 'categories' }"
@@ -42,11 +45,17 @@
 
         <div class="nav-section">
           <div class="nav-section-title">订单管理</div>
-          <router-link to="/orders" class="nav-item" :class="{ active: $route.name === 'orders' }">
+          <router-link
+            v-if="permissionList.includes('orders')"
+            to="/orders"
+            class="nav-item"
+            :class="{ active: $route.name === 'orders' }"
+          >
             <span class="nav-icon">📋</span>
             订单列表
           </router-link>
           <router-link
+            v-if="permissionList.includes('order_stats')"
             to="/order-stats"
             class="nav-item"
             :class="{ active: $route.name === 'order-stats' }"
@@ -59,6 +68,7 @@
         <div class="nav-section">
           <div class="nav-section-title">会员管理</div>
           <router-link
+            v-if="permissionList.includes('members')"
             to="/members"
             class="nav-item"
             :class="{ active: $route.name === 'members' }"
@@ -67,6 +77,7 @@
             会员列表
           </router-link>
           <router-link
+            v-if="permissionList.includes('member_levels')"
             to="/member-levels"
             class="nav-item"
             :class="{ active: $route.name === 'member-levels' }"
@@ -79,6 +90,7 @@
         <div class="nav-section">
           <div class="nav-section-title">营销管理</div>
           <router-link
+            v-if="permissionList.includes('coupons')"
             to="/coupons"
             class="nav-item"
             :class="{ active: $route.name === 'coupons' }"
@@ -91,6 +103,7 @@
         <div class="nav-section">
           <div class="nav-section-title">系统设置</div>
           <router-link
+            v-if="permissionList.includes('member_config')"
             to="/member-config"
             class="nav-item"
             :class="{ active: $route.name === 'member-config' }"
@@ -98,7 +111,12 @@
             <span class="nav-icon">⚙️</span>
             会员配置
           </router-link>
-          <router-link to="/users" class="nav-item" :class="{ active: $route.name === 'users' }">
+          <router-link
+            v-if="permissionList.includes('users')"
+            to="/users"
+            class="nav-item"
+            :class="{ active: $route.name === 'users' }"
+          >
             <span class="nav-icon">👤</span>
             用户管理
           </router-link>
@@ -129,5 +147,16 @@
 </template>
 
 <script setup lang="ts">
-// 使用 router-link 进行导航，无需额外的导航函数
+import { getUserPermission } from '@/api/Supabase'
+import useUserStore from '@/stores/modules/user-info'
+import { storeToRefs } from 'pinia'
+import { onMounted, ref } from 'vue'
+const { userInfo } = storeToRefs(useUserStore())
+
+// 菜单权限列表
+const permissionList = ref<string[]>([])
+onMounted(async () => {
+  const permissions = await getUserPermission(userInfo.value.id)
+  permissionList.value = permissions
+})
 </script>
