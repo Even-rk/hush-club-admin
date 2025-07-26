@@ -327,7 +327,6 @@ body {
   background: var(--bg-gray);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
-  margin-right: 8px;
 }
 
 .btn-secondary:hover {
@@ -352,6 +351,7 @@ body {
 .btn-sm {
   padding: 6px 12px;
   font-size: 12px;
+  margin-right: 8px;
 }
 
 /* 表格 */

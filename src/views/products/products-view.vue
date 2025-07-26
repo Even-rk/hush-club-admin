@@ -1,6 +1,6 @@
 <template>
   <!-- 商品管理页面 -->
-  <div id="products" class="page">
+  <div class="page">
     <div class="content-card">
       <div class="card-header">
         <div class="card-title">商品管理</div>

@@ -1,151 +1,171 @@
 <template>
-  <!-- 用户列表页面 -->
-  <div id="users" class="page active">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="page-title">用户列表</div>
-      <div class="page-actions">
-        <button class="btn btn-primary">新增用户</button>
-        <button class="btn btn-outline">导出用户</button>
-      </div>
-    </div>
-
-    <!-- 筛选条件 -->
-    <div class="content-card">
-      <div class="card-body">
-        <div class="filter-row">
-          <div class="filter-item">
-            <label>用户角色</label>
-            <select class="form-select">
-              <option value="">全部角色</option>
-              <option value="admin">管理员</option>
-              <option value="staff">员工</option>
-              <option value="cashier">收银员</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label>状态</label>
-            <select class="form-select">
-              <option value="">全部状态</option>
-              <option value="active">在职</option>
-              <option value="inactive">离职</option>
-              <option value="suspended">停职</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label>注册时间</label>
-            <input type="date" class="form-input" />
-          </div>
-          <div class="filter-item">
-            <label>用户名</label>
-            <input type="text" class="form-input" placeholder="输入用户名" />
-          </div>
-          <div class="filter-item">
-            <button class="btn btn-primary">搜索</button>
-            <button class="btn btn-outline">重置</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 用户列表 -->
+  <!-- 用户管理页面 -->
+  <div class="page">
     <div class="content-card">
       <div class="card-header">
-        <div class="card-title">用户列表</div>
+        <div class="card-title">系统用户管理</div>
         <div class="card-actions">
-          <span class="text-muted">共 12 位用户</span>
+          <button class="btn btn-primary" onclick="openUserModal()">+ 添加用户</button>
         </div>
       </div>
       <div class="card-body">
+        <!-- 用户统计 -->
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+          "
+        >
+          <div
+            style="
+              background: rgba(33, 150, 243, 0.1);
+              padding: 16px;
+              border-radius: var(--radius);
+              text-align: center;
+            "
+          >
+            <div style="font-size: 20px; font-weight: 600; color: var(--info-color)">8</div>
+            <div style="font-size: 12px; color: var(--text-secondary)">系统用户总数</div>
+          </div>
+          <div
+            style="
+              background: rgba(76, 175, 80, 0.1);
+              padding: 16px;
+              border-radius: var(--radius);
+              text-align: center;
+            "
+          >
+            <div style="font-size: 20px; font-weight: 600; color: var(--success-color)">6</div>
+            <div style="font-size: 12px; color: var(--text-secondary)">活跃用户</div>
+          </div>
+          <div
+            style="
+              background: rgba(255, 193, 7, 0.1);
+              padding: 16px;
+              border-radius: var(--radius);
+              text-align: center;
+            "
+          >
+            <div style="font-size: 20px; font-weight: 600; color: var(--warning-color)">2</div>
+            <div style="font-size: 12px; color: var(--text-secondary)">管理员</div>
+          </div>
+          <div
+            style="
+              background: rgba(244, 67, 54, 0.1);
+              padding: 16px;
+              border-radius: var(--radius);
+              text-align: center;
+            "
+          >
+            <div style="font-size: 20px; font-weight: 600; color: var(--error-color)">1</div>
+            <div style="font-size: 12px; color: var(--text-secondary)">已禁用</div>
+          </div>
+        </div>
+
+        <!-- 搜索和筛选 -->
+        <div class="search-bar">
+          <input type="text" class="search-input" placeholder="搜索用户名..." />
+          <button class="btn btn-secondary">🔍 搜索</button>
+        </div>
+
+        <div class="filters">
+          <div class="filter-item">
+            <label class="filter-label">角色:</label>
+            <select class="form-select filter-select">
+              <option>全部角色</option>
+              <option>超级管理员</option>
+              <option>管理员</option>
+              <option>店员</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">状态:</label>
+            <select class="form-select filter-select">
+              <option>全部状态</option>
+              <option>正常</option>
+              <option>已禁用</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 用户列表 -->
         <table class="data-table">
           <thead>
             <tr>
-              <th>用户信息</th>
+              <th>用户名</th>
               <th>角色</th>
-              <th>部门</th>
-              <th>状态</th>
+              <th>权限组</th>
               <th>最后登录</th>
               <th>创建时间</th>
+              <th>状态</th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
             <tr>
+              <td>admin</td>
               <td>
-                <div style="display: flex; align-items: center; gap: 12px">
-                  <div style="width: 40px; height: 40px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600">张</div>
-                  <div>
-                    <div>张经理</div>
-                    <div class="text-muted">zhang@hushclub.com</div>
-                  </div>
-                </div>
+                <span class="status-badge status-danger">超级管理员</span>
               </td>
-              <td>
-                <span class="status-badge status-primary">管理员</span>
-              </td>
-              <td>管理部</td>
-              <td>
-                <span class="status-badge status-success">在职</span>
-              </td>
+              <td>全部权限</td>
               <td>2024-12-01 14:30</td>
-              <td>2024-01-15</td>
+              <td>2023-01-15</td>
               <td>
-                <div class="action-buttons">
-                  <button class="btn btn-sm btn-outline">编辑</button>
-                  <button class="btn btn-sm btn-danger">删除</button>
-                </div>
+                <span class="status-badge status-success">正常</span>
+              </td>
+              <td>
+                <button class="btn btn-secondary btn-sm" onclick="editUser(this)">编辑</button>
+                <button class="btn btn-warning btn-sm">重置密码</button>
               </td>
             </tr>
             <tr>
+              <td>manager</td>
               <td>
-                <div style="display: flex; align-items: center; gap: 12px">
-                  <div style="width: 40px; height: 40px; background: var(--success-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600">李</div>
-                  <div>
-                    <div>李收银员</div>
-                    <div class="text-muted">li@hushclub.com</div>
-                  </div>
-                </div>
+                <span class="status-badge status-warning">管理员</span>
+              </td>
+              <td>店铺管理</td>
+              <td>2024-12-01 12:15</td>
+              <td>2023-03-20</td>
+              <td>
+                <span class="status-badge status-success">正常</span>
               </td>
               <td>
-                <span class="status-badge status-info">收银员</span>
-              </td>
-              <td>营业部</td>
-              <td>
-                <span class="status-badge status-success">在职</span>
-              </td>
-              <td>2024-12-01 13:45</td>
-              <td>2024-02-20</td>
-              <td>
-                <div class="action-buttons">
-                  <button class="btn btn-sm btn-outline">编辑</button>
-                  <button class="btn btn-sm btn-danger">删除</button>
-                </div>
+                <button class="btn btn-secondary btn-sm" onclick="editUser(this)">编辑</button>
+                <button class="btn btn-warning btn-sm">重置密码</button>
               </td>
             </tr>
             <tr>
+              <td>staff01</td>
               <td>
-                <div style="display: flex; align-items: center; gap: 12px">
-                  <div style="width: 40px; height: 40px; background: var(--warning-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600">王</div>
-                  <div>
-                    <div>王员工</div>
-                    <div class="text-muted">wang@hushclub.com</div>
-                  </div>
-                </div>
+                <span class="status-badge status-info">店员</span>
+              </td>
+              <td>订单处理</td>
+              <td>2024-12-01 08:30</td>
+              <td>2023-03-20</td>
+              <td>
+                <span class="status-badge status-success">正常</span>
               </td>
               <td>
-                <span class="status-badge status-warning">员工</span>
+                <button class="btn btn-secondary btn-sm" onclick="editUser(this)">编辑</button>
+                <button class="btn btn-danger btn-sm">禁用</button>
               </td>
-              <td>营业部</td>
+            </tr>
+            <tr>
+              <td>staff02</td>
               <td>
-                <span class="status-badge status-warning">停职</span>
+                <span class="status-badge status-info">店员</span>
               </td>
-              <td>2024-11-28 16:20</td>
-              <td>2024-03-10</td>
+              <td>商品管理</td>
+              <td>2024-11-28 18:45</td>
+              <td>2023-08-15</td>
               <td>
-                <div class="action-buttons">
-                  <button class="btn btn-sm btn-outline">编辑</button>
-                  <button class="btn btn-sm btn-success">启用</button>
-                </div>
+                <span class="status-badge status-danger">已禁用</span>
+              </td>
+              <td>
+                <button class="btn btn-secondary btn-sm" onclick="editUser(this)">编辑</button>
+                <button class="btn btn-success btn-sm">启用</button>
               </td>
             </tr>
           </tbody>
@@ -153,39 +173,118 @@
       </div>
     </div>
 
-    <!-- 角色权限说明 -->
+    <!-- 权限管理 -->
     <div class="content-card">
       <div class="card-header">
-        <div class="card-title">角色权限说明</div>
+        <div class="card-title">角色权限配置</div>
       </div>
       <div class="card-body">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
-          <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 16px">
-            <h4 style="margin: 0 0 12px 0; color: var(--primary-color)">管理员</h4>
-            <ul style="margin: 0; padding-left: 20px; color: var(--text-secondary)">
-              <li>系统管理权限</li>
-              <li>用户管理权限</li>
-              <li>数据查看权限</li>
-              <li>配置修改权限</li>
-            </ul>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+          "
+        >
+          <!-- 超级管理员 -->
+          <div
+            style="
+              border: 2px solid var(--error-color);
+              border-radius: var(--radius);
+              padding: 16px;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+              "
+            >
+              <div style="font-weight: 600; color: var(--error-color)">超级管理员</div>
+              <button class="btn btn-secondary btn-sm" onclick="editRolePermissions('superadmin')">
+                编辑权限
+              </button>
+            </div>
+            <div
+              id="superadmin-permissions"
+              style="font-size: 12px; color: var(--text-secondary); line-height: 1.6"
+            >
+              • 数据概览<br />
+              • 商品列表<br />
+              • 分类管理<br />
+              • 订单列表<br />
+              • 订单统计<br />
+              • 会员列表<br />
+              • 等级管理<br />
+              • 优惠券管理<br />
+              • 会员配置<br />
+              • 用户管理
+            </div>
           </div>
-          <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 16px">
-            <h4 style="margin: 0 0 12px 0; color: var(--info-color)">收银员</h4>
-            <ul style="margin: 0; padding-left: 20px; color: var(--text-secondary)">
-              <li>订单管理权限</li>
-              <li>会员管理权限</li>
-              <li>商品查看权限</li>
-              <li>基础数据查看</li>
-            </ul>
+
+          <!-- 管理员 -->
+          <div
+            style="
+              border: 2px solid var(--warning-color);
+              border-radius: var(--radius);
+              padding: 16px;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+              "
+            >
+              <div style="font-weight: 600; color: var(--warning-color)">管理员</div>
+              <button class="btn btn-secondary btn-sm" onclick="editRolePermissions('admin')">
+                编辑权限
+              </button>
+            </div>
+            <div
+              id="admin-permissions"
+              style="font-size: 12px; color: var(--text-secondary); line-height: 1.6"
+            >
+              • 数据概览<br />
+              • 商品列表<br />
+              • 分类管理<br />
+              • 订单列表<br />
+              • 订单统计<br />
+              • 会员列表<br />
+              • 等级管理<br />
+              • 优惠券管理
+            </div>
           </div>
-          <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 16px">
-            <h4 style="margin: 0 0 12px 0; color: var(--warning-color)">员工</h4>
-            <ul style="margin: 0; padding-left: 20px; color: var(--text-secondary)">
-              <li>订单查看权限</li>
-              <li>会员查看权限</li>
-              <li>商品查看权限</li>
-              <li>基础数据查看</li>
-            </ul>
+
+          <!-- 店员 -->
+          <div
+            style="border: 2px solid var(--info-color); border-radius: var(--radius); padding: 16px"
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+              "
+            >
+              <div style="font-weight: 600; color: var(--info-color)">店员</div>
+              <button class="btn btn-secondary btn-sm" onclick="editRolePermissions('staff')">
+                编辑权限
+              </button>
+            </div>
+            <div
+              id="staff-permissions"
+              style="font-size: 12px; color: var(--text-secondary); line-height: 1.6"
+            >
+              • 数据概览<br />
+              • 订单列表<br />
+              • 会员列表
+            </div>
           </div>
         </div>
       </div>

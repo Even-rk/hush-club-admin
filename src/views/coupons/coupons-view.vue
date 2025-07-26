@@ -1,66 +1,99 @@
 <template>
-  <!-- 优惠券页面 -->
-  <div id="coupons" class="page active">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="page-title">优惠券管理</div>
-      <div class="page-actions">
-        <button class="btn btn-primary">新增优惠券</button>
-      </div>
-    </div>
-
-    <!-- 筛选条件 -->
-    <div class="content-card">
-      <div class="card-body">
-        <div class="filter-row">
-          <div class="filter-item">
-            <label>优惠券类型</label>
-            <select class="form-select">
-              <option value="">全部类型</option>
-              <option value="discount">折扣券</option>
-              <option value="cash">现金券</option>
-              <option value="free">免费券</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label>状态</label>
-            <select class="form-select">
-              <option value="">全部状态</option>
-              <option value="active">生效中</option>
-              <option value="expired">已过期</option>
-              <option value="draft">草稿</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label>创建时间</label>
-            <input type="date" class="form-input" />
-          </div>
-          <div class="filter-item">
-            <button class="btn btn-primary">搜索</button>
-            <button class="btn btn-outline">重置</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 优惠券列表 -->
+  <!-- 优惠券管理页面 -->
+  <div class="page">
     <div class="content-card">
       <div class="card-header">
-        <div class="card-title">优惠券列表</div>
+        <div class="card-title">优惠券管理</div>
         <div class="card-actions">
-          <span class="text-muted">共 23 张优惠券</span>
+          <button class="btn btn-primary" onclick="openCouponModal()">+ 创建优惠券</button>
         </div>
       </div>
       <div class="card-body">
+        <!-- 优惠券统计 -->
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+          "
+        >
+          <div
+            style="
+              background: rgba(76, 175, 80, 0.1);
+              padding: 16px;
+              border-radius: var(--radius);
+              text-align: center;
+            "
+          >
+            <div style="font-size: 20px; font-weight: 600; color: var(--success-color)">12</div>
+            <div style="font-size: 12px; color: var(--text-secondary)">优惠券模板</div>
+          </div>
+          <div
+            style="
+              background: rgba(255, 193, 7, 0.1);
+              padding: 16px;
+              border-radius: var(--radius);
+              text-align: center;
+            "
+          >
+            <div style="font-size: 20px; font-weight: 600; color: var(--warning-color)">8</div>
+            <div style="font-size: 12px; color: var(--text-secondary)">正常状态</div>
+          </div>
+          <div
+            style="
+              background: rgba(33, 150, 243, 0.1);
+              padding: 16px;
+              border-radius: var(--radius);
+              text-align: center;
+            "
+          >
+            <div style="font-size: 20px; font-weight: 600; color: var(--info-color)">4</div>
+            <div style="font-size: 12px; color: var(--text-secondary)">已禁用</div>
+          </div>
+          <div
+            style="
+              background: rgba(244, 67, 54, 0.1);
+              padding: 16px;
+              border-radius: var(--radius);
+              text-align: center;
+            "
+          >
+            <div style="font-size: 20px; font-weight: 600; color: var(--error-color)">1,456</div>
+            <div style="font-size: 12px; color: var(--text-secondary)">累计发送</div>
+          </div>
+        </div>
+
+        <!-- 优惠券列表 -->
+        <div class="filters">
+          <div class="filter-item">
+            <label class="filter-label">优惠券状态:</label>
+            <select class="form-select filter-select">
+              <option>全部状态</option>
+              <option>正常</option>
+              <option>已使用</option>
+              <option>已过期</option>
+              <option>已禁用</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">优惠类型:</label>
+            <select class="form-select filter-select">
+              <option>全部类型</option>
+              <option>满减券</option>
+              <option>折扣券</option>
+              <option>免费券</option>
+            </select>
+          </div>
+        </div>
+
         <table class="data-table">
           <thead>
             <tr>
               <th>优惠券名称</th>
-              <th>类型</th>
+              <th>优惠类型</th>
               <th>优惠内容</th>
-              <th>使用条件</th>
-              <th>发放数量</th>
-              <th>已使用</th>
+              <th>使用门槛</th>
               <th>有效期</th>
               <th>状态</th>
               <th>操作</th>
@@ -69,86 +102,76 @@
           <tbody>
             <tr>
               <td>新用户专享券</td>
-              <td>
-                <span class="status-badge status-primary">折扣券</span>
-              </td>
-              <td>8折优惠</td>
-              <td>满30元可用</td>
-              <td>1000</td>
-              <td>156</td>
+              <td>满减券</td>
+              <td>满¥50减¥10</td>
+              <td>¥50</td>
               <td>2024-12-31</td>
               <td>
-                <span class="status-badge status-success">生效中</span>
+                <span class="status-badge status-success">正常</span>
               </td>
               <td>
-                <div class="action-buttons">
-                  <button class="btn btn-sm btn-outline">编辑</button>
-                  <button class="btn btn-sm btn-danger">删除</button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>生日特惠券</td>
-              <td>
-                <span class="status-badge status-warning">现金券</span>
-              </td>
-              <td>减10元</td>
-              <td>满50元可用</td>
-              <td>500</td>
-              <td>89</td>
-              <td>2024-12-31</td>
-              <td>
-                <span class="status-badge status-success">生效中</span>
-              </td>
-              <td>
-                <div class="action-buttons">
-                  <button class="btn btn-sm btn-outline">编辑</button>
-                  <button class="btn btn-sm btn-danger">删除</button>
-                </div>
+                <button class="btn btn-secondary btn-sm" onclick="editCoupon(this)">编辑</button>
+                <button class="btn btn-warning btn-sm">禁用</button>
               </td>
             </tr>
             <tr>
               <td>会员专享券</td>
+              <td>满减券</td>
+              <td>满¥100减¥20</td>
+              <td>¥100</td>
+              <td>2024-12-31</td>
               <td>
-                <span class="status-badge status-info">免费券</span>
-              </td>
-              <td>免费升级大杯</td>
-              <td>购买任意饮品</td>
-              <td>200</td>
-              <td>45</td>
-              <td>2024-11-30</td>
-              <td>
-                <span class="status-badge status-warning">已过期</span>
+                <span class="status-badge status-success">正常</span>
               </td>
               <td>
-                <div class="action-buttons">
-                  <button class="btn btn-sm btn-outline">编辑</button>
-                  <button class="btn btn-sm btn-danger">删除</button>
-                </div>
+                <button class="btn btn-secondary btn-sm" onclick="editCoupon(this)">编辑</button>
+                <button class="btn btn-warning btn-sm">禁用</button>
+              </td>
+            </tr>
+            <tr>
+              <td>周末特惠券</td>
+              <td>折扣券</td>
+              <td>8.8折</td>
+              <td>¥30</td>
+              <td>2024-12-31</td>
+              <td>
+                <span class="status-badge status-success">正常</span>
+              </td>
+              <td>
+                <button class="btn btn-secondary btn-sm" onclick="editCoupon(this)">编辑</button>
+                <button class="btn btn-warning btn-sm">禁用</button>
+              </td>
+            </tr>
+            <tr>
+              <td>冬日暖身券</td>
+              <td>免费券</td>
+              <td>免费获得热饮一杯</td>
+              <td>无门槛</td>
+              <td>2024-02-29</td>
+              <td>
+                <span class="status-badge status-danger">已过期</span>
+              </td>
+              <td>
+                <button class="btn btn-secondary btn-sm">查看</button>
+                <button class="btn btn-danger btn-sm">删除</button>
+              </td>
+            </tr>
+            <tr>
+              <td>生日特惠券</td>
+              <td>满减券</td>
+              <td>满¥30减¥15</td>
+              <td>¥30</td>
+              <td>2024-12-15</td>
+              <td>
+                <span class="status-badge status-info">已使用</span>
+              </td>
+              <td>
+                <button class="btn btn-secondary btn-sm">查看</button>
+                <button class="btn btn-danger btn-sm">删除</button>
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
-
-    <!-- 优惠券统计 -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-top: 24px">
-      <div class="content-card">
-        <div class="card-header">
-          <div class="card-title">优惠券使用统计</div>
-        </div>
-        <div class="card-body">
-          <div class="chart-placeholder">📊 优惠券使用统计图表</div>
-        </div>
-      </div>
-      <div class="content-card">
-        <div class="card-header">
-          <div class="card-title">优惠券类型分布</div>
-        </div>
-        <div class="card-body">
-          <div class="chart-placeholder">📈 优惠券类型分布图表</div>
-        </div>
       </div>
     </div>
   </div>
