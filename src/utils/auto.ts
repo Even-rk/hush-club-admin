@@ -1,3 +1,4 @@
+import { useErrorMessage, useSuccessMessage } from 'odos-ui'
 import { supabase } from './supabase'
 import bcrypt from 'bcryptjs'
 
@@ -16,18 +17,31 @@ const verifyBcryptPassword = async (password: string, hash: string): Promise<boo
 }
 
 /**
+ * 生成 bcrypt 哈希
+ * @param password 明文密码
+ * @returns bcrypt 哈希值
+ */
+export const generateBcryptHash = async (password: string): Promise<string> => {
+  const saltRounds = 10
+  return await bcrypt.hash(password, saltRounds)
+}
+
+/**
  * 登录验证函数
- * @param username 用户名
- * @param password 密码
+ * @param data 登录数据
  * @returns token 字符串，失败返回 null
  */
-export const login = async (username: string, password: string): Promise<string | null> => {
+export const SupabaseLogin = async (data: {
+  username: string
+  password: string
+}): Promise<string | null> => {
+  const { username, password } = data
   if (!username || !password) {
     return null
   }
 
   const { data: user, error } = await supabase
-    .from('System_users')
+    .from('system_users')
     .select('*')
     .eq('username', username)
     .single()
@@ -36,10 +50,13 @@ export const login = async (username: string, password: string): Promise<string 
     return null
   }
 
+  console.log(await generateBcryptHash(password))
+
   // 验证 bcrypt 密码哈希
   const isValidPassword = await verifyBcryptPassword(password, user.password_hash)
 
   if (!isValidPassword) {
+    useErrorMessage('账号名或密码错误')
     return null
   }
 
@@ -50,6 +67,7 @@ export const login = async (username: string, password: string): Promise<string 
       timestamp: Date.now()
     })
   )
+  useSuccessMessage('登录成功')
 
   return token
 }

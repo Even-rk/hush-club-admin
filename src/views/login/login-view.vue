@@ -25,13 +25,15 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { SupabaseLogin } from '@/utils/auto'
 
 const loginForm = ref({
-  username: '',
-  password: ''
+  username: 'admin',
+  password: '123456'
 })
 
-const login = () => {
-  console.log(loginForm.value)
+const login = async () => {
+  const data = await SupabaseLogin(loginForm.value)
+  console.log(data)
 }
 </script>
