@@ -7,7 +7,6 @@ import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/',
   plugins: [
     vue({
       // 启用组件内联所有内容（模板、脚本、样式）
