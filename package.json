@@ -29,6 +29,7 @@
     "bcryptjs": "^3.0.2",
     "odos-ui": "^0.4.27",
     "pinia": "2.1.7",
+    "pinia-plugin-persistedstate": "^4.4.1",
     "sass": "^1.89.2",
     "typescript": "5.8.3",
     "vite": "6.3.5",

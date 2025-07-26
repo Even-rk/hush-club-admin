@@ -26,6 +26,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { SupabaseLogin } from '@/utils/auto'
+import useUserStore from '@/stores/modules/user-info'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const loginForm = ref({
   username: 'admin',
@@ -33,7 +36,11 @@ const loginForm = ref({
 })
 
 const login = async () => {
+  const { setUserInfo } = useUserStore()
   const data = await SupabaseLogin(loginForm.value)
-  console.log(data)
+  if (data) {
+    setUserInfo(data)
+    router.push('/')
+  }
 }
 </script>
