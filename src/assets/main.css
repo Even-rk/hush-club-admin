@@ -723,7 +723,6 @@ body {
 
 /* 登录页面样式 */
 .login-page {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -769,6 +768,9 @@ body {
 }
 
 .login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   padding: 14px;
   font-size: 16px;
@@ -781,18 +783,6 @@ body {
   font-size: 12px;
 }
 
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.checkbox-label input[type='checkbox'] {
-  margin: 0;
-}
 
 /* 响应式设计 */
 @media (max-width: 1024px) {
