@@ -51,76 +51,33 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr v-for="product in productList" :key="product.id">
               <td>
                 <div class="products-name">美式</div>
+                <img v-if="product.image_url" :src="product.image_url" alt="商品图片" />
               </td>
-              <td>经典美式咖啡</td>
-              <td>美式咖啡</td>
-              <td>¥18.00</td>
-              <td>¥15.30</td>
-              <td>¥12.60</td>
+              <td>{{ product.product_name }}</td>
+              <td>{{ product.category_name }}</td>
+              <td>¥{{ product.normal_member_price }}</td>
+              <td>¥{{ product.silver_member_price }}</td>
+              <td>¥{{ product.gold_member_price }}</td>
               <td>
-                <span class="status-badge status-success">上架中</span>
+                <span
+                  class="status-badge"
+                  :class="{
+                    'status-success': product.status === 'active',
+                    'status-danger': product.status === 'inactive'
+                  }"
+                >
+                  {{ product.status === 'active' ? '上架中' : '已下架' }}
+                </span>
               </td>
-              <td>1,256</td>
+              <td>{{ product.sales_count }}</td>
               <td>
-                <button class="btn btn-secondary btn-sm" @click="editProduct()">编辑</button>
-                <button class="btn btn-warning btn-sm">下架</button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="products-name">拿铁</div>
-              </td>
-              <td>香草拿铁</td>
-              <td>拿铁系列</td>
-              <td>¥25.00</td>
-              <td>¥21.25</td>
-              <td>¥17.75</td>
-              <td>
-                <span class="status-badge status-success">上架中</span>
-              </td>
-              <td>892</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" @click="editProduct()">编辑</button>
-                <button class="btn btn-warning btn-sm">下架</button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="products-name">卡布</div>
-              </td>
-              <td>经典卡布奇诺</td>
-              <td>卡布奇诺</td>
-              <td>¥22.00</td>
-              <td>¥18.70</td>
-              <td>¥15.20</td>
-              <td>
-                <span class="status-badge status-danger">已下架</span>
-              </td>
-              <td>734</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" @click="editProduct()">编辑</button>
-                <button class="btn btn-success btn-sm">上架</button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="products-name">冰美</div>
-              </td>
-              <td>冰美式咖啡</td>
-              <td>美式咖啡</td>
-              <td>¥20.00</td>
-              <td>¥17.00</td>
-              <td>¥14.00</td>
-              <td>
-                <span class="status-badge status-danger">已下架</span>
-              </td>
-              <td>342</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" @click="editProduct()">编辑</button>
-                <button class="btn btn-success btn-sm">上架</button>
+                <button class="btn btn-secondary btn-sm" @click="editProduct(product)">编辑</button>
+                <button class="btn btn-warning btn-sm" @click="productStatus(product.id)">
+                  下架
+                </button>
               </td>
             </tr>
           </tbody>
@@ -131,15 +88,28 @@
 </template>
 
 <script setup lang="ts">
+import { reqGetProductList } from '@/api/supabase'
+import { Product } from '@/types/supabase'
+import { onMounted, ref } from 'vue'
+
 // 打开商品弹窗
 const openProductModal = () => {
   console.log('openProductModal')
 }
 
 // 编辑商品
-const editProduct = () => {
-  console.log('editProduct')
+const editProduct = (product: Product) => {
+  console.log('editProduct', product)
 }
+
+const productStatus = (id: number) => {
+  console.log('productStatus', id)
+}
+
+const productList = ref<Product[]>([])
+onMounted(async () => {
+  productList.value = await reqGetProductList()
+})
 </script>
 
 <style lang="scss">

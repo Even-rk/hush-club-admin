@@ -147,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { getUserPermission } from '@/api/Supabase'
+import { reqGetUserPermission } from '@/api/supabase'
 import useUserStore from '@/stores/modules/user-info'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
@@ -156,7 +156,7 @@ const { userInfo } = storeToRefs(useUserStore())
 // 菜单权限列表
 const permissionList = ref<string[]>([])
 onMounted(async () => {
-  const permissions = await getUserPermission(userInfo.value.id)
+  const permissions = await reqGetUserPermission(userInfo.value.id)
   permissionList.value = permissions
 })
 </script>
