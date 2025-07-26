@@ -1,7 +1,7 @@
 // 集成 Supabase
 
 import supabase from '@/utils/supabase'
-import { Product, ProductCategory } from '@/types/supabase'
+import { Product, ProductCategory, OrderDetail } from '@/types/supabase'
 
 // 用户菜单权限
 export const reqGetUserPermission = async (userId: number): Promise<string[]> => {
@@ -66,4 +66,38 @@ export const reqGetAllCategory = async (): Promise<ProductCategory[]> => {
     })
   )
   return categoryList as ProductCategory[]
+}
+
+// 查全部订单（包含会员信息和商品明细）
+export const reqGetAllOrder = async (): Promise<OrderDetail[]> => {
+  const { data: orders, error: orders_error } = await supabase.from('orders').select('*')
+  if (orders_error) {
+    return []
+  }
+
+  // 获取所有订单的完整信息
+  const orderDetails = await Promise.all(
+    orders.map(async order => {
+      // 查询会员信息
+      const { data: member, error: member_error } = await supabase
+        .from('members')
+        .select('*')
+        .eq('id', order.member_id)
+        .single()
+
+      // 查询订单商品明细
+      const { data: order_items, error: items_error } = await supabase
+        .from('order_items')
+        .select('*')
+        .eq('order_id', order.id)
+
+      return {
+        ...order,
+        member: member_error ? null : member,
+        order_items: items_error ? [] : order_items
+      }
+    })
+  )
+
+  return orderDetails as OrderDetail[]
 }

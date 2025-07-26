@@ -43,117 +43,46 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>HU20241201001</td>
+            <tr v-for="order in orderList" :key="order.id">
+              <td>{{ order.order_no }}</td>
               <td>
-                <div>张先生</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">138****8888</div>
+                <div>{{ order.member?.real_name }}</div>
+                <div style="font-size: 12px; color: var(--text-secondary)">
+                  {{ order.member?.phone }}
+                </div>
               </td>
               <td>
-                <div>美式咖啡 x2</div>
-                <div>香草拿铁 x1</div>
+                <div v-for="item in order.order_items" :key="item.id">
+                  {{ item.product_name }} x{{ item.quantity }}
+                </div>
               </td>
-              <td>¥45.60</td>
-              <td>微信支付</td>
+              <td>¥{{ order.final_amount }}</td>
+              <td>{{ order.payment_method }}</td>
               <td>
-                <span class="status-badge status-success">已完成</span>
+                <span
+                  class="status-badge"
+                  :class="{
+                    // 待支付
+                    'status-info': order.status === 'pending',
+                    // 已完成
+                    'status-success': order.status === 'completed',
+                    // 待制作
+                    'status-warning': order.status === 'processing',
+                    // 已取消
+                    'status-error': order.status === 'cancelled'
+                  }"
+                >
+                  <template v-if="order.status === 'pending'"> 待支付 </template>
+                  <template v-else-if="order.status === 'completed'"> 已完成 </template>
+                  <template v-else-if="order.status === 'processing'"> 待制作 </template>
+                  <template v-else-if="order.status === 'cancelled'"> 已取消 </template>
+                </span>
               </td>
-              <td>2024-12-01 14:30</td>
+              <td>{{ order.created_at }}</td>
               <td>
-                <button class="btn btn-secondary btn-sm" onclick="viewOrderDetail(this)">
+                <button class="btn btn-secondary btn-sm" @click="viewOrderDetail(order)">
                   查看
                 </button>
-              </td>
-            </tr>
-            <tr>
-              <td>HU20241201002</td>
-              <td>
-                <div>李女士</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">139****9999</div>
-              </td>
-              <td>
-                <div>卡布奇诺 x1</div>
-                <div>提拉米苏拿铁 x1</div>
-              </td>
-              <td>¥38.25</td>
-              <td>余额支付</td>
-              <td>
-                <span class="status-badge status-warning">待制作</span>
-              </td>
-              <td>2024-12-01 14:25</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="viewOrderDetail(this)">
-                  查看
-                </button>
-                <button class="btn btn-success btn-sm" onclick="completeOrder(this)">完成</button>
-              </td>
-            </tr>
-            <tr>
-              <td>HU20241201003</td>
-              <td>
-                <div>王先生</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">137****7777</div>
-              </td>
-              <td>
-                <div>冰美式 x2</div>
-                <div>焦糖玛奇朵 x1</div>
-              </td>
-              <td>¥57.80</td>
-              <td>微信支付</td>
-              <td>
-                <span class="status-badge status-warning">待制作</span>
-              </td>
-              <td>2024-12-01 14:20</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="viewOrderDetail(this)">
-                  查看
-                </button>
-                <button class="btn btn-success btn-sm" onclick="completeOrder(this)">完成</button>
-              </td>
-            </tr>
-            <tr>
-              <td>HU20241201004</td>
-              <td>
-                <div>陈女士</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">136****6666</div>
-              </td>
-              <td>
-                <div>拿铁 x1</div>
-                <div>摩卡 x1</div>
-              </td>
-              <td>¥42.50</td>
-              <td>微信支付</td>
-              <td>
-                <span class="status-badge status-success">已完成</span>
-              </td>
-              <td>2024-12-01 14:15</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="viewOrderDetail(this)">
-                  查看
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>HU20241201005</td>
-              <td>
-                <div>刘先生</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">135****5555</div>
-              </td>
-              <td>
-                <div>美式咖啡 x1</div>
-                <div>卡布奇诺 x1</div>
-              </td>
-              <td>¥35.80</td>
-              <td>微信支付</td>
-              <td>
-                <span class="status-badge status-warning">待制作</span>
-              </td>
-              <td>2024-12-01 14:10</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="viewOrderDetail(this)">
-                  查看
-                </button>
-                <button class="btn btn-success btn-sm" onclick="completeOrder(this)">完成</button>
               </td>
             </tr>
           </tbody>
@@ -164,5 +93,20 @@
 </template>
 
 <script setup lang="ts">
+import { OrderDetail } from '@/types/supabase'
+import { reqGetAllOrder } from '@/api/supabase'
+import { onMounted, ref } from 'vue'
+
 // 订单列表页面逻辑
+const orderList = ref<OrderDetail[]>([])
+
+onMounted(async () => {
+  orderList.value = await reqGetAllOrder()
+  console.log(orderList.value)
+})
+
+// 查看详情
+const viewOrderDetail = (order: OrderDetail) => {
+  console.log(order)
+}
 </script>
