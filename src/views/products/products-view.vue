@@ -42,8 +42,9 @@
               <th>商品图片</th>
               <th>商品名称</th>
               <th>分类</th>
-              <th>普通价格</th>
-              <th>会员价格</th>
+              <th>普通会员价格</th>
+              <th>银牌会员价格</th>
+              <th>金牌会员价格</th>
               <th>状态</th>
               <th>销量</th>
               <th>操作</th>
@@ -58,6 +59,7 @@
               <td>美式咖啡</td>
               <td>¥18.00</td>
               <td>¥15.30</td>
+              <td>¥12.60</td>
               <td>
                 <span class="status-badge status-success">上架中</span>
               </td>
@@ -75,6 +77,7 @@
               <td>拿铁系列</td>
               <td>¥25.00</td>
               <td>¥21.25</td>
+              <td>¥17.75</td>
               <td>
                 <span class="status-badge status-success">上架中</span>
               </td>
@@ -92,6 +95,7 @@
               <td>卡布奇诺</td>
               <td>¥22.00</td>
               <td>¥18.70</td>
+              <td>¥15.20</td>
               <td>
                 <span class="status-badge status-danger">已下架</span>
               </td>
@@ -109,6 +113,7 @@
               <td>美式咖啡</td>
               <td>¥20.00</td>
               <td>¥17.00</td>
+              <td>¥14.00</td>
               <td>
                 <span class="status-badge status-danger">已下架</span>
               </td>
