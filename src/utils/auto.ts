@@ -1,6 +1,7 @@
 import { useErrorMessage, useSuccessMessage } from 'odos-ui'
 import { supabase } from './supabase'
 import bcrypt from 'bcryptjs'
+import { formatDate } from './format'
 
 /**
  * 验证 bcrypt 密码哈希
@@ -50,8 +51,6 @@ export const SupabaseLogin = async (data: {
     return null
   }
 
-  console.log(await generateBcryptHash(password))
-
   // 验证 bcrypt 密码哈希
   const isValidPassword = await verifyBcryptPassword(password, user.password_hash)
 
@@ -67,6 +66,13 @@ export const SupabaseLogin = async (data: {
       timestamp: Date.now()
     })
   )
+
+  // 更新表最后一次登录时间
+  await supabase
+    .from('system_users')
+    .update({ last_login_time: formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss') })
+    .eq('id', user.id)
+
   useSuccessMessage('登录成功')
 
   return token
