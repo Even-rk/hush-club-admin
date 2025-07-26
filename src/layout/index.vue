@@ -10,116 +10,98 @@
       <nav class="sidebar-nav">
         <div class="nav-section">
           <div class="nav-section-title">概览</div>
-          <a
-            href="#"
+          <router-link
+            to="/dashboard"
             class="nav-item"
             :class="{ active: $route.name === 'dashboard' }"
-            @click="showPage('dashboard')"
           >
             <span class="nav-icon">📊</span>
             数据概览
-          </a>
+          </router-link>
         </div>
 
         <div class="nav-section">
           <div class="nav-section-title">商品管理</div>
-          <a
-            href="#"
+          <router-link
+            to="/products"
             class="nav-item"
             :class="{ active: $route.name === 'products' }"
-            @click="showPage('products')"
           >
             <span class="nav-icon">☕</span>
             商品列表
-          </a>
-          <a
-            href="#"
+          </router-link>
+          <router-link
+            to="/categories"
             class="nav-item"
             :class="{ active: $route.name === 'categories' }"
-            @click="showPage('categories')"
           >
             <span class="nav-icon">📁</span>
             分类管理
-          </a>
+          </router-link>
         </div>
 
         <div class="nav-section">
           <div class="nav-section-title">订单管理</div>
-          <a
-            href="#"
-            class="nav-item"
-            :class="{ active: $route.name === 'orders' }"
-            @click="showPage('orders')"
-          >
+          <router-link to="/orders" class="nav-item" :class="{ active: $route.name === 'orders' }">
             <span class="nav-icon">📋</span>
             订单列表
-          </a>
-          <a
-            href="#"
+          </router-link>
+          <router-link
+            to="/order-stats"
             class="nav-item"
             :class="{ active: $route.name === 'order-stats' }"
-            @click="showPage('order-stats')"
           >
             <span class="nav-icon">📈</span>
             订单统计
-          </a>
+          </router-link>
         </div>
 
         <div class="nav-section">
           <div class="nav-section-title">会员管理</div>
-          <a
-            href="#"
+          <router-link
+            to="/members"
             class="nav-item"
             :class="{ active: $route.name === 'members' }"
-            @click="showPage('members')"
           >
             <span class="nav-icon">👥</span>
             会员列表
-          </a>
-          <a
-            href="#"
+          </router-link>
+          <router-link
+            to="/member-levels"
             class="nav-item"
             :class="{ active: $route.name === 'member-levels' }"
-            @click="showPage('member-levels')"
           >
             <span class="nav-icon">🏆</span>
             等级管理
-          </a>
+          </router-link>
         </div>
 
         <div class="nav-section">
           <div class="nav-section-title">营销管理</div>
-          <a
-            href="#"
+          <router-link
+            to="/coupons"
             class="nav-item"
             :class="{ active: $route.name === 'coupons' }"
-            @click="showPage('coupons')"
           >
             <span class="nav-icon">🎫</span>
             优惠券管理
-          </a>
+          </router-link>
         </div>
 
         <div class="nav-section">
           <div class="nav-section-title">系统设置</div>
-          <a
-            href="#"
+          <router-link
+            to="/member-config"
             class="nav-item"
             :class="{ active: $route.name === 'member-config' }"
-            @click="showPage('member-config')"
           >
             <span class="nav-icon">⚙️</span>
             会员配置
-          </a>
-          <a
-            href="#"
-            class="nav-item"
-            :class="{ active: $route.name === 'users' }"
-            @click="showPage('users')"
-          >
+          </router-link>
+          <router-link to="/users" class="nav-item" :class="{ active: $route.name === 'users' }">
             <span class="nav-icon">👤</span>
             用户管理
-          </a>
+          </router-link>
         </div>
       </nav>
     </div>
@@ -147,11 +129,5 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
-const showPage = (page: string) => {
-  router.push({ name: page })
-}
+// 使用 router-link 进行导航，无需额外的导航函数
 </script>
