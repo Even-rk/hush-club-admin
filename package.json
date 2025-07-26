@@ -1,0 +1,47 @@
+{
+  "name": "hush-club-admin",
+  "version": "1.0.0",
+  "description": "Vue3 + TypeScript + Vite",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vue-tsc && vite build",
+    "build:dev": "pnpm build --mode dev",
+    "build:test": "pnpm build --mode test",
+    "build:prod": "pnpm build --mode prod",
+    "build:analyze": "vue-tsc && vite build --mode analyze",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
+    "format": "prettier --write './**/*.{js,ts,jsx,tsx,vue}'"
+  },
+  "keywords": [
+    "vue",
+    "typescript",
+    "vite"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vitejs/plugin-vue": "5.2.4",
+    "axios": "^1.9.0",
+    "odos-ui": "^0.4.2",
+    "pinia": "2.1.7",
+    "typescript": "5.8.3",
+    "vite": "6.3.5",
+    "vue": "3.5.13",
+    "vue-router": "4.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "@typescript-eslint/eslint-plugin": "^6.16.0",
+    "@typescript-eslint/parser": "^6.16.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "eslint-plugin-vue": "^9.19.0",
+    "prettier": "3.5.3",
+    "rollup-plugin-visualizer": "^6.0.1",
+    "terser": "^5.39.1",
+    "vue-tsc": "^2.2.10"
+  }
+}
