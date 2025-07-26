@@ -75,8 +75,15 @@
               <td>{{ product.sales_count }}</td>
               <td>
                 <button class="btn btn-secondary btn-sm" @click="editProduct(product)">编辑</button>
-                <button class="btn btn-warning btn-sm" @click="productStatus(product.id)">
-                  下架
+                <button
+                  class="btn btn-sm"
+                  :class="{
+                    'btn-warning': product.status === 'active',
+                    'btn-success': product.status === 'inactive'
+                  }"
+                  @click="productStatus(product.id)"
+                >
+                  {{ product.status === 'active' ? '下架' : '上架' }}
                 </button>
               </td>
             </tr>

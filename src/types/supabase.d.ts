@@ -22,3 +22,23 @@ export type Product = {
   // 分类名称
   category_name: string
 }
+
+// 商品分类
+export type ProductCategory = {
+  // 分类id
+  id: number
+  // 分类名称
+  category_name: string
+  // 创建时间
+  created_at: string
+  // 描述
+  description: string
+  // 关联商品数量
+  product_count: number
+  // 排序
+  sort_order: number
+  // 状态
+  status: string
+  // 更新时间
+  updated_at: string
+}

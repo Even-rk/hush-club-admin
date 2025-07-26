@@ -25,7 +25,9 @@
               text-align: center;
             "
           >
-            <div style="font-size: 20px; font-weight: 600; color: var(--info-color)">8</div>
+            <div style="font-size: 20px; font-weight: 600; color: var(--info-color)">
+              {{ categoryList.length }}
+            </div>
             <div style="font-size: 12px; color: var(--text-secondary)">分类总数</div>
           </div>
           <div
@@ -36,19 +38,10 @@
               text-align: center;
             "
           >
-            <div style="font-size: 20px; font-weight: 600; color: var(--success-color)">6</div>
+            <div style="font-size: 20px; font-weight: 600; color: var(--success-color)">
+              {{ categoryList.filter(item => item.status === 'active').length }}
+            </div>
             <div style="font-size: 12px; color: var(--text-secondary)">启用分类</div>
-          </div>
-          <div
-            style="
-              background: rgba(255, 193, 7, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--warning-color)">45</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">关联商品</div>
           </div>
           <div
             style="
@@ -364,5 +357,15 @@
 </template>
 
 <script setup lang="ts">
+import { ProductCategory } from '@/types/supabase'
+import { onMounted, ref } from 'vue'
+import { reqGetAllCategory } from '@/api/supabase'
+
 // 商品分类页面逻辑
+const categoryList = ref<ProductCategory[]>([])
+
+onMounted(async () => {
+  categoryList.value = await reqGetAllCategory()
+  console.log(categoryList.value)
+})
 </script>

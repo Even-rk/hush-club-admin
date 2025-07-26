@@ -1,7 +1,7 @@
 // 集成 Supabase
 
 import supabase from '@/utils/supabase'
-import { Product } from '@/types/supabase'
+import { Product, ProductCategory } from '@/types/supabase'
 
 // 用户菜单权限
 export const reqGetUserPermission = async (userId: number): Promise<string[]> => {
@@ -41,4 +41,29 @@ export const reqGetProductList = async (): Promise<Product[]> => {
     })
   )
   return productList as Product[]
+}
+
+// 查全部分类
+export const reqGetAllCategory = async (): Promise<ProductCategory[]> => {
+  const { data, error } = await supabase.from('product_categories').select('*')
+  if (error) {
+    return []
+  }
+  // 关联商品数量
+  const categoryList = await Promise.all(
+    data.map(async item => {
+      const { count: product_data, error: product_error } = await supabase
+        .from('products')
+        .select('*', { count: 'exact', head: true })
+        .eq('category_id', item.id)
+      if (product_error) {
+        return item
+      }
+      return {
+        ...item,
+        product_count: product_data
+      }
+    })
+  )
+  return categoryList as ProductCategory[]
 }
