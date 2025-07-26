@@ -10,44 +10,18 @@
         </div>
       </div>
       <div class="card-body">
-        <div class="stats-grid" style="margin-bottom: 24px">
-          <div
-            style="
-              background: white;
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-              border: 1px solid var(--border-color);
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--text-secondary)">2,458</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">总会员数</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">2,458</div>
+            <div class="stat-label">总会员数</div>
           </div>
-          <div
-            style="
-              background: white;
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-              border: 1px solid var(--border-color);
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--success-color)">
-              ¥458,960
-            </div>
-            <div style="font-size: 12px; color: var(--text-secondary)">总充值金额</div>
+          <div class="stat-card">
+            <div class="stat-number stat-success">¥458,960</div>
+            <div class="stat-label">总充值金额</div>
           </div>
-          <div
-            style="
-              background: white;
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-              border: 1px solid var(--border-color);
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--primary-color)">¥5,000</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">单次最高充值</div>
+          <div class="stat-card">
+            <div class="stat-number stat-primary">¥5,000</div>
+            <div class="stat-label">单次最高充值</div>
           </div>
         </div>
 
@@ -97,7 +71,7 @@
               <td>张先生</td>
               <td>138****8888</td>
               <td>
-                <select class="form-select" style="min-width: 120px">
+                <select class="form-select member-level-select">
                   <option>普通会员</option>
                   <option>银牌会员</option>
                   <option selected>金牌会员</option>
@@ -126,7 +100,7 @@
               <td>李女士</td>
               <td>139****9999</td>
               <td>
-                <select class="form-select" style="min-width: 120px">
+                <select class="form-select member-level-select">
                   <option>普通会员</option>
                   <option selected>银牌会员</option>
                   <option>金牌会员</option>
@@ -155,7 +129,7 @@
               <td>王先生</td>
               <td>137****7777</td>
               <td>
-                <select class="form-select" style="min-width: 120px">
+                <select class="form-select member-level-select">
                   <option>普通会员</option>
                   <option>银牌会员</option>
                   <option>金牌会员</option>
@@ -190,3 +164,40 @@
 <script setup lang="ts">
 // 会员列表页面逻辑
 </script>
+
+<style scoped lang="scss">
+.stats-grid {
+  margin-bottom: 24px;
+
+  .stat-card {
+    background: white;
+    padding: 16px;
+    border-radius: var(--radius);
+    text-align: center;
+    border: 1px solid var(--border-color);
+
+    .stat-number {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-secondary);
+
+      &.stat-success {
+        color: var(--success-color);
+      }
+
+      &.stat-primary {
+        color: var(--primary-color);
+      }
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+  }
+}
+
+.member-level-select {
+  min-width: 120px;
+}
+</style>
