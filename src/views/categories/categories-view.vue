@@ -81,7 +81,7 @@
                   {{ item.status === 'active' ? '已启用' : '已禁用' }}
                 </span>
               </td>
-              <td>{{ item.created_at }}</td>
+              <td>{{ formatDate(item.created_at) }}</td>
               <td>
                 <button class="btn btn-secondary btn-sm" @click="editCategory(item)">编辑</button>
                 <button class="btn btn-warning btn-sm">禁用</button>
@@ -136,6 +136,7 @@
 import { ProductCategory } from '@/types/supabase'
 import { onMounted, ref } from 'vue'
 import { reqGetAllCategory } from '@/api/supabase'
+import { formatDate } from '@/utils/format'
 
 // 商品分类页面逻辑
 const categoryList = ref<ProductCategory[]>([])
