@@ -13,7 +13,21 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/admin',
     name: 'admin',
-    component: () => import('@/layout/index.vue')
+    component: () => import('@/layout/index.vue'),
+    children: [
+      {
+        // 数据概览
+        path: '/dashboard',
+        name: 'dashboard',
+        component: () => import('@/views/dashboard/dashboard-view.vue')
+      },
+      {
+        // 商品列表
+        path: '/products',
+        name: 'products',
+        component: () => import('@/views/products/products-view.vue')
+      }
+    ]
   }
 ]
 

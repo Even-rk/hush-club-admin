@@ -192,11 +192,6 @@ body {
   padding: 24px;
 }
 
-/* 页面 */
-.page {
-  display: none;
-}
-
 .page.active {
   display: block;
 }
@@ -332,6 +327,7 @@ body {
   background: var(--bg-gray);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
+  margin-right: 8px;
 }
 
 .btn-secondary:hover {
@@ -485,7 +481,6 @@ body {
 
 /* 模态框样式 */
 .modal {
-  display: none;
   position: fixed;
   z-index: 1000;
   left: 0;
