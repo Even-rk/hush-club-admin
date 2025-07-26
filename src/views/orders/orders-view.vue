@@ -20,9 +20,9 @@
           </div>
           <div class="filter-item">
             <label class="filter-label">日期范围:</label>
-            <input type="date" class="form-input" style="max-width: 150px" />
+            <input type="date" class="form-input date-input" />
             <span>至</span>
-            <input type="date" class="form-input" style="max-width: 150px" />
+            <input type="date" class="form-input date-input" />
           </div>
           <div class="filter-item">
             <button class="btn btn-primary">筛选</button>
@@ -47,7 +47,7 @@
               <td>{{ order.order_no }}</td>
               <td>
                 <div>{{ order.member?.real_name }}</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">
+                <div class="customer-phone">
                   {{ order.member?.phone }}
                 </div>
               </td>
@@ -110,3 +110,14 @@ const viewOrderDetail = (order: OrderDetail) => {
   console.log(order)
 }
 </script>
+
+<style scoped lang="scss">
+.date-input {
+  max-width: 150px;
+}
+
+.customer-phone {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+</style>

@@ -10,57 +10,22 @@
       </div>
       <div class="card-body">
         <!-- 用户统计 -->
-        <div
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-          "
-        >
-          <div
-            style="
-              background: rgba(33, 150, 243, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--info-color)">8</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">系统用户总数</div>
+        <div class="stats-grid">
+          <div class="stat-card stat-info">
+            <div class="stat-number">8</div>
+            <div class="stat-label">系统用户总数</div>
           </div>
-          <div
-            style="
-              background: rgba(76, 175, 80, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--success-color)">6</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">活跃用户</div>
+          <div class="stat-card stat-success">
+            <div class="stat-number">6</div>
+            <div class="stat-label">活跃用户</div>
           </div>
-          <div
-            style="
-              background: rgba(255, 193, 7, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--warning-color)">2</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">管理员</div>
+          <div class="stat-card stat-warning">
+            <div class="stat-number">2</div>
+            <div class="stat-label">管理员</div>
           </div>
-          <div
-            style="
-              background: rgba(244, 67, 54, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--error-color)">1</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">已禁用</div>
+          <div class="stat-card stat-error">
+            <div class="stat-number">1</div>
+            <div class="stat-label">已禁用</div>
           </div>
         </div>
 
@@ -179,38 +144,16 @@
         <div class="card-title">角色权限配置</div>
       </div>
       <div class="card-body">
-        <div
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-          "
-        >
+        <div class="role-grid">
           <!-- 超级管理员 -->
-          <div
-            style="
-              border: 2px solid var(--error-color);
-              border-radius: var(--radius);
-              padding: 16px;
-            "
-          >
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 12px;
-              "
-            >
-              <div style="font-weight: 600; color: var(--error-color)">超级管理员</div>
+          <div class="role-card role-superadmin">
+            <div class="role-header">
+              <div class="role-title">超级管理员</div>
               <button class="btn btn-secondary btn-sm" onclick="editRolePermissions('superadmin')">
                 编辑权限
               </button>
             </div>
-            <div
-              id="superadmin-permissions"
-              style="font-size: 12px; color: var(--text-secondary); line-height: 1.6"
-            >
+            <div id="superadmin-permissions" class="role-permissions">
               • 数据概览<br />
               • 商品列表<br />
               • 分类管理<br />
@@ -225,30 +168,14 @@
           </div>
 
           <!-- 管理员 -->
-          <div
-            style="
-              border: 2px solid var(--warning-color);
-              border-radius: var(--radius);
-              padding: 16px;
-            "
-          >
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 12px;
-              "
-            >
-              <div style="font-weight: 600; color: var(--warning-color)">管理员</div>
+          <div class="role-card role-admin">
+            <div class="role-header">
+              <div class="role-title">管理员</div>
               <button class="btn btn-secondary btn-sm" onclick="editRolePermissions('admin')">
                 编辑权限
               </button>
             </div>
-            <div
-              id="admin-permissions"
-              style="font-size: 12px; color: var(--text-secondary); line-height: 1.6"
-            >
+            <div id="admin-permissions" class="role-permissions">
               • 数据概览<br />
               • 商品列表<br />
               • 分类管理<br />
@@ -261,26 +188,14 @@
           </div>
 
           <!-- 店员 -->
-          <div
-            style="border: 2px solid var(--info-color); border-radius: var(--radius); padding: 16px"
-          >
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 12px;
-              "
-            >
-              <div style="font-weight: 600; color: var(--info-color)">店员</div>
+          <div class="role-card role-staff">
+            <div class="role-header">
+              <div class="role-title">店员</div>
               <button class="btn btn-secondary btn-sm" onclick="editRolePermissions('staff')">
                 编辑权限
               </button>
             </div>
-            <div
-              id="staff-permissions"
-              style="font-size: 12px; color: var(--text-secondary); line-height: 1.6"
-            >
+            <div id="staff-permissions" class="role-permissions">
               • 数据概览<br />
               • 订单列表<br />
               • 会员列表
@@ -295,3 +210,111 @@
 <script setup lang="ts">
 // 用户列表页面逻辑
 </script>
+
+<style scoped lang="scss">
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .stat-card {
+    padding: 16px;
+    border-radius: var(--radius);
+    text-align: center;
+
+    &.stat-info {
+      background: rgba(33, 150, 243, 0.1);
+    }
+
+    &.stat-success {
+      background: rgba(76, 175, 80, 0.1);
+    }
+
+    &.stat-warning {
+      background: rgba(255, 193, 7, 0.1);
+    }
+
+    &.stat-error {
+      background: rgba(244, 67, 54, 0.1);
+    }
+
+    .stat-number {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--info-color);
+    }
+
+    &.stat-success .stat-number {
+      color: var(--success-color);
+    }
+
+    &.stat-warning .stat-number {
+      color: var(--warning-color);
+    }
+
+    &.stat-error .stat-number {
+      color: var(--error-color);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+  }
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+
+  .role-card {
+    border: 2px solid var(--info-color);
+    border-radius: var(--radius);
+    padding: 16px;
+
+    &.role-superadmin {
+      border-color: var(--error-color);
+    }
+
+    &.role-admin {
+      border-color: var(--warning-color);
+    }
+
+    &.role-staff {
+      border-color: var(--info-color);
+    }
+
+    .role-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      .role-title {
+        font-weight: 600;
+        color: var(--info-color);
+      }
+    }
+
+    &.role-superadmin .role-title {
+      color: var(--error-color);
+    }
+
+    &.role-admin .role-title {
+      color: var(--warning-color);
+    }
+
+    &.role-staff .role-title {
+      color: var(--info-color);
+    }
+
+    .role-permissions {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+  }
+}
+</style>
