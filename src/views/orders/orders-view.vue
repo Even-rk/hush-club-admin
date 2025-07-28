@@ -39,6 +39,7 @@
               <th>支付方式</th>
               <th>订单状态</th>
               <th>下单时间</th>
+              <th>订单备注</th>
               <th>操作</th>
             </tr>
           </thead>
@@ -57,7 +58,8 @@
                 </div>
               </td>
               <td>¥{{ order.final_amount }}</td>
-              <td>{{ order.payment_method }}</td>
+              <td v-if="order.payment_method === 'wechat'">微信</td>
+              <td v-else-if="order.payment_method === 'balance'">余额</td>
               <td>
                 <span
                   class="status-badge"
@@ -79,6 +81,7 @@
                 </span>
               </td>
               <td>{{ order.created_at }}</td>
+              <td>{{ order.remark || '--' }}</td>
               <td>
                 <button class="btn btn-secondary btn-sm" @click="viewOrderDetail(order)">
                   查看
@@ -96,19 +99,45 @@
 import { OrderDetail } from '@/types/supabase'
 import { reqGetAllOrder } from '@/api/supabase'
 import { onMounted, ref } from 'vue'
+import supabase from '@/utils/supabase'
+import { formatDate } from '@/utils/format'
 
 // 订单列表页面逻辑
 const orderList = ref<OrderDetail[]>([])
 
 onMounted(async () => {
-  orderList.value = await reqGetAllOrder()
-  console.log(orderList.value)
+  const orders = await reqGetAllOrder()
+  orderList.value = orders.map(order => {
+    return {
+      ...order,
+      created_at: formatDate(order.created_at, 'YYYY-MM-DD HH:mm:ss')
+    }
+  })
 })
 
 // 查看详情
 const viewOrderDetail = (order: OrderDetail) => {
   console.log(order)
 }
+
+onMounted(() => {
+  // 订阅订单
+  supabase.channel('orders-channel').on(
+    'postgres_changes',
+    {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'orders'
+    },
+    payload => {
+      // 添加订单
+      orderList.value.push({
+        ...payload.new,
+        created_at: formatDate(payload.new.created_at, 'YYYY-MM-DD HH:mm:ss')
+      } as OrderDetail)
+    }
+  )
+})
 </script>
 
 <style scoped lang="scss">
