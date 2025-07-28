@@ -7,8 +7,8 @@
       </div>
       <form id="loginForm" class="login-form" @submit.prevent="login">
         <div class="form-group">
-          <label>用户名</label>
-          <input v-model="loginForm.username" type="text" class="form-control" required />
+          <label>邮箱</label>
+          <input v-model="loginForm.email" type="email" class="form-control" required />
         </div>
         <div class="form-group">
           <label>密码</label>
@@ -31,8 +31,8 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const loginForm = ref({
-  username: 'admin',
-  password: '123456'
+  email: 'kwr011024@163.com',
+  password: 'kwr102466'
 })
 
 const login = async () => {
