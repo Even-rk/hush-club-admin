@@ -19,7 +19,7 @@ export type Product = {
   // 销售数量
   sales_count: number
   // 状态
-  status: string
+  status: 'active' | 'inactive'
   // 分类名称
   category_name: string
 }
@@ -39,7 +39,7 @@ export type ProductCategory = {
   // 排序
   sort_order: number
   // 状态
-  status: string
+  status: 'active' | 'inactive'
   // 更新时间
   updated_at: string
 }
@@ -117,20 +117,53 @@ export type OrderItem = {
 
 // 会员信息类型
 export type Member = {
+  // 会员ID
   id: number
+  // 会员编号
   member_code: string
+  // 会员姓名
   real_name: string
+  // 手机号
   phone: string
+  // 会员等级ID
   level_id: number
+  // 会员等级名称
+  level_name: string
+  // 余额
   balance: number
+  // 单次最高充值总额
   total_recharge: number
+  // 消费总额
   total_consumption: number
+  // 订单数量
   order_count: number
-  points: number
-  status: string
+  // 注册时间
   register_time: string
+  // 最后登录时间
   last_login_time: string | null
+  // 创建时间
   created_at: string
+  // 更新时间
+  updated_at: string
+}
+
+// 会员等级信息类型
+export type MemberLevel = {
+  // 会员等级ID
+  id: number
+  // 会员等级名称
+  level_name: string
+  // 会员等级编码
+  level_code: string
+  // 折扣率
+  discount_rate: number
+  // 升级条件
+  upgrade_condition: string
+  // 状态
+  status: 'active' | 'inactive'
+  // 创建时间
+  created_at: string
+  // 更新时间
   updated_at: string
 }
 
@@ -153,7 +186,7 @@ export type OrderDetail = {
   // 使用的优惠券ID
   coupon_id: number | null
   // 订单状态
-  status: string
+  status: OrderStatus
   // 支付方式
   payment_method: string
   // 支付时间

@@ -1,13 +1,13 @@
 // 集成 Supabase
 
 import supabase from '@/utils/supabase'
-import { Product, ProductCategory, OrderDetail } from '@/types/supabase'
+import { Product, ProductCategory, OrderDetail, Member, MemberLevel } from '@/types/supabase'
 
 // 用户菜单权限
 export const reqGetUserPermission = async (userId: number): Promise<string[]> => {
   const { data: role_data, error: role_error } = await supabase
     .from('role_permissions')
-    .select('*')
+    .select('permission_code')
     .eq('role_id', userId)
   if (role_error) {
     return []
@@ -28,7 +28,7 @@ export const reqGetProductList = async (): Promise<Product[]> => {
     data.map(async item => {
       const { data: category_data, error: category_error } = await supabase
         .from('product_categories')
-        .select('*')
+        .select('category_name')
         .eq('id', item.category_id)
         .single()
       if (category_error) {
@@ -100,4 +100,41 @@ export const reqGetAllOrder = async (): Promise<OrderDetail[]> => {
   )
 
   return orderDetails as OrderDetail[]
+}
+
+// 查会员等级列表
+export const reqGetMemberLevelList = async (): Promise<MemberLevel[]> => {
+  const { data, error } = await supabase.from('member_levels').select('*')
+  if (error) {
+    return []
+  }
+  return data as MemberLevel[]
+}
+
+// 查会员列表
+export const reqGetMemberList = async (): Promise<Member[]> => {
+  const { data, error } = await supabase.from('members').select('*')
+  if (error) {
+    return []
+  }
+
+  // 查会员等级
+  const memberList = await Promise.all(
+    data.map(async item => {
+      const { data: member_level, error: member_level_error } = await supabase
+        .from('member_levels')
+        .select('level_name')
+        .eq('id', item.level_id)
+        .single()
+      if (member_level_error) {
+        return item
+      }
+      return {
+        ...item,
+        level_name: member_level?.level_name
+      }
+    })
+  )
+
+  return memberList as Member[]
 }

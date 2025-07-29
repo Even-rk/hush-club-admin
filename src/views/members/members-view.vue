@@ -67,80 +67,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>张先生</td>
-              <td>138****8888</td>
-              <td>
-                <select class="form-select member-level-select">
-                  <option>普通会员</option>
-                  <option>银牌会员</option>
-                  <option selected>金牌会员</option>
-                  <option>钻石会员</option>
-                </select>
-              </td>
-              <td>¥580.00</td>
-              <td>¥500.00</td>
-              <td>¥3,256.80</td>
-              <td>128</td>
-              <td>2023-08-15</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="viewMemberDetail(this)">
-                  查看
-                </button>
-                <button class="btn btn-secondary btn-sm" onclick="editMember(this)">编辑</button>
-                <button class="btn btn-primary btn-sm" onclick="openRechargeModal(this)">
-                  充值
-                </button>
-                <button class="btn btn-warning btn-sm" onclick="openMemberCouponModal(this)">
-                  优惠券
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>李女士</td>
-              <td>139****9999</td>
-              <td>
-                <select class="form-select member-level-select">
-                  <option>普通会员</option>
-                  <option selected>银牌会员</option>
-                  <option>金牌会员</option>
-                  <option>钻石会员</option>
-                </select>
-              </td>
-              <td>¥156.00</td>
-              <td>¥200.00</td>
-              <td>¥1,425.60</td>
-              <td>67</td>
-              <td>2024-02-20</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="viewMemberDetail(this)">
-                  查看
-                </button>
-                <button class="btn btn-secondary btn-sm" onclick="editMember(this)">编辑</button>
-                <button class="btn btn-primary btn-sm" onclick="openRechargeModal(this)">
-                  充值
-                </button>
-                <button class="btn btn-warning btn-sm" onclick="openMemberCouponModal(this)">
-                  优惠券
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>王先生</td>
-              <td>137****7777</td>
-              <td>
-                <select class="form-select member-level-select">
-                  <option>普通会员</option>
-                  <option>银牌会员</option>
-                  <option>金牌会员</option>
-                  <option selected>钻石会员</option>
-                </select>
-              </td>
-              <td>¥1,280.00</td>
-              <td>¥1,000.00</td>
-              <td>¥8,765.40</td>
-              <td>256</td>
-              <td>2022-12-10</td>
+            <tr v-for="member in memberList" :key="member.id">
+              <td>{{ member.real_name }}</td>
+              <td>{{ member.phone }}</td>
+              <td>{{ member.level_name }}</td>
+              <td>¥{{ member.balance }}</td>
+              <td>¥{{ member.total_recharge }}</td>
+              <td>¥{{ member.total_consumption }}</td>
+              <td>{{ member.order_count }}</td>
+              <td>{{ member.register_time }}</td>
               <td>
                 <button class="btn btn-secondary btn-sm" onclick="viewMemberDetail(this)">
                   查看
@@ -162,7 +97,20 @@
 </template>
 
 <script setup lang="ts">
+import { reqGetMemberList } from '@/api/supabase'
+import { Member } from '@/types/supabase'
+import { formatDate } from '@/utils/format'
+import { onMounted, ref } from 'vue'
+
 // 会员列表页面逻辑
+const memberList = ref<Member[]>([])
+onMounted(async () => {
+  const data = await reqGetMemberList()
+  memberList.value = data.map(item => ({
+    ...item,
+    register_time: formatDate(item.register_time, 'YYYY-MM-DD')
+  }))
+})
 </script>
 
 <style scoped lang="scss">
