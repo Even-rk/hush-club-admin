@@ -49,39 +49,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>李女士</td>
-                <td>139****9999</td>
-                <td><span class="status-badge">普通会员</span></td>
-                <td>
-                  <span class="status-badge status-badge--silver">银牌会员</span>
-                </td>
-                <td>¥120</td>
-                <td>2024-12-01 10:30</td>
-              </tr>
-              <tr>
-                <td>王先生</td>
-                <td>137****7777</td>
-                <td>
-                  <span class="status-badge status-badge--gold">金牌会员</span>
-                </td>
-                <td>
-                  <span class="status-badge status-badge--diamond">钻石会员</span>
-                </td>
-                <td>¥800</td>
-                <td>2024-11-30 16:45</td>
-              </tr>
-              <tr>
-                <td>刘女士</td>
-                <td>135****5555</td>
-                <td>
-                  <span class="status-badge status-badge--silver">银牌会员</span>
-                </td>
-                <td>
-                  <span class="status-badge status-badge--gold">金牌会员</span>
-                </td>
-                <td>¥600</td>
-                <td>2024-11-29 14:20</td>
+              <tr v-for="member in updateMemberList" :key="member.id">
+                <td>{{ member.real_name }}</td>
+                <td>{{ member.phone }}</td>
+                <td>{{ member.original_level_name }}</td>
+                <td>{{ member.new_level_name }}</td>
+                <td>{{ member.recharge_amount }}</td>
+                <td>{{ formatDate(member.upgrade_time) }}</td>
               </tr>
             </tbody>
           </table>
@@ -93,12 +67,17 @@
 
 <script setup lang="ts">
 import { reqGetMemberLevelList } from '@/api/supabase'
-import { MemberLevel } from '@/types/supabase'
+import { MemberLevel, UpdateMember } from '@/types/supabase'
+import { formatDate } from '@/utils/format'
 import { onMounted, ref } from 'vue'
 
 const memberLevelList = ref<MemberLevel[]>([])
+const updateMemberList = ref<UpdateMember[]>([])
+
 onMounted(async () => {
-  memberLevelList.value = await reqGetMemberLevelList()
+  const { memberLevels, updateMembers } = await reqGetMemberLevelList()
+  memberLevelList.value = memberLevels || []
+  updateMemberList.value = updateMembers || []
 })
 </script>
 

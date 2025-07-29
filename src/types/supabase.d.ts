@@ -171,6 +171,30 @@ export type MemberLevel = {
   member_count: number
 }
 
+// 会员更新记录
+export type UpdateMember = {
+  // 会员ID
+  id: number
+  // 会员id
+  member_id: string
+  // 会员姓名
+  real_name: string
+  // 手机号
+  phone: string
+  // 原会员等级ID
+  original_level_id: number
+  // 原会员等级名称
+  original_level_name: string
+  // 新会员等级ID
+  new_level_id: number
+  // 新会员等级名称
+  new_level_name: string
+  // 充值金额
+  recharge_amount: number
+  // 升级时间
+  upgrade_time: string
+}
+
 // 完整订单信息类型
 export type OrderDetail = {
   // 订单基础信息
