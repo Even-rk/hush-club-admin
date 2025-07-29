@@ -108,7 +108,25 @@ export const reqGetMemberLevelList = async (): Promise<MemberLevel[]> => {
   if (error) {
     return []
   }
-  return data as MemberLevel[]
+
+  // 查询会员数量
+  const memberList = await Promise.all(
+    data.map(async i => {
+      const { data: member_count, error: member_count_error } = await supabase
+        .from('members')
+        .select('*', { count: 'exact', head: true })
+        .eq('level_id', i.id)
+      if (member_count_error) {
+        return i
+      }
+      return {
+        ...i,
+        member_count: member_count
+      }
+    })
+  )
+
+  return memberList as MemberLevel[]
 }
 
 // 查会员列表

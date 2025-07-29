@@ -157,6 +157,8 @@ export type MemberLevel = {
   level_code: string
   // 折扣率
   discount_rate: number
+  // 会员描述
+  description: string
   // 升级条件
   upgrade_condition: string
   // 状态
@@ -165,6 +167,8 @@ export type MemberLevel = {
   created_at: string
   // 更新时间
   updated_at: string
+  // 会员数量
+  member_count: number
 }
 
 // 完整订单信息类型
