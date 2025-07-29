@@ -1,3 +1,4 @@
+// 商品
 export type Product = {
   // 商品id
   id: number
@@ -56,8 +57,9 @@ export type OrderStatus = 'pending' | 'processing' | 'completed' | 'cancelled'
  * 支付方式
  * balance 余额支付
  * wechat 微信支付
+ * alipay 支付宝
  */
-export type PaymentMethod = 'balance' | 'wechat'
+export type PaymentMethod = 'balance' | 'wechat' | 'alipay'
 
 // 商品订单
 export type Order = {
@@ -95,13 +97,21 @@ export type Order = {
 
 // 订单商品类型
 export type OrderItem = {
+  // 商品订单ID
   id: number
+  // 商品订单编号
   order_id: number
+  // 商品ID
   product_id: number
+  // 商品名称
   product_name: string
+  // 商品单价
   unit_price: number
+  // 购买数量
   quantity: number
+  // 小计
   subtotal: number
+  // 创建时间
   created_at: string
 }
 
@@ -128,19 +138,33 @@ export type Member = {
 export type OrderDetail = {
   // 订单基础信息
   id: number
+  // 订单编号
   order_no: string
+  // 会员ID
   member_id: number
+  // 订单总金额
   total_amount: number
+  // 会员折扣
   member_discount: number
+  // 优惠券折扣
   coupon_discount: number
+  // 最终支付金额
   final_amount: number
+  // 使用的优惠券ID
   coupon_id: number | null
+  // 订单状态
   status: string
+  // 支付方式
   payment_method: string
+  // 支付时间
   payment_time: string | null
+  // 完成时间
   complete_time: string | null
+  // 订单备注
   remark: string | null
+  // 创建时间
   created_at: string
+  // 更新时间
   updated_at: string
   // 会员信息
   member: Member | null
