@@ -12,15 +12,15 @@
       <div class="card-body">
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-number">2,458</div>
+            <div class="stat-number">{{ memberTotal }}</div>
             <div class="stat-label">总会员数</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number stat-success">¥458,960</div>
+            <div class="stat-number stat-success">¥{{ totalRecharge }}</div>
             <div class="stat-label">总充值金额</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number stat-primary">¥5,000</div>
+            <div class="stat-number stat-primary">¥{{ maxRecharge }}</div>
             <div class="stat-label">单次最高充值</div>
           </div>
         </div>
@@ -102,14 +102,24 @@ import { Member } from '@/types/supabase'
 import { formatDate } from '@/utils/format'
 import { onMounted, ref } from 'vue'
 
-// 会员列表页面逻辑
+// 会员列表
 const memberList = ref<Member[]>([])
+const memberTotal = ref(0)
+const totalRecharge = ref(0)
+const maxRecharge = ref(0)
 onMounted(async () => {
   const data = await reqGetMemberList()
-  memberList.value = data.map(item => ({
+  const list = data.memberList || []
+  memberList.value = list.map(item => ({
     ...item,
     register_time: formatDate(item.register_time, 'YYYY-MM-DD')
   }))
+  // 会员数量
+  memberTotal.value = data.memberTotal || 0
+  // 总充值金额
+  totalRecharge.value = data.totalRecharge || 0
+  // 单次最高充值总额
+  maxRecharge.value = data.maxRecharge || 0
 })
 </script>
 

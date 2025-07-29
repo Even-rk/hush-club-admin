@@ -112,10 +112,15 @@ export const reqGetMemberLevelList = async (): Promise<MemberLevel[]> => {
 }
 
 // 查会员列表
-export const reqGetMemberList = async (): Promise<Member[]> => {
+export const reqGetMemberList = async (): Promise<{
+  maxRecharge?: number
+  totalRecharge?: number
+  memberTotal?: number
+  memberList?: Member[]
+}> => {
   const { data, error } = await supabase.from('members').select('*')
   if (error) {
-    return []
+    return {}
   }
 
   // 查会员等级
@@ -136,5 +141,14 @@ export const reqGetMemberList = async (): Promise<Member[]> => {
     })
   )
 
-  return memberList as Member[]
+  return {
+    // 单次最高充值总额
+    maxRecharge: data.reduce((acc, item) => Math.max(acc, item.total_recharge), 0),
+    // 总充值金额
+    totalRecharge: data.reduce((acc, item) => acc + item.total_recharge, 0),
+    // 会员数量
+    memberTotal: data.length,
+    // 会员列表
+    memberList: memberList as Member[]
+  }
 }
