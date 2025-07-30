@@ -1,127 +1,174 @@
 <template>
   <!-- 订单管理页面 -->
-  <div class="page">
-    <div class="content-card">
-      <div class="card-header">
-        <div class="card-title">订单管理</div>
-        <div class="card-actions">
-          <button class="btn btn-secondary">📊 导出数据</button>
+  <div class="content-card">
+    <div class="card-header">
+      <div class="card-title">订单管理</div>
+    </div>
+    <div class="card-body">
+      <!-- 筛选器 -->
+      <div class="filters">
+        <div class="filter-item">
+          <label class="filter-label">订单状态:</label>
+          <select class="form-select filter-select">
+            <option>全部状态</option>
+            <option>已完成</option>
+            <option>制作中</option>
+            <option>待支付</option>
+            <option>已取消</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label class="filter-label">支付方式:</label>
+          <select class="form-select filter-select">
+            <option>全部方式</option>
+            <option>微信支付</option>
+            <option>余额支付</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label class="filter-label">日期:</label>
+          <input type="date" class="form-input date-input" />
+        </div>
+        <div class="filter-item">
+          <button class="btn btn-primary">筛选</button>
         </div>
       </div>
-      <div class="card-body">
-        <div class="filters">
-          <div class="filter-item">
-            <label class="filter-label">订单状态:</label>
-            <select class="form-select filter-select">
-              <option>全部状态</option>
-              <option>待制作</option>
-              <option>已完成</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label class="filter-label">日期范围:</label>
-            <input type="date" class="form-input date-input" />
-            <span>至</span>
-            <input type="date" class="form-input date-input" />
-          </div>
-          <div class="filter-item">
-            <button class="btn btn-primary">筛选</button>
-          </div>
-        </div>
 
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>订单号</th>
-              <th>客户信息</th>
-              <th>商品明细</th>
-              <th>订单金额</th>
-              <th>支付方式</th>
-              <th>订单状态</th>
-              <th>下单时间</th>
-              <th>订单备注</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="order in orderList" :key="order.id">
-              <td>{{ order.order_no }}</td>
-              <td>
-                <div>{{ order.member?.real_name }}</div>
-                <div class="customer-phone">
-                  {{ order.member?.phone }}
-                </div>
-              </td>
-              <td>
-                <div v-for="item in order.order_items" :key="item.id">
-                  {{ item.product_name }} x{{ item.quantity }}
-                </div>
-              </td>
-              <td>¥{{ order.final_amount }}</td>
-              <td v-if="order.payment_method === 'wechat'">微信</td>
-              <td v-else-if="order.payment_method === 'balance'">余额</td>
-              <td>
-                <span
-                  class="status-badge"
-                  :class="{
-                    // 待支付
-                    'status-info': order.status === 'pending',
-                    // 已完成
-                    'status-success': order.status === 'completed',
-                    // 待制作
-                    'status-warning': order.status === 'processing',
-                    // 已取消
-                    'status-error': order.status === 'cancelled'
-                  }"
-                >
-                  <template v-if="order.status === 'pending'"> 待支付 </template>
-                  <template v-else-if="order.status === 'completed'"> 已完成 </template>
-                  <template v-else-if="order.status === 'processing'"> 待制作 </template>
-                  <template v-else-if="order.status === 'cancelled'"> 已取消 </template>
-                </span>
-              </td>
-              <td>{{ order.created_at }}</td>
-              <td>{{ order.remark || '--' }}</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" @click="viewOrderDetail(order)">
-                  查看
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <!-- 订单列表 -->
+      <data-table
+        :data="orderList"
+        :columns="orderColumns"
+        :actions="orderActions"
+        :loading="loading"
+        row-key="id"
+      >
+        <!-- 客户信息插槽 -->
+        <template #customer="{ row }">
+          <div>
+            <div>{{ row.member?.real_name }}</div>
+            <div class="customer-phone">{{ row.member?.phone }}</div>
+          </div>
+        </template>
+
+        <!-- 商品明细插槽 -->
+        <template #items="{ row }">
+          <div>
+            <div v-for="item in row.order_items" :key="item.id">
+              {{ item.product_name }} x{{ item.quantity }}
+            </div>
+          </div>
+        </template>
+
+        <!-- 支付方式插槽 -->
+        <template #payment="{ row }">
+          <span v-if="row.payment_method === 'wechat'">微信</span>
+          <span v-else-if="row.payment_method === 'balance'">余额</span>
+          <span v-else>{{ row.payment_method }}</span>
+        </template>
+      </data-table>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { OrderDetail } from '@/types/supabase'
 import { reqGetAllOrder } from '@/api/supabase'
-import { onMounted, ref } from 'vue'
-import supabase from '@/utils/supabase'
+import { OrderDetail } from '@/types/supabase'
+import type { TableColumn, TableAction } from '@/types/supabase'
 import { formatDate } from '@/utils/format'
+import { onMounted, ref } from 'vue'
+import { supabase } from '@/utils/supabase'
+import DataTable from '@/components/data-table.vue'
 
-// 订单列表页面逻辑
+// 数据状态
 const orderList = ref<OrderDetail[]>([])
+const loading = ref(false)
 
-onMounted(async () => {
-  const orders = await reqGetAllOrder()
-  orderList.value = orders.map(order => {
-    return {
-      ...order,
-      created_at: formatDate(order.created_at, 'YYYY-MM-DD HH:mm:ss')
+// 表格列配置
+const orderColumns: TableColumn<OrderDetail>[] = [
+  { key: 'order_no', title: '订单号', width: '140px' },
+  {
+    key: 'customer',
+    title: '客户信息',
+    slot: 'customer'
+  },
+  {
+    key: 'items',
+    title: '商品明细',
+    slot: 'items'
+  },
+  { key: 'final_amount', title: '订单金额', type: 'price' },
+  {
+    key: 'payment',
+    title: '支付方式',
+    slot: 'payment'
+  },
+  {
+    key: 'status',
+    title: '订单状态',
+    type: 'status',
+    statusMap: {
+      completed: { text: '已完成', className: 'status-success' },
+      processing: { text: '制作中', className: 'status-warning' },
+      pending: { text: '待支付', className: 'status-info' },
+      cancelled: { text: '已取消', className: 'status-error' }
     }
-  })
-})
+  },
+  { key: 'created_at', title: '下单时间' },
+  { key: 'notes', title: '订单备注' }
+]
 
-// 查看详情
+// 操作函数
 const viewOrderDetail = (order: OrderDetail) => {
-  console.log(order)
+  console.log('查看订单详情:', order)
 }
 
+const editOrder = (order: OrderDetail) => {
+  console.log('编辑订单:', order)
+}
+
+const cancelOrder = (order: OrderDetail) => {
+  console.log('取消订单:', order)
+}
+
+// 表格操作配置
+const orderActions: TableAction<OrderDetail>[] = [
+  {
+    text: '查看详情',
+    type: 'secondary',
+    onClick: order => viewOrderDetail(order)
+  },
+  {
+    text: '编辑',
+    type: 'primary',
+    visible: order => order.status !== 'completed' && order.status !== 'cancelled',
+    onClick: order => editOrder(order)
+  },
+  {
+    text: '取消订单',
+    type: 'error',
+    visible: order => order.status === 'pending',
+    onClick: order => cancelOrder(order)
+  }
+]
+
+// 加载数据
+onMounted(async () => {
+  loading.value = true
+  try {
+    const orders = await reqGetAllOrder()
+    orderList.value = orders.map(order => {
+      return {
+        ...order,
+        created_at: formatDate(order.created_at, 'YYYY-MM-DD HH:mm:ss')
+      }
+    })
+  } finally {
+    loading.value = false
+  }
+})
+
+// 订阅实时更新
 onMounted(() => {
-  // 订阅订单
   supabase.channel('orders-channel').on(
     'postgres_changes',
     {
@@ -148,5 +195,28 @@ onMounted(() => {
 .customer-phone {
   font-size: 12px;
   color: var(--text-secondary);
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 14px;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.filter-select {
+  min-width: 120px;
 }
 </style>

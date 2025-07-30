@@ -37,28 +37,28 @@
           <div class="card-title">最近等级升级记录</div>
         </div>
         <div class="card-body">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>会员姓名</th>
-                <th>手机号</th>
-                <th>原等级</th>
-                <th>新等级</th>
-                <th>充值金额</th>
-                <th>升级时间</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="member in updateMemberList" :key="member.id">
-                <td>{{ member.real_name }}</td>
-                <td>{{ member.phone }}</td>
-                <td>{{ member.original_level_name }}</td>
-                <td>{{ member.new_level_name }}</td>
-                <td>{{ member.recharge_amount }}</td>
-                <td>{{ formatDate(member.upgrade_time) }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <data-table
+            :data="upgradeRecords"
+            :columns="upgradeColumns"
+            :show-actions="false"
+            :loading="upgradeLoading"
+            row-key="id"
+            empty-text="暂无升级记录"
+          >
+            <!-- 原等级插槽 -->
+            <template #oldLevel="{ value }">
+              <span class="status-badge" :class="getLevelClass(value as string)">
+                {{ value }}
+              </span>
+            </template>
+
+            <!-- 新等级插槽 -->
+            <template #newLevel="{ value }">
+              <span class="status-badge" :class="getLevelClass(value as string)">
+                {{ value }}
+              </span>
+            </template>
+          </data-table>
         </div>
       </div>
     </div>
@@ -67,17 +67,57 @@
 
 <script setup lang="ts">
 import { reqGetMemberLevelList } from '@/api/supabase'
-import { MemberLevel, UpdateMember } from '@/types/supabase'
-import { formatDate } from '@/utils/format'
+import { MemberLevel, TableColumn, UpdateMember } from '@/types/supabase'
 import { onMounted, ref } from 'vue'
+import DataTable from '@/components/data-table.vue'
 
 const memberLevelList = ref<MemberLevel[]>([])
-const updateMemberList = ref<UpdateMember[]>([])
+const upgradeRecords = ref<UpdateMember[]>([])
+const upgradeLoading = ref(false)
+
+// 升级记录表格列配置
+const upgradeColumns: TableColumn<UpdateMember>[] = [
+  { key: 'real_name', title: '会员姓名' },
+  { key: 'phone', title: '手机号' },
+  {
+    key: 'original_level_name',
+    title: '原等级',
+    slot: 'oldLevel'
+  },
+  {
+    key: 'new_level_name',
+    title: '新等级',
+    slot: 'newLevel'
+  },
+  { key: 'recharge_amount', title: '充值金额', type: 'price' },
+  { key: 'upgrade_time', title: '升级时间' }
+]
+
+// 获取等级对应的样式类
+const getLevelClass = (levelName: string) => {
+  switch (levelName) {
+    case '普通会员':
+      return ''
+    case '银牌会员':
+      return 'status-silver'
+    case '金牌会员':
+      return 'status-gold'
+    case '钻石会员':
+      return 'status-diamond'
+    default:
+      return ''
+  }
+}
 
 onMounted(async () => {
-  const { memberLevels, updateMembers } = await reqGetMemberLevelList()
-  memberLevelList.value = memberLevels || []
-  updateMemberList.value = updateMembers || []
+  upgradeLoading.value = true
+  try {
+    const result = await reqGetMemberLevelList()
+    memberLevelList.value = result.memberLevels || []
+    upgradeRecords.value = result.updateMembers || []
+  } finally {
+    upgradeLoading.value = false
+  }
 })
 </script>
 
@@ -93,7 +133,7 @@ onMounted(async () => {
   border: 2px solid var(--border-color);
   border-radius: var(--radius);
   padding: 20px;
-  text-align: center;
+  text-align: left;
 
   &--silver {
     border-color: var(--silver-color);

@@ -1,134 +1,194 @@
 <template>
   <!-- 商品管理页面 -->
-  <div class="page">
-    <div class="content-card">
-      <div class="card-header">
-        <div class="card-title">商品管理</div>
-        <div class="card-actions">
-          <button class="btn btn-primary" @click="openProductModal()">+ 添加商品</button>
+  <div class="content-card">
+    <div class="card-header">
+      <div class="card-title">商品管理</div>
+      <button class="btn btn-primary">+ 新增商品</button>
+    </div>
+    <div class="card-body">
+      <!-- 筛选器 -->
+      <div class="filters">
+        <div class="filter-item">
+          <label class="filter-label">商品分类:</label>
+          <select class="form-select filter-select">
+            <option>全部分类</option>
+            <option>咖啡</option>
+            <option>茶饮</option>
+            <option>甜品</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label class="filter-label">商品状态:</label>
+          <select class="form-select filter-select">
+            <option>全部状态</option>
+            <option>上架中</option>
+            <option>已下架</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <input type="text" class="form-control filter-search" placeholder="搜索商品名称" />
+          <button class="btn btn-secondary">搜索</button>
         </div>
       </div>
-      <div class="card-body">
-        <!-- 搜索和筛选 -->
-        <div class="search-bar">
-          <input type="text" class="search-input" placeholder="搜索商品名称..." />
-          <button class="btn btn-secondary">🔍 搜索</button>
-        </div>
 
-        <div class="filters">
-          <div class="filter-item">
-            <label class="filter-label">分类:</label>
-            <select class="form-select filter-select">
-              <option>全部分类</option>
-              <option>意式咖啡</option>
-              <option>美式咖啡</option>
-              <option>拿铁系列</option>
-              <option>卡布奇诺</option>
-            </select>
+      <!-- 商品列表 -->
+      <data-table
+        :data="productList"
+        :columns="productColumns"
+        :actions="productActions"
+        :loading="loading"
+        row-key="id"
+      >
+        <!-- 商品图片插槽 -->
+        <template #image="{ value, row }">
+          <div class="product-image">
+            <img v-if="value" :src="String(value)" :alt="row.product_name" />
+            <div v-else class="no-image">无图片</div>
           </div>
-          <div class="filter-item">
-            <label class="filter-label">状态:</label>
-            <select class="form-select filter-select">
-              <option>全部状态</option>
-              <option>上架中</option>
-              <option>已下架</option>
-            </select>
-          </div>
-        </div>
+        </template>
 
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>商品图片</th>
-              <th>商品名称</th>
-              <th>分类</th>
-              <th>普通会员价格</th>
-              <th>银牌会员价格</th>
-              <th>金牌会员价格</th>
-              <th>状态</th>
-              <th>销量</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="product in productList" :key="product.id">
-              <td>
-                <div class="products-name">美式</div>
-                <img v-if="product.image_url" :src="product.image_url" alt="商品图片" />
-              </td>
-              <td>{{ product.product_name }}</td>
-              <td>{{ product.category_name }}</td>
-              <td>¥{{ product.normal_member_price }}</td>
-              <td>¥{{ product.silver_member_price }}</td>
-              <td>¥{{ product.gold_member_price }}</td>
-              <td>
-                <span
-                  class="status-badge"
-                  :class="{
-                    'status-success': product.status === 'active',
-                    'status-danger': product.status === 'inactive'
-                  }"
-                >
-                  {{ product.status === 'active' ? '上架中' : '已下架' }}
-                </span>
-              </td>
-              <td>{{ product.sales_count }}</td>
-              <td>
-                <button class="btn btn-secondary btn-sm" @click="editProduct(product)">编辑</button>
-                <button
-                  class="btn btn-sm"
-                  :class="{
-                    'btn-warning': product.status === 'active',
-                    'btn-success': product.status === 'inactive'
-                  }"
-                  @click="productStatus(product.id)"
-                >
-                  {{ product.status === 'active' ? '下架' : '上架' }}
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <!-- 商品名称插槽 -->
+        <template #name="{ row }">
+          <div class="product-info">
+            <div class="product-name">{{ row.product_name }}</div>
+            <div class="product-category">{{ row.category_name }}</div>
+          </div>
+        </template>
+      </data-table>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { reqGetProductList } from '@/api/supabase'
-import { Product } from '@/types/supabase'
-import { onMounted, ref } from 'vue'
+import { Product, TableColumn, TableAction } from '@/types/supabase'
+import DataTable from '@/components/data-table.vue'
 
-// 打开商品弹窗
-const openProductModal = () => {
-  console.log('openProductModal')
-}
-
-// 编辑商品
-const editProduct = (product: Product) => {
-  console.log('editProduct', product)
-}
-
-const productStatus = (id: number) => {
-  console.log('productStatus', id)
-}
-
+// 数据状态
 const productList = ref<Product[]>([])
+const loading = ref(false)
+
+// 表格列配置
+const productColumns: TableColumn<Product>[] = [
+  { key: 'image_url', title: '商品图片', slot: 'image' },
+  { key: 'product_name', title: '商品名称', slot: 'name' },
+  { key: 'normal_member_price', title: '普通会员价格', type: 'price' },
+  { key: 'silver_member_price', title: '银牌会员价格', type: 'price' },
+  { key: 'gold_member_price', title: '金牌会员价格', type: 'price' },
+  {
+    key: 'status',
+    title: '状态',
+    type: 'status',
+    statusMap: {
+      active: { text: '上架中', className: 'status-success' },
+      inactive: { text: '已下架', className: 'status-error' }
+    }
+  },
+  { key: 'sales_count', title: '销量' }
+]
+
+// 操作函数
+const editProduct = (product: Product) => {
+  console.log('编辑商品:', product)
+}
+
+const toggleProductStatus = (product: Product) => {
+  console.log('切换商品状态:', product)
+  // 这里实际应该调用API来切换状态
+}
+
+// 表格操作配置
+const productActions: TableAction<Product>[] = [
+  {
+    text: '编辑',
+    type: 'secondary',
+    onClick: product => editProduct(product)
+  },
+  {
+    text: '上架',
+    type: 'success',
+    visible: product => product.status === 'inactive',
+    onClick: product => toggleProductStatus(product)
+  },
+  {
+    text: '下架',
+    type: 'warning',
+    visible: product => product.status === 'active',
+    onClick: product => toggleProductStatus(product)
+  }
+]
+
+// 加载数据
 onMounted(async () => {
-  productList.value = await reqGetProductList()
+  loading.value = true
+  try {
+    productList.value = await reqGetProductList()
+  } finally {
+    loading.value = false
+  }
 })
 </script>
 
-<style lang="scss">
-.products-name {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #ff6b35, #e55a2b);
-  border-radius: 4px;
+<style lang="scss" scoped>
+.filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 12px;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 14px;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.filter-select {
+  min-width: 120px;
+}
+
+.filter-search {
+  min-width: 200px;
+}
+
+.product-image {
+  img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  .no-image {
+    width: 50px;
+    height: 50px;
+    background: var(--bg-gray);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+}
+
+.product-info {
+  .product-name {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .product-category {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
 }
 </style>
