@@ -128,12 +128,21 @@
     <div class="main-content">
       <!-- 顶部导航栏 -->
       <div class="top-header">
-        <div></div>
+        <div>{{ showLogout }}</div>
         <div class="header">
-          <div class="user-menu">
+          <div class="user-menu" @click="toggleDropdown">
+            <div class="user-menu-btn" />
             <div class="user-avatar">A</div>
             <div class="user-name">管理员</div>
-            <span>▼</span>
+            <span :class="{ 'dropdown-arrow': true, 'dropdown-arrow--open': showDropdown }">▼</span>
+
+            <!-- 下拉菜单 -->
+            <div v-show="showDropdown" class="dropdown-menu">
+              <div class="dropdown-item dropdown-item--danger" @click="logout">
+                <span class="dropdown-icon">🚪</span>
+                退出登录
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -149,9 +158,35 @@
 <script setup lang="ts">
 import { reqGetUserPermission } from '@/api/supabase'
 import useUserStore from '@/stores/modules/user-info'
+import { supabase } from '@/utils/supabase'
+import type {} from '@/types/supabase'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { UserInfo } from '@/types/stores'
+
 const { userInfo } = storeToRefs(useUserStore())
+const router = useRouter()
+
+// 下拉菜单显示状态
+const showDropdown = ref(false)
+
+// 切换下拉菜单
+const toggleDropdown = () => {
+  showDropdown.value = !showDropdown.value
+}
+
+// 退出登录
+const logout = async () => {
+  showDropdown.value = false
+  const { setUserInfo } = useUserStore()
+  setUserInfo({} as UserInfo)
+  await supabase.auth.signOut()
+  router.push('/login')
+}
+
+// 显示退出登录
+const showLogout = ref(false)
 
 // 菜单权限列表
 const permissionList = ref<string[]>([])
@@ -159,4 +194,100 @@ onMounted(async () => {
   const permissions = await reqGetUserPermission(userInfo.value.id)
   permissionList.value = permissions
 })
+
+// 点击其他地方关闭下拉菜单
+onMounted(() => {
+  document.addEventListener('click', event => {
+    const userMenu = document.querySelector('.user-menu')
+    if (userMenu && !userMenu.contains(event.target as Node)) {
+      showDropdown.value = false
+    }
+  })
+})
 </script>
+
+<style lang="scss" scoped>
+.user-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--bg-gray);
+  }
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: transform 0.2s ease;
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--bg-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  padding: 8px 0;
+  margin-top: 4px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--bg-gray);
+  }
+
+  &--danger {
+    color: var(--error-color);
+
+    &:hover {
+      background-color: rgba(244, 67, 54, 0.1);
+    }
+  }
+}
+
+.dropdown-icon {
+  font-size: 16px;
+}
+</style>
