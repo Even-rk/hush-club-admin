@@ -3,7 +3,7 @@
   <div class="content-card">
     <div class="card-header">
       <div class="card-title">商品管理</div>
-      <button class="btn btn-primary">+ 新增商品</button>
+      <button class="btn btn-primary" @click="openProductModal">+ 新增商品</button>
     </div>
     <div class="card-body">
       <!-- 筛选器 -->
@@ -57,6 +57,13 @@
       </data-table>
     </div>
   </div>
+
+  <product-modal
+    :visible="productModalVisible"
+    :mode="productModalMode"
+    :product-data="productModalData"
+    @close="closeProductModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -64,10 +71,28 @@ import { ref, onMounted } from 'vue'
 import { reqGetProductList } from '@/api/supabase'
 import { Product, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
+import ProductModal from '@/components/product-modal.vue'
 
 // 数据状态
 const productList = ref<Product[]>([])
 const loading = ref(false)
+
+// 商品弹窗
+const productModalVisible = ref(false)
+// 商品弹窗模式
+const productModalMode = ref<'view' | 'edit' | 'add'>('view')
+// 商品弹窗数据
+const productModalData = ref({} as Product)
+// 关闭商品弹窗
+const closeProductModal = () => {
+  productModalVisible.value = false
+}
+
+// 打开商品弹窗
+const openProductModal = () => {
+  productModalVisible.value = true
+  productModalMode.value = 'add'
+}
 
 // 表格列配置
 const productColumns: TableColumn<Product>[] = [
