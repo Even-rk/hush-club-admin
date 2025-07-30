@@ -12,19 +12,25 @@
         <!-- 用户统计 -->
         <div class="stats-grid">
           <div class="stat-card stat-info">
-            <div class="stat-number">8</div>
+            <div class="stat-number">{{ userList.length }}</div>
             <div class="stat-label">系统用户总数</div>
           </div>
           <div class="stat-card stat-success">
-            <div class="stat-number">6</div>
+            <div class="stat-number">
+              {{ userList.filter(i => i.status == 'active').length }}
+            </div>
             <div class="stat-label">活跃用户</div>
           </div>
           <div class="stat-card stat-warning">
-            <div class="stat-number">2</div>
+            <div class="stat-number">
+              {{ userList.filter(i => [1, 2].includes(i.role_id)).length }}
+            </div>
             <div class="stat-label">管理员</div>
           </div>
           <div class="stat-card stat-error">
-            <div class="stat-number">1</div>
+            <div class="stat-number">
+              {{ userList.filter(i => i.status == 'inactive').length }}
+            </div>
             <div class="stat-label">已禁用</div>
           </div>
         </div>
@@ -61,7 +67,7 @@
             <tr>
               <th>用户名</th>
               <th>角色</th>
-              <th>权限组</th>
+              <th>邮箱</th>
               <th>最后登录</th>
               <th>创建时间</th>
               <th>状态</th>
@@ -69,68 +75,23 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>admin</td>
+            <tr v-for="user in userList" :key="user.id">
+              <td>{{ user.username }}</td>
               <td>
-                <span class="status-badge status-danger">超级管理员</span>
+                <span class="status-badge status-danger">{{ user.role_name }}</span>
               </td>
-              <td>全部权限</td>
-              <td>2024-12-01 14:30</td>
-              <td>2023-01-15</td>
+              <td>{{ user.email }}</td>
+              <td>{{ formatDate(user.created_at, 'YYYY-MM-DD HH:mm') }}</td>
+              <td>{{ formatDate(user.updated_at, 'YYYY-MM-DD') }}</td>
               <td>
-                <span class="status-badge status-success">正常</span>
-              </td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="editUser(this)">编辑</button>
-                <button class="btn btn-warning btn-sm">重置密码</button>
-              </td>
-            </tr>
-            <tr>
-              <td>manager</td>
-              <td>
-                <span class="status-badge status-warning">管理员</span>
-              </td>
-              <td>店铺管理</td>
-              <td>2024-12-01 12:15</td>
-              <td>2023-03-20</td>
-              <td>
-                <span class="status-badge status-success">正常</span>
+                <span v-if="user.status === 'active'" class="status-badge status-success">
+                  正常
+                </span>
+                <span v-else class="status-badge status-error">禁用</span>
               </td>
               <td>
                 <button class="btn btn-secondary btn-sm" onclick="editUser(this)">编辑</button>
                 <button class="btn btn-warning btn-sm">重置密码</button>
-              </td>
-            </tr>
-            <tr>
-              <td>staff01</td>
-              <td>
-                <span class="status-badge status-info">店员</span>
-              </td>
-              <td>订单处理</td>
-              <td>2024-12-01 08:30</td>
-              <td>2023-03-20</td>
-              <td>
-                <span class="status-badge status-success">正常</span>
-              </td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="editUser(this)">编辑</button>
-                <button class="btn btn-danger btn-sm">禁用</button>
-              </td>
-            </tr>
-            <tr>
-              <td>staff02</td>
-              <td>
-                <span class="status-badge status-info">店员</span>
-              </td>
-              <td>商品管理</td>
-              <td>2024-11-28 18:45</td>
-              <td>2023-08-15</td>
-              <td>
-                <span class="status-badge status-danger">已禁用</span>
-              </td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="editUser(this)">编辑</button>
-                <button class="btn btn-success btn-sm">启用</button>
               </td>
             </tr>
           </tbody>
@@ -208,7 +169,17 @@
 </template>
 
 <script setup lang="ts">
+import { reqGetUserList } from '@/api/supabase'
+import { User } from '@/types/supabase'
+import { formatDate } from '@/utils/format'
+import { onMounted, ref } from 'vue'
+
 // 用户列表页面逻辑
+const userList = ref<User[]>([])
+
+onMounted(async () => {
+  userList.value = await reqGetUserList()
+})
 </script>
 
 <style scoped lang="scss">
