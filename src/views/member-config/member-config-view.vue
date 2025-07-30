@@ -94,34 +94,6 @@
               </div>
             </div>
           </div>
-
-          <!-- 钻石会员 -->
-          <div class="level-card level-diamond">
-            <div class="level-header">
-              <div class="level-icon">钻</div>
-              <div class="level-info">
-                <div class="level-name">钻石会员</div>
-                <div class="level-desc">最高级会员</div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">升级条件（元）</label>
-              <div class="upgrade-input">
-                <span>单次充值满</span>
-                <input type="number" class="form-input upgrade-value" value="1000" />
-                <span>元</span>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">优惠折扣</label>
-              <div class="discount-input">
-                <input type="number" class="form-input discount-value" value="8.0" step="0.1" />
-                <span>折</span>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div class="save-button-container">

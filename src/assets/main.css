@@ -324,6 +324,7 @@ body {
 }
 
 .btn-secondary {
+  flex-shrink: 0;
   background: var(--bg-gray);
   color: var(--text-primary);
   border: 1px solid var(--border-color);

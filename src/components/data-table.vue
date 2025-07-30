@@ -331,7 +331,6 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
 .table-actions {
   display: flex;
   gap: 8px;
-  justify-content: center;
   flex-wrap: wrap;
 }
 
@@ -437,6 +436,7 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
   }
 
   &.btn-secondary {
+    flex-shrink: 0;
     background: var(--bg-gray);
     color: var(--text-primary);
     border: 1px solid var(--border-color);
