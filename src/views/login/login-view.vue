@@ -8,11 +8,23 @@
       <form id="loginForm" class="login-form" @submit.prevent="login">
         <div class="form-group">
           <label>邮箱</label>
-          <input v-model="loginForm.email" type="email" class="form-control" required />
+          <input
+            v-model="loginForm.email"
+            placeholder="请输入邮箱"
+            type="email"
+            class="form-control"
+            required
+          />
         </div>
         <div class="form-group">
           <label>密码</label>
-          <input v-model="loginForm.password" type="password" class="form-control" required />
+          <input
+            v-model="loginForm.password"
+            placeholder="请输入密码"
+            type="password"
+            class="form-control"
+            required
+          />
         </div>
         <button type="submit" class="btn btn-primary login-btn">登录</button>
       </form>
