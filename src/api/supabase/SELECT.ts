@@ -54,7 +54,10 @@ export const reqGetProductList = async (): Promise<Product[]> => {
 
 // 查全部分类
 export const reqGetAllCategory = async (): Promise<ProductCategory[]> => {
-  const { data, error } = await supabase.from('product_categories').select('*')
+  const { data, error } = await supabase
+    .from('product_categories')
+    .select('*')
+    .order('sort_order', { ascending: true })
   if (error) {
     return []
   }
@@ -124,16 +127,19 @@ export const reqGetMemberLevelList = async (): Promise<{
   // 查询会员数量
   const memberLevelList = await Promise.all(
     data.map(async i => {
-      const { data: member_count, error: member_count_error } = await supabase
+      const { count: member_count, error: member_count_error } = await supabase
         .from('members')
         .select('*', { count: 'exact', head: true })
         .eq('level_id', i.id)
       if (member_count_error) {
-        return i
+        return {
+          ...i,
+          member_count: 0
+        }
       }
       return {
         ...i,
-        member_count: member_count
+        member_count: member_count || 0
       }
     })
   )

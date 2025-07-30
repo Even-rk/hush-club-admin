@@ -6,48 +6,50 @@
       <button class="btn btn-primary">+ 新增会员</button>
     </div>
     <div class="card-body">
-      <!-- 统计卡片 -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number">{{ memberTotal }}</div>
-          <div class="stat-label">会员总数</div>
+      <template v-if="!loading">
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">{{ memberTotal }}</div>
+            <div class="stat-label">会员总数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">¥{{ totalRecharge }}</div>
+            <div class="stat-label">总充值金额</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">¥{{ maxRecharge }}</div>
+            <div class="stat-label">单次最高充值</div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">¥{{ totalRecharge }}</div>
-          <div class="stat-label">总充值金额</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">¥{{ maxRecharge }}</div>
-          <div class="stat-label">单次最高充值</div>
-        </div>
-      </div>
 
-      <!-- 筛选器 -->
-      <div class="filters">
-        <div class="filter-item">
-          <label class="filter-label">会员等级:</label>
-          <select class="form-select filter-select">
-            <option>全部等级</option>
-            <option>普通会员</option>
-            <option>银牌会员</option>
-            <option>金牌会员</option>
-          </select>
+        <!-- 筛选器 -->
+        <div class="filters">
+          <div class="filter-item">
+            <label class="filter-label">会员等级:</label>
+            <select class="form-select filter-select">
+              <option>全部等级</option>
+              <option>普通会员</option>
+              <option>银牌会员</option>
+              <option>金牌会员</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">注册时间:</label>
+            <input type="date" class="form-control filter-date" />
+            <span class="filter-separator">至</span>
+            <input type="date" class="form-control filter-date" />
+          </div>
+          <div class="filter-item">
+            <input
+              type="text"
+              class="form-control filter-search"
+              placeholder="搜索会员姓名或手机号"
+            />
+            <button class="btn btn-secondary">搜索</button>
+          </div>
         </div>
-        <div class="filter-item">
-          <label class="filter-label">注册时间:</label>
-          <input type="date" class="form-control filter-date" />
-          <span class="filter-separator">至</span>
-          <input type="date" class="form-control filter-date" />
-        </div>
-        <div class="filter-item">
-          <input
-            type="text"
-            class="form-control filter-search"
-            placeholder="搜索会员姓名或手机号"
-          />
-          <button class="btn btn-secondary">搜索</button>
-        </div>
-      </div>
+      </template>
 
       <!-- 会员列表 -->
       <data-table

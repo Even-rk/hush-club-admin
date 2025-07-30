@@ -33,7 +33,7 @@
 
       <!-- 等级升级日志 -->
       <div class="content-card upgrade-log-card">
-        <div class="card-header">
+        <div v-if="!upgradeLoading" class="card-header">
           <div class="card-title">最近等级升级记录</div>
         </div>
         <div class="card-body">
@@ -133,7 +133,7 @@ onMounted(async () => {
   border: 2px solid var(--border-color);
   border-radius: var(--radius);
   padding: 20px;
-  text-align: left;
+  text-align: center;
 
   &--silver {
     border-color: var(--silver-color);

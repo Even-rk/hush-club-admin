@@ -34,7 +34,7 @@
   </div>
 
   <!-- 分类排序管理 -->
-  <div class="content-card">
+  <div v-if="!loading" class="content-card">
     <div class="card-header">
       <div class="card-title">分类排序</div>
       <div class="card-subtitle">拖拽调整分类的显示顺序</div>
