@@ -61,9 +61,8 @@
 
         <!-- 支付方式插槽 -->
         <template #payment="{ row }">
-          <span v-if="row.payment_method === 'wechat'">微信</span>
-          <span v-else-if="row.payment_method === 'balance'">余额</span>
-          <span v-else>{{ row.payment_method }}</span>
+          <span v-if="row.payment_method === 'wechat'">微信支付</span>
+          <span v-else-if="row.payment_method === 'balance'">余额支付</span>
         </template>
       </data-table>
     </div>
@@ -114,7 +113,7 @@ const orderColumns: TableColumn<OrderDetail>[] = [
     }
   },
   { key: 'created_at', title: '下单时间' },
-  { key: 'notes', title: '订单备注' }
+  { key: 'remark', title: '订单备注' }
 ]
 
 // 操作函数
@@ -122,13 +121,13 @@ const viewOrderDetail = (order: OrderDetail) => {
   console.log('查看订单详情:', order)
 }
 
-const editOrder = (order: OrderDetail) => {
-  console.log('编辑订单:', order)
-}
+// const editOrder = (order: OrderDetail) => {
+//   console.log('编辑订单:', order)
+// }
 
-const cancelOrder = (order: OrderDetail) => {
-  console.log('取消订单:', order)
-}
+// const cancelOrder = (order: OrderDetail) => {
+//   console.log('取消订单:', order)
+// }
 
 // 表格操作配置
 const orderActions: TableAction<OrderDetail>[] = [
@@ -136,19 +135,19 @@ const orderActions: TableAction<OrderDetail>[] = [
     text: '查看详情',
     type: 'secondary',
     onClick: order => viewOrderDetail(order)
-  },
-  {
-    text: '编辑',
-    type: 'primary',
-    visible: order => order.status !== 'completed' && order.status !== 'cancelled',
-    onClick: order => editOrder(order)
-  },
-  {
-    text: '取消订单',
-    type: 'error',
-    visible: order => order.status === 'pending',
-    onClick: order => cancelOrder(order)
   }
+  // {
+  //   text: '编辑',
+  //   type: 'primary',
+  //   visible: order => order.status !== 'completed' && order.status !== 'cancelled',
+  //   onClick: order => editOrder(order)
+  // },
+  // {
+  //   text: '取消订单',
+  //   type: 'error',
+  //   visible: order => order.status === 'pending',
+  //   onClick: order => cancelOrder(order)
+  // }
 ]
 
 // 加载数据

@@ -80,7 +80,7 @@
 
             <!-- 默认文本 -->
             <span v-else>
-              <template v-if="typeof getValue(row, column.key) === 'string'">
+              <template v-if="typeof getValue(row, column.key) !== 'number'">
                 {{ getValue(row, column.key) || '--' }}
               </template>
               <template v-else>
