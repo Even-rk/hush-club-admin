@@ -10,57 +10,22 @@
       </div>
       <div class="card-body">
         <!-- 优惠券统计 -->
-        <div
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-          "
-        >
-          <div
-            style="
-              background: rgba(76, 175, 80, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--success-color)">12</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">优惠券模板</div>
+        <div class="statsGrid">
+          <div class="statCard statCardSuccess">
+            <div class="statNumber statNumberSuccess">12</div>
+            <div class="statLabel">优惠券模板</div>
           </div>
-          <div
-            style="
-              background: rgba(255, 193, 7, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--warning-color)">8</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">正常状态</div>
+          <div class="statCard statCardWarning">
+            <div class="statNumber statNumberWarning">8</div>
+            <div class="statLabel">正常状态</div>
           </div>
-          <div
-            style="
-              background: rgba(33, 150, 243, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--info-color)">4</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">已禁用</div>
+          <div class="statCard statCardInfo">
+            <div class="statNumber statNumberInfo">4</div>
+            <div class="statLabel">已禁用</div>
           </div>
-          <div
-            style="
-              background: rgba(244, 67, 54, 0.1);
-              padding: 16px;
-              border-radius: var(--radius);
-              text-align: center;
-            "
-          >
-            <div style="font-size: 20px; font-weight: 600; color: var(--error-color)">1,456</div>
-            <div style="font-size: 12px; color: var(--text-secondary)">累计发送</div>
+          <div class="statCard statCardError">
+            <div class="statNumber statNumberError">1,456</div>
+            <div class="statLabel">累计发送</div>
           </div>
         </div>
 
@@ -180,3 +145,65 @@
 <script setup lang="ts">
 // 优惠券页面逻辑
 </script>
+
+<style scoped>
+/* 统计网格容器 */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* 统计卡片基础样式 */
+.statCard {
+  padding: 16px;
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+/* 不同类型的统计卡片背景色 */
+.statCardSuccess {
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.statCardWarning {
+  background: rgba(255, 193, 7, 0.1);
+}
+
+.statCardInfo {
+  background: rgba(33, 150, 243, 0.1);
+}
+
+.statCardError {
+  background: rgba(244, 67, 54, 0.1);
+}
+
+/* 统计数字样式 */
+.statNumber {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.statNumberSuccess {
+  color: var(--success-color);
+}
+
+.statNumberWarning {
+  color: var(--warning-color);
+}
+
+.statNumberInfo {
+  color: var(--info-color);
+}
+
+.statNumberError {
+  color: var(--error-color);
+}
+
+/* 统计标签样式 */
+.statLabel {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+</style>
