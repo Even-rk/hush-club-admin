@@ -7,7 +7,7 @@
     </div>
     <div class="card-body">
       <!-- 用户统计 -->
-      <div class="stats-grid">
+      <div v-if="!loading" class="stats-grid">
         <div class="stat-card stat-info">
           <div class="stat-number">{{ userList.length }}</div>
           <div class="stat-label">系统用户总数</div>
@@ -70,60 +70,26 @@
   </div>
 
   <!-- 权限管理 -->
-  <div class="content-card">
+  <div v-if="!loading" class="content-card">
     <div class="card-header">
       <div class="card-title">角色权限配置</div>
     </div>
     <div class="card-body">
       <div class="role-grid">
-        <!-- 超级管理员 -->
-        <div class="role-card role-superadmin">
+        <div
+          v-for="role in rolePermissionList"
+          :key="role.id"
+          class="role-card"
+          :class="`role-${role.role_code.toLowerCase()}`"
+        >
           <div class="role-header">
-            <div class="role-title">超级管理员</div>
+            <div class="role-title">{{ role.role_name }}</div>
             <button class="btn btn-secondary btn-sm">编辑权限</button>
           </div>
           <div class="role-permissions">
-            • 数据概览<br />
-            • 商品列表<br />
-            • 分类管理<br />
-            • 订单列表<br />
-            • 订单统计<br />
-            • 会员列表<br />
-            • 等级管理<br />
-            • 优惠券管理<br />
-            • 会员配置<br />
-            • 用户管理
-          </div>
-        </div>
-
-        <!-- 管理员 -->
-        <div class="role-card role-admin">
-          <div class="role-header">
-            <div class="role-title">管理员</div>
-            <button class="btn btn-secondary btn-sm">编辑权限</button>
-          </div>
-          <div class="role-permissions">
-            • 数据概览<br />
-            • 商品列表<br />
-            • 分类管理<br />
-            • 订单列表<br />
-            • 订单统计<br />
-            • 会员列表<br />
-            • 等级管理<br />
-            • 优惠券管理
-          </div>
-        </div>
-
-        <!-- 店员 -->
-        <div class="role-card role-staff">
-          <div class="role-header">
-            <div class="role-title">店员</div>
-            <button class="btn btn-secondary btn-sm">编辑权限</button>
-          </div>
-          <div class="role-permissions">
-            • 数据概览<br />
-            • 订单列表<br />
-            • 会员列表
+            <template v-for="permission in role.permissions" :key="permission.permission_code">
+              {{ permission.menu_name }}<br />
+            </template>
           </div>
         </div>
       </div>
@@ -132,16 +98,22 @@
 </template>
 
 <script setup lang="ts">
-import { reqGetUserList } from '@/api/supabase'
+import { reqGetRolePermissionList, reqGetUserList } from '@/api/supabase'
 import { User } from '@/types/supabase'
-import type { TableColumn, TableAction } from '@/types/supabase'
+import type { TableColumn, TableAction, RolePermission } from '@/types/supabase'
 import { formatDate } from '@/utils/format'
 import { onMounted, ref } from 'vue'
 import DataTable from '@/components/data-table.vue'
+import route from '@/router/route'
 
-// 数据状态
+// 用户列表
 const userList = ref<User[]>([])
+// 加载中
 const loading = ref(false)
+// 角色权限列表
+const rolePermissionList = ref<RolePermission[]>([])
+// 编辑权限
+const editPermission = ref<{ isEdit: boolean }[]>([])
 
 // 表格列配置
 const userColumns: TableColumn<User>[] = [
@@ -209,10 +181,27 @@ const userActions: TableAction<User>[] = [
 onMounted(async () => {
   loading.value = true
   try {
-    userList.value = await reqGetUserList()
+    const [users, rolePermissions] = await Promise.all([
+      reqGetUserList(),
+      reqGetRolePermissionList()
+    ])
+    userList.value = users
+    rolePermissionList.value = rolePermissions
+    // 初始化是否编辑
+    editPermission.value = rolePermissions.map(() => ({
+      isEdit: false
+    }))
   } finally {
     loading.value = false
   }
+
+  const routeList = route.find(i => i.name === 'admin')?.children
+  console.log(
+    routeList?.map(i => ({
+      menu_name: i.meta?.title,
+      permission_code: i.name
+    }))
+  )
 })
 </script>
 

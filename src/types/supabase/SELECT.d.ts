@@ -260,7 +260,14 @@ export type User = {
 // 角色权限列表
 export type RolePermission = {
   // 角色ID
-  role_id: number
-  // 权限ID
-  permission_id: number
+  id: number
+  // 角色名称
+  role_name: string
+  // 角色code
+  role_code: string
+  // 权限列表
+  permissions: {
+    permission_code: string
+    menu_name: string
+  }[]
 }

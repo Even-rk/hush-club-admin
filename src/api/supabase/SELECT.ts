@@ -311,9 +311,26 @@ export const reqGetUserList = async (): Promise<User[]> => {
 
 // 角色权限列表
 export const reqGetRolePermissionList = async (): Promise<RolePermission[]> => {
-  const { data, error } = await supabase.from('role_permissions').select('*')
-  if (error) {
+  const { data: role, error: role_error } = await supabase.from('user_roles').select('*')
+  if (role_error) {
     return []
   }
-  return data
+  // 查等级对应权限
+  const rolePermissionList = await Promise.all(
+    role.map(async item => {
+      const { data: permission_list, error: permission_error } = await supabase
+        .from('role_permissions')
+        .select('permission_code, menu_name')
+        .eq('role_id', item.id)
+      if (permission_error) {
+        return item
+      }
+      return {
+        ...item,
+        permissions: permission_list
+      }
+    })
+  )
+
+  return rolePermissionList as RolePermission[]
 }

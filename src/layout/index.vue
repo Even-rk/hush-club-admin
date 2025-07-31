@@ -128,7 +128,7 @@
     <div class="main-content">
       <!-- 顶部导航栏 -->
       <div class="top-header">
-        <div>{{ showLogout }}</div>
+        <div></div>
         <div class="header">
           <div class="user-menu" @click="toggleDropdown">
             <div class="user-menu-btn" />
@@ -184,9 +184,6 @@ const logout = async () => {
   await supabase.auth.signOut()
   router.push('/login')
 }
-
-// 显示退出登录
-const showLogout = ref(false)
 
 // 菜单权限列表
 const permissionList = ref<string[]>([])
