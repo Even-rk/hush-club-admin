@@ -288,11 +288,11 @@ export type Coupon = {
   // 优惠券面值 满减 折扣 免费
   discount_value: number
   // 优惠券门槛金额
-  threshold_amount: string
+  threshold_amount: number
   // 优惠券描述
   description: string
   // 有效天数
-  vallid_days: string
+  vallid_days: number
   // 有效截止时间
   valid_day: string
   // 优惠券状态

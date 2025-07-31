@@ -129,7 +129,7 @@ const columns: TableColumn<Coupon>[] = [
     title: '使用门槛',
     type: 'text',
     formatter: (_, row: Coupon) => {
-      const isZero = row.threshold_amount === '0' || !row.threshold_amount
+      const isZero = row.threshold_amount == 0 || !row.threshold_amount
       return isZero ? '无门槛' : `¥${row.threshold_amount}`
     }
   },
