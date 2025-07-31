@@ -12,8 +12,10 @@ export type Product = {
   silver_member_price: number
   // 黄金会员价格
   gold_member_price: number
-  // 图片url
-  image_url: string | null
+  // 图片id
+  image_id: number
+  // 图片地址
+  image_url: string
   // 商品名称
   product_name: string
   // 销售数量

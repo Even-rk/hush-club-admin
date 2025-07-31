@@ -149,6 +149,7 @@ onMounted(async () => {
   loading.value = true
   try {
     productList.value = await reqGetProductList()
+    console.log(productList.value)
   } finally {
     loading.value = false
   }
@@ -187,7 +188,7 @@ onMounted(async () => {
   img {
     width: 50px;
     height: 50px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 6px;
   }
 

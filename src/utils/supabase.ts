@@ -7,7 +7,8 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 // 创建Supabase客户端实例
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: false
+    storageKey: 'supabase-auth-token',
+    storage: sessionStorage
   }
 })
 

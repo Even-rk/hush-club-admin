@@ -5,7 +5,7 @@
       <div class="card-header">
         <div class="card-title">优惠券管理</div>
         <div class="card-actions">
-          <button class="btn btn-primary" onclick="openCouponModal()">+ 创建优惠券</button>
+          <button class="btn btn-primary">+ 创建优惠券</button>
         </div>
       </div>
       <div class="card-body">

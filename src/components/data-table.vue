@@ -328,7 +328,7 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
   img {
     width: 40px;
     height: 40px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 4px;
   }
 }

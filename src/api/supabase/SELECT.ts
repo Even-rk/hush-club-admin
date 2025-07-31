@@ -11,6 +11,7 @@ import {
   User,
   RolePermission
 } from '@/types/supabase'
+import { getPublicUrl } from '@/utils/storage'
 
 // 用户菜单权限
 export const reqGetUserPermission = async (userId: number): Promise<string[]> => {
@@ -35,6 +36,7 @@ export const reqGetProductList = async (): Promise<Product[]> => {
   // 查对应分类
   const productList = await Promise.all(
     data.map(async item => {
+      // 查分类
       const { data: category_data, error: category_error } = await supabase
         .from('product_categories')
         .select('category_name')
@@ -42,6 +44,27 @@ export const reqGetProductList = async (): Promise<Product[]> => {
         .single()
       if (category_error) {
         return item
+      }
+      // 查图片
+      if (item.image_id) {
+        const { data: image_data, error: image_error } = await supabase
+          .from('storage_files')
+          .select('file_path, bucket_name')
+          .eq('id', item.image_id)
+          .single()
+        if (image_error) {
+          return {
+            ...item,
+            category_name: category_data.category_name
+          }
+        }
+        // 查图片地址
+        const image_url = getPublicUrl(image_data.bucket_name, image_data.file_path)
+        return {
+          ...item,
+          category_name: category_data.category_name,
+          image_url: image_url
+        }
       }
       return {
         ...item,
