@@ -77,18 +77,43 @@
     <div class="card-body">
       <div class="role-grid">
         <div
-          v-for="role in rolePermissionList"
+          v-for="(role, index) in rolePermissionList"
           :key="role.id"
           class="role-card"
           :class="`role-${role.role_code.toLowerCase()}`"
         >
           <div class="role-header">
             <div class="role-title">{{ role.role_name }}</div>
-            <button class="btn btn-secondary btn-sm">编辑权限</button>
+            <template v-if="!editPermission[index].isEdit">
+              <button class="btn btn-secondary btn-sm" @click="editPermissionFn(role.id, index)">
+                编辑
+              </button>
+            </template>
+            <div v-if="editPermission[index].isEdit">
+              <button
+                class="btn btn-secondary btn-sm"
+                @click="editPermission[index].isEdit = false"
+              >
+                取消
+              </button>
+              <button class="btn btn-primary btn-sm" @click="savePermission(role.id)">保存</button>
+            </div>
           </div>
           <div class="role-permissions">
-            <template v-for="permission in role.permissions" :key="permission.permission_code">
-              {{ permission.menu_name }}<br />
+            <template v-if="!editPermission[index].isEdit">
+              <template v-for="permission in role.permissions" :key="permission.permission_code">
+                {{ permission.menu_name }}<br />
+              </template>
+            </template>
+            <template v-if="editPermission[index].isEdit">
+              <div v-for="routeItem in routeList" :key="routeItem.permission_code">
+                <input
+                  v-model="selectedPermission"
+                  :value="routeItem.permission_code"
+                  type="checkbox"
+                />
+                {{ routeItem.menu_name }}
+              </div>
             </template>
           </div>
         </div>
@@ -114,6 +139,10 @@ const loading = ref(false)
 const rolePermissionList = ref<RolePermission[]>([])
 // 编辑权限
 const editPermission = ref<{ isEdit: boolean }[]>([])
+// 路由列表
+const routeList = ref<{ menu_name: string; permission_code: string }[]>([])
+// 当前选择的权限
+const selectedPermission = ref<string[]>([])
 
 // 表格列配置
 const userColumns: TableColumn<User>[] = [
@@ -158,6 +187,25 @@ const viewUser = (user: User) => {
   console.log('查看用户详情:', user)
 }
 
+// 编辑权限
+const editPermissionFn = (roleId: number, editIndex: number) => {
+  const target = rolePermissionList.value.find(i => i.id === roleId)
+  if (!target) {
+    selectedPermission.value = []
+  } else {
+    selectedPermission.value = target.permissions.map(i => i.permission_code)
+  }
+  // 先关闭所有的
+  editPermission.value = editPermission.value.map(() => ({ isEdit: false }))
+  // 打开当前的
+  editPermission.value[editIndex].isEdit = true
+}
+
+// 保存权限
+const savePermission = (roleId: number) => {
+  console.log('保存权限:', roleId)
+}
+
 // 表格操作配置
 const userActions: TableAction<User>[] = [
   {
@@ -195,13 +243,12 @@ onMounted(async () => {
     loading.value = false
   }
 
-  const routeList = route.find(i => i.name === 'admin')?.children
-  console.log(
-    routeList?.map(i => ({
-      menu_name: i.meta?.title,
-      permission_code: i.name
-    }))
-  )
+  const routes = route.find(i => i.name === 'admin')?.children
+  const routeMap = routes?.map(i => ({
+    menu_name: i.meta?.title,
+    permission_code: i.name
+  }))
+  routeList.value = (routeMap as { menu_name: string; permission_code: string }[]) || []
 })
 </script>
 
@@ -326,6 +373,10 @@ onMounted(async () => {
       .role-title {
         font-weight: 600;
         color: var(--info-color);
+      }
+
+      .btn:last-child {
+        margin-right: 0;
       }
     }
 
