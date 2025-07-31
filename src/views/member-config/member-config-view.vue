@@ -10,18 +10,54 @@
       <div class="card-body">
         <div class="level-grid">
           <!-- 普通会员 -->
-          <div class="level-card level-normal">
+          <div
+            v-for="item in memberLevels"
+            :key="item.id"
+            class="level-card"
+            :class="`level-${item.level_code}`"
+          >
             <div class="level-header">
-              <div class="level-icon">普</div>
+              <div class="level-icon">{{ item.level_name.slice(0, 1) }}</div>
               <div class="level-info">
-                <div class="level-name">普通会员</div>
-                <div class="level-desc">默认等级</div>
+                <div class="level-name">{{ item.level_name }}</div>
+                <div class="level-desc">
+                  <template v-if="item.level_code == 'normal'">
+                    <span>登录微信账号即可成为普通会员</span>
+                  </template>
+                  <template v-else>
+                    <span>单次充值满</span>
+                    <span>{{ item.upgrade_condition }}</span>
+                    <span>元即可升级为</span>
+                    <span>{{ item.level_name }}</span>
+                  </template>
+                </div>
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">升级条件</label>
-              <input type="text" class="form-input readonly-input" value="登录微信账号" readonly />
+              <label class="form-label">
+                升级条件
+                <template v-if="item.level_code !== 'normal'">(元)</template>
+              </label>
+              <template v-if="item.level_code === 'normal'">
+                <input
+                  type="text"
+                  class="form-input readonly-input"
+                  value="登录微信账号"
+                  readonly
+                />
+              </template>
+              <template v-else>
+                <div class="upgrade-input">
+                  <span>单次充值满</span>
+                  <input
+                    type="number"
+                    class="form-input upgrade-value"
+                    :value="item.upgrade_condition"
+                  />
+                  <span>元</span>
+                </div>
+              </template>
             </div>
 
             <div class="form-group">
@@ -30,67 +66,9 @@
                 <input
                   type="number"
                   class="form-input discount-value"
-                  value="10"
-                  step="0.1"
-                  readonly
+                  :value="item.discount_rate * 10"
                 />
-                <span>折（原价）</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 银牌会员 -->
-          <div class="level-card level-silver">
-            <div class="level-header">
-              <div class="level-icon">银</div>
-              <div class="level-info">
-                <div class="level-name">银牌会员</div>
-                <div class="level-desc">第一级会员</div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">升级条件（元）</label>
-              <div class="upgrade-input">
-                <span>单次充值满</span>
-                <input type="number" class="form-input upgrade-value" value="100" />
-                <span>元</span>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">优惠折扣</label>
-              <div class="discount-input">
-                <input type="number" class="form-input discount-value" value="9.5" step="0.1" />
-                <span>折</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 金牌会员 -->
-          <div class="level-card level-gold">
-            <div class="level-header">
-              <div class="level-icon">金</div>
-              <div class="level-info">
-                <div class="level-name">金牌会员</div>
-                <div class="level-desc">第二级会员</div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">升级条件（元）</label>
-              <div class="upgrade-input">
-                <span>单次充值满</span>
-                <input type="number" class="form-input upgrade-value" value="500" />
-                <span>元</span>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">优惠折扣</label>
-              <div class="discount-input">
-                <input type="number" class="form-input discount-value" value="8.5" step="0.1" />
-                <span>折</span>
+                <span>折 <template v-if="item.level_code == 'normal'">（原价）</template> </span>
               </div>
             </div>
           </div>
@@ -175,7 +153,16 @@
 </template>
 
 <script setup lang="ts">
+import { reqGetMemberLevels } from '@/api/supabase/SELECT'
+import { MemberLevel } from '@/types/supabase/SELECT'
+import { onMounted, ref } from 'vue'
+
 // 会员配置页面逻辑
+const memberLevels = ref<MemberLevel[]>([])
+
+onMounted(async () => {
+  memberLevels.value = await reqGetMemberLevels()
+})
 </script>
 
 <style scoped lang="scss">

@@ -297,6 +297,15 @@ export const reqGetMemberList = async (): Promise<{
   }
 }
 
+// 会员等级列表
+export const reqGetMemberLevels = async (): Promise<MemberLevel[]> => {
+  const { data, error } = await supabase.from('member_levels').select('*')
+  if (error) {
+    return []
+  }
+  return data as MemberLevel[]
+}
+
 // 用户列表
 export const reqGetUserList = async (): Promise<User[]> => {
   const { data, error } = await supabase.from('system_users').select('*')
