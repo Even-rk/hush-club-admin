@@ -9,7 +9,8 @@ import {
   MemberLevel,
   UpdateMember,
   User,
-  RolePermission
+  RolePermission,
+  Coupon
 } from '@/types/supabase'
 import { getPublicUrl } from '@/utils/storage'
 
@@ -333,4 +334,52 @@ export const reqGetRolePermissionList = async (): Promise<RolePermission[]> => {
   )
 
   return rolePermissionList as RolePermission[]
+}
+
+// 优惠券列表
+export const reqGetCouponList = async (): Promise<{
+  couponList?: Coupon[]
+  coupon_count?: number
+  active_count?: number
+  inactive_count?: number
+  send_count?: number
+}> => {
+  const { data, error } = await supabase.from('coupon_templates').select('*')
+  if (error) {
+    return {}
+  }
+
+  // 处理有效时间
+  const couponList = data.map(item => {
+    if (item.valid_days == '0' || !item.valid_days) {
+      return { ...item, valid_day: '长期有效' }
+    } else {
+      // 创建时间加天数
+      const valid_day_date = new Date(item.created_at)
+      valid_day_date.setDate(valid_day_date.getDate() + parseInt(item.valid_days))
+      return { ...item, valid_day: valid_day_date.toISOString() }
+    }
+  })
+
+  // 优惠券模版数量
+  const coupon_count = couponList.length
+  // 正常状态数量
+  const active_count = couponList.filter(item => item.status == 'active').length
+  // 禁用状态数量
+  const inactive_count = couponList.filter(item => item.status == 'inactive').length
+  // 累计发送数量
+  const { count: send_count, error: send_error } = await supabase
+    .from('member_coupons')
+    .select('*', { count: 'exact', head: true })
+  if (send_error) {
+    return {}
+  }
+
+  return {
+    couponList: couponList as Coupon[],
+    coupon_count: coupon_count || 0,
+    active_count: active_count || 0,
+    inactive_count: inactive_count || 0,
+    send_count: send_count || 0
+  }
 }
