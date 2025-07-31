@@ -36,17 +36,30 @@ export const reqGetProductList = async (): Promise<Product[]> => {
   }
   // 查对应分类
   const productList = await Promise.all(
-    data.map(async item => {
-      // 查分类
-      const { data: category_data, error: category_error } = await supabase
-        .from('product_categories')
-        .select('category_name')
-        .eq('id', item.category_id)
-        .single()
-      if (category_error) {
-        return item
-      }
-      // 查图片
+    data.map(async (item: Product) => {
+      // 查会员等级
+      const [{ data: category_data }, { data: member_level_data }] = await Promise.all([
+        // 查分类
+        await supabase
+          .from('product_categories')
+          .select('category_name')
+          .eq('id', item.category_id)
+          .single(),
+        // 查会员价格
+        await supabase.from('member_levels').select('discount_rate,level_code')
+      ])
+
+      // 银牌会员折扣
+      const silver_member_price =
+        member_level_data?.find(i => {
+          return i.level_code == 'silver'
+        })?.discount_rate * item.normal_member_price
+      // 金牌会员折扣
+      const gold_member_price =
+        member_level_data?.find(i => {
+          return i.level_code == 'gold'
+        })?.discount_rate * item.normal_member_price
+
       if (item.image_id) {
         const { data: image_data, error: image_error } = await supabase
           .from('storage_files')
@@ -54,22 +67,24 @@ export const reqGetProductList = async (): Promise<Product[]> => {
           .eq('id', item.image_id)
           .single()
         if (image_error) {
-          return {
-            ...item,
-            category_name: category_data.category_name
-          }
+          return item
         }
         // 查图片地址
         const image_url = getPublicUrl(image_data.bucket_name, image_data.file_path)
         return {
           ...item,
+          image_url: image_url,
           category_name: category_data.category_name,
-          image_url: image_url
+          silver_member_price: silver_member_price.toFixed(2), // 保留两位小数点
+          gold_member_price: gold_member_price.toFixed(2)
         }
       }
+
       return {
         ...item,
-        category_name: category_data.category_name
+        category_name: category_data.category_name,
+        silver_member_price: silver_member_price.toFixed(2), // 保留两位小数点
+        gold_member_price: gold_member_price.toFixed(2)
       }
     })
   )
