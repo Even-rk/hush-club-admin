@@ -10,7 +10,8 @@ import {
   UpdateMember,
   User,
   RolePermission,
-  Coupon
+  Coupon,
+  DatabaseMemoryUsage
 } from '@/types/supabase'
 import { getPublicUrl } from '@/utils/storage'
 
@@ -406,4 +407,10 @@ export const reqGetCouponList = async (): Promise<{
     inactive_count: inactive_count || 0,
     send_count: send_count || 0
   }
+}
+
+// 查询supabase 内存使用量
+export const reqGetDatabaseMemoryUsage = async (): Promise<DatabaseMemoryUsage[]> => {
+  const { data } = await supabase.rpc('get_database_size')
+  return data
 }

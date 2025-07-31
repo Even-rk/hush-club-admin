@@ -35,11 +35,19 @@ export const SupabaseLogin = async (data: { email: string; password: string }) =
     .update({ last_login_time: formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss') })
     .eq('id', user.id)
 
+  // 查用户角色
+  const { data: role } = await supabase
+    .from('user_roles')
+    .select('role_code')
+    .eq('id', user.role_id)
+    .single()
+
   return {
     id: user.id as number,
     token: supabaseUser.session?.access_token as string,
     last_login_time: user.last_login_time as string,
     real_name: user.real_name as string,
+    role_code: role?.role_code,
     username: user.username as string
   }
 }

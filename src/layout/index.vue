@@ -128,10 +128,26 @@
     <div class="main-content">
       <!-- 顶部导航栏 -->
       <div class="top-header">
-        <div></div>
+        <div class="database-memory-usage">
+          <template v-if="userInfo.role_code === 'superadmin'">
+            <div
+              v-for="item in memoryUsage"
+              :key="item.metric_name"
+              class="database-memory-usage-item"
+            >
+              <span>{{ item.metric_name }}：</span>
+              <span>{{ item.size_gb }}GB/{{ item.quota_gb }}GB</span>
+            </div>
+          </template>
+        </div>
+        <!-- 使用量警告 -->
+        <template v-if="userInfo.role_code == 'superadmin'">
+          <template v-if="memoryUsage.some(i => i.usage_percentage > 90)">
+            <div class="danger">当前内存使用量已达警戒线,请联系开发者,进行系统升级！</div>
+          </template>
+        </template>
         <div class="header">
           <div class="user-menu" @click="toggleDropdown">
-            <div class="user-menu-btn" />
             <div class="user-avatar">A</div>
             <div class="user-name">管理员</div>
             <span :class="{ 'dropdown-arrow': true, 'dropdown-arrow--open': showDropdown }">▼</span>
@@ -156,10 +172,10 @@
 </template>
 
 <script setup lang="ts">
-import { reqGetUserPermission } from '@/api/supabase'
+import { reqGetDatabaseMemoryUsage, reqGetUserPermission } from '@/api/supabase'
 import useUserStore from '@/stores/modules/user-info'
 import { supabase } from '@/utils/supabase'
-import type {} from '@/types/supabase'
+import type { DatabaseMemoryUsage } from '@/types/supabase'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -167,6 +183,8 @@ import { UserInfo } from '@/types/stores'
 
 const { userInfo } = storeToRefs(useUserStore())
 const router = useRouter()
+//
+const memoryUsage = ref<DatabaseMemoryUsage[]>([])
 
 // 下拉菜单显示状态
 const showDropdown = ref(false)
@@ -190,6 +208,9 @@ const permissionList = ref<string[]>([])
 onMounted(async () => {
   const permissions = await reqGetUserPermission(userInfo.value.id)
   permissionList.value = permissions
+
+  const memoryUsageData = await reqGetDatabaseMemoryUsage()
+  memoryUsage.value = memoryUsageData
 })
 
 // 点击其他地方关闭下拉菜单
@@ -286,5 +307,30 @@ onMounted(() => {
 
 .dropdown-icon {
   font-size: 16px;
+}
+
+.database-memory-usage {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 12px;
+  color: var(--text-primary);
+  .database-memory-usage-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    > span:last-child {
+      color: var(--primary-color);
+    }
+  }
+}
+
+.danger {
+  color: var(--error-color);
+  font-size: 20px;
 }
 </style>

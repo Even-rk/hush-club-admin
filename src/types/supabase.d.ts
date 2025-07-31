@@ -53,3 +53,19 @@ export interface TableProps<T = Record<string, unknown>> {
   // 表格大小
   size?: 'small' | 'medium' | 'large'
 }
+
+// 查询supabase 内存使用量
+export interface DatabaseMemoryUsage {
+  // 指标名称
+  metric_name: string
+  // 配额（GB）
+  quota_gb: number
+  // 配额（MB）
+  quota_mb: number
+  // 大小（GB）
+  size_gb: number
+  // 大小（MB）
+  size_mb: number
+  // 使用率
+  usage_percentage: number
+}
