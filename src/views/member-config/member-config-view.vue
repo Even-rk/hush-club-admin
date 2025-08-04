@@ -1,152 +1,144 @@
 <template>
-  <!-- 会员配置页面 -->
-  <div class="page">
-    <!-- 会员等级配置 -->
-    <div class="content-card">
-      <div class="card-header">
-        <div class="card-title">会员等级配置</div>
-        <div class="card-subtitle">设置不同会员等级的升级条件和优惠力度</div>
-      </div>
-      <div class="card-body">
-        <div class="level-grid">
-          <!-- 普通会员 -->
-          <div
-            v-for="item in memberLevels"
-            :key="item.id"
-            class="level-card"
-            :class="`level-${item.level_code}`"
-          >
-            <div class="level-header">
-              <div class="level-icon">{{ item.level_name.slice(0, 1) }}</div>
-              <div class="level-info">
-                <div class="level-name">{{ item.level_name }}</div>
-                <div class="level-desc">
-                  <template v-if="item.level_code == 'normal'">
-                    <span>登录微信账号即可成为普通会员</span>
-                  </template>
-                  <template v-else>
-                    <span>单次充值满</span>
-                    <span>{{ item.upgrade_condition }}</span>
-                    <span>元即可升级为</span>
-                    <span>{{ item.level_name }}</span>
-                  </template>
-                </div>
+  <!-- 会员等级配置 -->
+  <div class="content-card">
+    <div class="card-header">
+      <div class="card-title">会员等级配置</div>
+      <div class="card-subtitle">设置不同会员等级的升级条件和优惠力度</div>
+    </div>
+    <div class="card-body">
+      <div class="level-grid">
+        <!-- 普通会员 -->
+        <div
+          v-for="item in memberLevels"
+          :key="item.id"
+          class="level-card"
+          :class="`level-${item.level_code}`"
+        >
+          <div class="level-header">
+            <div class="level-icon">{{ item.level_name.slice(0, 1) }}</div>
+            <div class="level-info">
+              <div class="level-name">{{ item.level_name }}</div>
+              <div class="level-desc">
+                <template v-if="item.level_code == 'normal'">
+                  <span>登录微信账号即可成为普通会员</span>
+                </template>
+                <template v-else>
+                  <span>单次充值满</span>
+                  <span>{{ item.upgrade_condition }}</span>
+                  <span>元即可升级为</span>
+                  <span>{{ item.level_name }}</span>
+                </template>
               </div>
             </div>
+          </div>
 
-            <div class="form-group">
-              <label class="form-label">
-                升级条件
-                <template v-if="item.level_code !== 'normal'">(元)</template>
-              </label>
-              <template v-if="item.level_code === 'normal'">
-                <input
-                  type="text"
-                  class="form-input readonly-input"
-                  value="登录微信账号"
-                  readonly
-                />
-              </template>
-              <template v-else>
-                <div class="upgrade-input">
-                  <span>单次充值满</span>
-                  <input
-                    type="number"
-                    class="form-input upgrade-value"
-                    :value="item.upgrade_condition"
-                  />
-                  <span>元</span>
-                </div>
-              </template>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">优惠折扣</label>
-              <div class="discount-input">
+          <div class="form-group">
+            <label class="form-label">
+              升级条件
+              <template v-if="item.level_code !== 'normal'">(元)</template>
+            </label>
+            <template v-if="item.level_code === 'normal'">
+              <input type="text" class="form-input readonly-input" value="登录微信账号" readonly />
+            </template>
+            <template v-else>
+              <div class="upgrade-input">
+                <span>单次充值满</span>
                 <input
                   type="number"
-                  class="form-input discount-value"
-                  :value="item.discount_rate * 10"
+                  class="form-input upgrade-value"
+                  :value="item.upgrade_condition"
                 />
-                <span>折 <template v-if="item.level_code == 'normal'">（原价）</template> </span>
+                <span>元</span>
               </div>
+            </template>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">优惠折扣</label>
+            <div class="discount-input">
+              <input
+                type="number"
+                class="form-input discount-value"
+                :value="item.discount_rate * 10"
+              />
+              <span>折 <template v-if="item.level_code == 'normal'">（原价）</template> </span>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="save-button-container">
-          <button class="btn btn-primary save-button">保存会员等级配置</button>
-        </div>
+      <div class="save-button-container">
+        <button class="btn btn-primary save-button">保存会员等级配置</button>
       </div>
     </div>
+  </div>
 
-    <!-- 充值设置 -->
-    <div class="content-card">
-      <div class="card-header">
-        <div class="card-title">充值系统配置</div>
-        <div class="card-subtitle">设置小程序充值相关参数和规则</div>
+  <!-- 充值设置 -->
+  <div class="content-card">
+    <div class="card-header">
+      <div class="card-title">充值系统配置</div>
+      <div class="card-subtitle">设置小程序充值相关参数和规则</div>
+    </div>
+    <div class="card-body">
+      <div class="recharge-grid">
+        <div>
+          <div class="form-group">
+            <label class="form-label">充值方式</label>
+            <div class="payment-methods">
+              <label class="payment-method">
+                <input type="checkbox" checked />
+                <span>微信支付</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">最小充值金额（元）</label>
+            <input type="number" class="form-input" value="10" min="1" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">最大充值金额（元）</label>
+            <input type="number" class="form-input" value="5000" min="100" />
+          </div>
+        </div>
+
+        <div>
+          <div class="form-group">
+            <label class="form-label">快捷充值金额设置</label>
+            <div class="quick-amount-grid">
+              <input type="number" class="form-input" value="50" placeholder="金额1" />
+              <input type="number" class="form-input" value="100" placeholder="金额2" />
+              <input type="number" class="form-input" value="200" placeholder="金额3" />
+              <input type="number" class="form-input" value="500" placeholder="金额4" />
+              <input type="number" class="form-input" value="1000" placeholder="金额5" />
+              <input type="number" class="form-input" value="2000" placeholder="金额6" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">充值赠送规则</label>
+            <div class="bonus-desc">充值满指定金额时额外赠送</div>
+            <div class="bonus-input">
+              <span>充值满</span>
+              <input type="number" class="form-input bonus-value" value="500" />
+              <span>元赠送</span>
+              <input type="number" class="form-input bonus-value" value="50" />
+              <span>元</span>
+            </div>
+            <div class="bonus-input">
+              <span>充值满</span>
+              <input type="number" class="form-input bonus-value" value="1000" />
+              <span>元赠送</span>
+              <input type="number" class="form-input bonus-value" value="150" />
+              <span>元</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="card-body">
-        <div class="recharge-grid">
-          <div>
-            <div class="form-group">
-              <label class="form-label">充值方式</label>
-              <div class="payment-methods">
-                <label class="payment-method">
-                  <input type="checkbox" checked />
-                  <span>微信支付</span>
-                </label>
-              </div>
-            </div>
 
-            <div class="form-group">
-              <label class="form-label">最小充值金额（元）</label>
-              <input type="number" class="form-input" value="10" min="1" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">最大充值金额（元）</label>
-              <input type="number" class="form-input" value="5000" min="100" />
-            </div>
-          </div>
-
-          <div>
-            <div class="form-group">
-              <label class="form-label">快捷充值金额设置</label>
-              <div class="quick-amount-grid">
-                <input type="number" class="form-input" value="50" placeholder="金额1" />
-                <input type="number" class="form-input" value="100" placeholder="金额2" />
-                <input type="number" class="form-input" value="200" placeholder="金额3" />
-                <input type="number" class="form-input" value="500" placeholder="金额4" />
-                <input type="number" class="form-input" value="1000" placeholder="金额5" />
-                <input type="number" class="form-input" value="2000" placeholder="金额6" />
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">充值赠送规则</label>
-              <div class="bonus-desc">充值满指定金额时额外赠送</div>
-              <div class="bonus-input">
-                <span>充值满</span>
-                <input type="number" class="form-input bonus-value" value="500" />
-                <span>元赠送</span>
-                <input type="number" class="form-input bonus-value" value="50" />
-                <span>元</span>
-              </div>
-              <div class="bonus-input">
-                <span>充值满</span>
-                <input type="number" class="form-input bonus-value" value="1000" />
-                <span>元赠送</span>
-                <input type="number" class="form-input bonus-value" value="150" />
-                <span>元</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="save-button-container">
-          <button class="btn btn-primary save-button">保存充值配置</button>
-        </div>
+      <div class="save-button-container">
+        <button class="btn btn-primary save-button">保存充值配置</button>
       </div>
     </div>
   </div>
@@ -166,9 +158,44 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+/* 内容卡片样式 */
+.content-card {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .card-subtitle {
   color: var(--text-secondary);
   font-size: 14px;
+  margin-top: 4px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.card-body {
+  padding: 20px;
 }
 
 .level-grid {

@@ -1,80 +1,78 @@
 <template>
   <!-- 优惠券管理页面 -->
-  <div class="page">
-    <div class="content-card">
-      <div class="card-header">
-        <div class="card-title">优惠券管理</div>
-        <div class="card-actions">
-          <button class="btn btn-primary">+ 创建优惠券</button>
+  <div class="content-card">
+    <div class="card-header">
+      <div class="card-title">优惠券管理</div>
+      <div class="card-actions">
+        <button class="btn btn-primary">+ 创建优惠券</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <!-- 优惠券统计 -->
+      <div v-if="!loading" class="statsGrid">
+        <div class="statCard statCardSuccess">
+          <div class="statNumber statNumberSuccess">{{ coupon_count }}</div>
+          <div class="statLabel">优惠券模板</div>
+        </div>
+        <div class="statCard statCardWarning">
+          <div class="statNumber statNumberWarning">{{ active_count }}</div>
+          <div class="statLabel">正常状态</div>
+        </div>
+        <div class="statCard statCardInfo">
+          <div class="statNumber statNumberInfo">{{ inactive_count }}</div>
+          <div class="statLabel">已禁用</div>
+        </div>
+        <div class="statCard statCardError">
+          <div class="statNumber statNumberError">{{ send_count }}</div>
+          <div class="statLabel">累计发送</div>
         </div>
       </div>
-      <div class="card-body">
-        <!-- 优惠券统计 -->
-        <div v-if="!loading" class="statsGrid">
-          <div class="statCard statCardSuccess">
-            <div class="statNumber statNumberSuccess">{{ coupon_count }}</div>
-            <div class="statLabel">优惠券模板</div>
-          </div>
-          <div class="statCard statCardWarning">
-            <div class="statNumber statNumberWarning">{{ active_count }}</div>
-            <div class="statLabel">正常状态</div>
-          </div>
-          <div class="statCard statCardInfo">
-            <div class="statNumber statNumberInfo">{{ inactive_count }}</div>
-            <div class="statLabel">已禁用</div>
-          </div>
-          <div class="statCard statCardError">
-            <div class="statNumber statNumberError">{{ send_count }}</div>
-            <div class="statLabel">累计发送</div>
-          </div>
-        </div>
 
-        <!-- 优惠券列表 -->
-        <div class="filters">
-          <div class="filter-item">
-            <label class="filter-label">优惠券状态:</label>
-            <select class="form-select filter-select">
-              <option>全部状态</option>
-              <option>正常</option>
-              <option>已使用</option>
-              <option>已过期</option>
-              <option>已禁用</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label class="filter-label">优惠类型:</label>
-            <select class="form-select filter-select">
-              <option>全部类型</option>
-              <option>满减券</option>
-              <option>折扣券</option>
-              <option>免费券</option>
-            </select>
-          </div>
+      <!-- 优惠券列表 -->
+      <div class="filters">
+        <div class="filter-item">
+          <label class="filter-label">优惠券状态:</label>
+          <select class="form-select filter-select">
+            <option>全部状态</option>
+            <option>正常</option>
+            <option>已使用</option>
+            <option>已过期</option>
+            <option>已禁用</option>
+          </select>
         </div>
-
-        <!-- 数据表格 -->
-        <DataTable
-          :data="couponList"
-          :columns="columns"
-          :actions="actions"
-          :loading="loading"
-          empty-text="暂无优惠券数据"
-        >
-          <!-- 优惠内容插槽 -->
-          <template #discount_content="{ row }">
-            <span v-if="row.coupon_type === 'reduce'">
-              满¥{{ row.threshold_amount }}减¥{{ row.discount_value }}
-            </span>
-            <span v-else-if="row.coupon_type === 'discount'">
-              {{ (row.discount_value * 10).toFixed(1) }}折
-            </span>
-            <span v-else-if="row.coupon_type === 'free'">
-              {{ row.description || '免费获得' }}
-            </span>
-            <span v-else> ¥{{ row.discount_value }} </span>
-          </template>
-        </DataTable>
+        <div class="filter-item">
+          <label class="filter-label">优惠类型:</label>
+          <select class="form-select filter-select">
+            <option>全部类型</option>
+            <option>满减券</option>
+            <option>折扣券</option>
+            <option>免费券</option>
+          </select>
+        </div>
       </div>
+
+      <!-- 数据表格 -->
+      <DataTable
+        :data="couponList"
+        :columns="columns"
+        :actions="actions"
+        :loading="loading"
+        empty-text="暂无优惠券数据"
+      >
+        <!-- 优惠内容插槽 -->
+        <template #discount_content="{ row }">
+          <span v-if="row.coupon_type === 'reduce'">
+            满¥{{ row.threshold_amount }}减¥{{ row.discount_value }}
+          </span>
+          <span v-else-if="row.coupon_type === 'discount'">
+            {{ (row.discount_value * 10).toFixed(1) }}折
+          </span>
+          <span v-else-if="row.coupon_type === 'free'">
+            {{ row.description || '免费获得' }}
+          </span>
+          <span v-else> ¥{{ row.discount_value }} </span>
+        </template>
+      </DataTable>
     </div>
   </div>
 </template>
@@ -274,5 +272,71 @@ onMounted(async () => {
 .statLabel {
   font-size: 12px;
   color: var(--text-secondary);
+}
+
+/* 内容卡片样式 */
+.content-card {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* 筛选器样式 */
+.filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 14px;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.filter-select {
+  min-width: 120px;
+}
+
+.filter-search {
+  min-width: 200px;
 }
 </style>

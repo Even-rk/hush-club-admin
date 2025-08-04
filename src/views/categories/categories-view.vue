@@ -116,6 +116,41 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+/* 内容卡片 */
+.content-card {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+}
+
+.card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.card-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.card-body {
+  padding: 24px;
+}
+
 .filters {
   display: flex;
   gap: 16px;
