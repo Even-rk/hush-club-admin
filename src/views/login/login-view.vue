@@ -59,6 +59,40 @@ const login = async () => {
 
 <style lang="scss" scoped>
 /* 登录页面样式 */
+/* 表单控件样式 */
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-white);
+  background-clip: padding-box;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.25);
+}
+
+.form-control::placeholder {
+  color: var(--text-light);
+  opacity: 1;
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: var(--bg-gray);
+  opacity: 1;
+}
+
 .login-page {
   position: fixed;
   top: 0;
