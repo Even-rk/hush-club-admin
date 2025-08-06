@@ -106,7 +106,7 @@ import { ref, onMounted } from 'vue'
 import { reqGetAllCategory, reqGetProductList } from '@/api/supabase'
 import { Product, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
-import ProductModal from '@/components/product-modal.vue'
+import ProductModal from './components/product-modal.vue'
 import CoolSelect from '@/components/cool-select.vue'
 
 // 数据状态
