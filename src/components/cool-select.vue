@@ -9,8 +9,11 @@
       :class="{ 'cool-select__trigger--focus': isOpen }"
       @click="toggleDropdown"
     >
-      <span class="cool-select__value">
-        {{ selectedOption?.label || placeholder }}
+      <span v-if="selectedOption?.label" class="cool-select__value">
+        {{ selectedOption?.label }}
+      </span>
+      <span v-else class="cool-select__value-placeholder">
+        {{ placeholder }}
       </span>
       <span class="cool-select__arrow" :class="{ 'cool-select__arrow--open': isOpen }"> ▼ </span>
     </div>
@@ -245,6 +248,10 @@ onUnmounted(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.cool-select__value-placeholder {
+  color: var(--text-secondary);
 }
 
 .cool-select__arrow {

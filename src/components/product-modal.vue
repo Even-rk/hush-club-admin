@@ -49,36 +49,9 @@
 
           <!-- 会员价格 -->
           <div class="form-group">
-            <label class="form-label required">会员价格设置</label>
+            <label class="form-label required">价格设置</label>
             <div class="price-form-grid">
               <div class="price-form-item">
-                <label class="price-label">普通会员价</label>
-                <div class="input-group">
-                  <span class="input-prefix">¥</span>
-                  <input
-                    type="number"
-                    class="form-control"
-                    placeholder="0.00"
-                    min="0"
-                    step="0.01"
-                  />
-                </div>
-              </div>
-              <div class="price-form-item">
-                <label class="price-label">银牌会员价</label>
-                <div class="input-group">
-                  <span class="input-prefix">¥</span>
-                  <input
-                    type="number"
-                    class="form-control"
-                    placeholder="0.00"
-                    min="0"
-                    step="0.01"
-                  />
-                </div>
-              </div>
-              <div class="price-form-item">
-                <label class="price-label">金牌会员价</label>
                 <div class="input-group">
                   <span class="input-prefix">¥</span>
                   <input
