@@ -5,7 +5,7 @@
         <h1>HUSH CLUB</h1>
         <p>管理后台登录</p>
       </div>
-      <form id="loginForm" class="login-form" @submit.prevent="login">
+      <form class="login-form" @submit.prevent="login">
         <div class="form-group">
           <label>邮箱</label>
           <input
@@ -58,6 +58,10 @@ const login = async () => {
 </script>
 
 <style lang="scss" scoped>
+.form-group {
+  margin-bottom: 20px;
+}
+
 /* 登录页面样式 */
 /* 表单控件样式 */
 .form-control {

@@ -33,7 +33,8 @@
             class="form-control filter-search"
             placeholder="搜索商品名称"
           />
-          <button class="btn btn-secondary" @click="searchProducts">搜索</button>
+          <button class="btn btn-secondary" @click="resetProducts">重置</button>
+          <button class="btn btn-primary" @click="searchProducts">搜索</button>
         </div>
       </div>
 
@@ -74,7 +75,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { reqGetProductList } from '@/api/supabase'
+import { reqGetAllCategory, reqGetProductList } from '@/api/supabase'
 import { Product, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
 import ProductModal from '@/components/product-modal.vue'
@@ -85,33 +86,39 @@ const productList = ref<Product[]>([])
 const loading = ref(false)
 
 // 筛选器状态
-const selectedCategory = ref('')
-const selectedStatus = ref('')
-const searchQuery = ref('')
+const selectedCategory = ref()
+const selectedStatus = ref()
+const searchQuery = ref()
 
 // 分类选项
-const categoryOptions = [
-  { label: '全部分类', value: '' },
-  { label: '咖啡', value: 'coffee' },
-  { label: '茶饮', value: 'tea' },
-  { label: '甜品', value: 'dessert' }
-]
+const categoryOptions = ref([] as { label: string; value: number }[])
 
 // 状态选项
 const statusOptions = [
-  { label: '全部状态', value: '' },
   { label: '上架中', value: 'active' },
   { label: '已下架', value: 'inactive' }
 ]
 
 // 搜索商品
-const searchProducts = () => {
-  console.log('搜索参数:', {
-    category: selectedCategory.value,
-    status: selectedStatus.value,
-    query: searchQuery.value
-  })
-  // TODO: 实现搜索逻辑
+const searchProducts = async () => {
+  loading.value = true
+  try {
+    // 查商品
+    productList.value = await reqGetProductList({
+      category_id: selectedCategory.value,
+      status: selectedStatus.value,
+      search: searchQuery.value
+    })
+  } finally {
+    loading.value = false
+  }
+}
+
+// 重置商品
+const resetProducts = () => {
+  selectedCategory.value = undefined
+  selectedStatus.value = undefined
+  searchQuery.value = ''
 }
 
 // 商品弹窗
@@ -185,8 +192,14 @@ const productActions: TableAction<Product>[] = [
 onMounted(async () => {
   loading.value = true
   try {
+    // 查商品
     productList.value = await reqGetProductList()
-    console.log(productList.value)
+    // 查分类
+    const categoryList = await reqGetAllCategory()
+    categoryOptions.value = categoryList.map(item => ({
+      label: item.category_name,
+      value: item.id
+    }))
   } finally {
     loading.value = false
   }

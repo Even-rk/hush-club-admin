@@ -35,6 +35,7 @@ body {
 
 /* 按钮 */
 .btn {
+  flex-shrink: 0;
   padding: 8px 16px;
   border: none;
   border-radius: var(--radius);
@@ -58,7 +59,6 @@ body {
 }
 
 .btn-secondary {
-  flex-shrink: 0;
   background: var(--bg-gray);
   color: var(--text-primary);
   border: 1px solid var(--border-color);

@@ -24,7 +24,8 @@
             class="form-control filter-search"
             placeholder="搜索分类名称"
           />
-          <button class="btn btn-secondary" @click="searchCategories">搜索</button>
+          <button class="btn btn-secondary" @click="resetCategories">重置</button>
+          <button class="btn btn-primary" @click="searchCategories">搜索</button>
         </div>
       </div>
 
@@ -77,18 +78,27 @@ const searchQuery = ref('')
 
 // 状态选项
 const statusOptions = [
-  { label: '全部状态', value: '' },
   { label: '已启用', value: 'active' },
   { label: '已禁用', value: 'inactive' }
 ]
 
 // 搜索分类
-const searchCategories = () => {
-  console.log('搜索参数:', {
-    status: selectedStatus.value,
-    query: searchQuery.value
-  })
-  // TODO: 实现搜索逻辑
+const searchCategories = async () => {
+  loading.value = true
+  try {
+    categoryList.value = await reqGetAllCategory({
+      status: selectedStatus.value,
+      search: searchQuery.value
+    })
+  } finally {
+    loading.value = false
+  }
+}
+
+// 重置分类
+const resetCategories = () => {
+  selectedStatus.value = ''
+  searchQuery.value = ''
 }
 
 // 表格列配置

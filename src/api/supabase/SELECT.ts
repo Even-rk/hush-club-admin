@@ -30,8 +30,25 @@ export const reqGetUserPermission = async (userId: number): Promise<string[]> =>
 }
 
 // 商品列表
-export const reqGetProductList = async (): Promise<Product[]> => {
-  const { data, error } = await supabase.from('products').select('*')
+export const reqGetProductList = async (params?: {
+  status?: string
+  category_id?: number
+  search?: string
+}): Promise<Product[]> => {
+  const supabaseProduct = supabase.from('products').select('*')
+  // 查状态
+  if (params?.status) {
+    supabaseProduct.eq('status', params.status)
+  }
+  // 查分类
+  if (params?.category_id) {
+    supabaseProduct.eq('category_id', params.category_id)
+  }
+  // 查商品名称
+  if (params?.search) {
+    supabaseProduct.ilike('product_name', `%${params.search}%`)
+  }
+  const { data, error } = await supabaseProduct
   if (error) {
     return []
   }
@@ -93,11 +110,23 @@ export const reqGetProductList = async (): Promise<Product[]> => {
 }
 
 // 查全部分类
-export const reqGetAllCategory = async (): Promise<ProductCategory[]> => {
-  const { data, error } = await supabase
+export const reqGetAllCategory = async (params?: {
+  status?: string
+  search?: string
+}): Promise<ProductCategory[]> => {
+  const supabaseCategory = supabase
     .from('product_categories')
     .select('*')
     .order('sort_order', { ascending: true })
+  // 查状态
+  if (params?.status) {
+    supabaseCategory.eq('status', params.status)
+  }
+  // 查分类名称
+  if (params?.search) {
+    supabaseCategory.ilike('category_name', `%${params.search}%`)
+  }
+  const { data, error } = await supabaseCategory
   if (error) {
     return []
   }
