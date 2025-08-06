@@ -39,6 +39,7 @@
               type="text"
               class="search-input-enhanced"
               placeholder="搜索商品名称、编号或分类..."
+              @change="queryChange"
             />
             <button class="search-btn" @click="searchProducts">搜索</button>
           </div>
@@ -48,16 +49,16 @@
               <cool-select
                 v-model="selectedCategory"
                 :options="categoryOptions"
-                class="filter-select-enhanced"
                 placeholder="全部分类"
+                @change="searchProducts"
               />
             </div>
             <div class="filter-item-enhanced">
               <cool-select
                 v-model="selectedStatus"
                 :options="statusOptions"
-                class="filter-select-enhanced"
                 placeholder="全部状态"
+                @change="searchProducts"
               />
             </div>
             <button class="btn btn-secondary" @click="resetProducts">重置筛选</button>
@@ -149,6 +150,16 @@ const resetProducts = () => {
   selectedCategory.value = 0
   selectedStatus.value = ''
   searchQuery.value = ''
+  // 重置后查询
+  searchProducts()
+}
+
+// 查询变化
+const queryChange = () => {
+  if (!searchQuery.value) {
+    // 内容为空，查询所有
+    searchProducts()
+  }
 }
 
 // 商品弹窗
