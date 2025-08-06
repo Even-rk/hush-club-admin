@@ -23,7 +23,7 @@
       <div class="card-header">
         <div class="card-title">订单列表</div>
         <div class="card-tools">
-          <button class="tool-btn" title="刷新">
+          <button class="tool-btn" title="刷新" @click="searchOrders()">
             <span>🔄</span>
           </button>
           <button class="tool-btn" title="筛选">
@@ -37,6 +37,7 @@
           <div class="search-box">
             <span class="search-icon">🔍</span>
             <input
+              v-model="searchQuery"
               type="text"
               class="search-input-enhanced"
               placeholder="搜索订单号、客户姓名或手机号..."
@@ -122,8 +123,12 @@ const loading = ref(false)
 
 // 筛选器状态
 const selectedStatus = ref('')
+// 支付方式
 const selectedPayment = ref('')
+// 日期选择器
 const selectedDate = ref('')
+// 搜索框
+const searchQuery = ref('')
 
 // 订单状态选项
 const statusOptions = [
@@ -186,6 +191,26 @@ const orderActions: TableAction<OrderDetail>[] = [
     onClick: order => viewOrderDetail(order)
   }
 ]
+
+// 搜索订单
+const searchOrders = async (params?: { status?: string; search?: string; date?: string }) => {
+  loading.value = true
+  try {
+    const orders = await reqGetAllOrder({
+      status: params?.status || selectedStatus.value,
+      query: params?.search || searchQuery.value,
+      date: params?.date || selectedDate.value
+    })
+    orderList.value = orders.map(order => {
+      return {
+        ...order,
+        created_at: formatDate(order.created_at, 'YYYY-MM-DD HH:mm:ss')
+      }
+    })
+  } finally {
+    loading.value = false
+  }
+}
 
 // 加载数据
 onMounted(async () => {

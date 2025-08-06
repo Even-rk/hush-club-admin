@@ -150,6 +150,12 @@ export const reqGetAllCategory = async (params?: {
 export const reqGetAllOrder = async (params?: {
   // 最近订单
   is_recent?: boolean
+  // 订单状态
+  status?: string
+  // 订单编号/会员手机号/会员姓名
+  query?: string
+  // 日期
+  date?: string
 }): Promise<OrderDetail[]> => {
   const supabaseOrder = supabase.from('orders').select('*')
   // 查日期
@@ -157,6 +163,20 @@ export const reqGetAllOrder = async (params?: {
     // 查日期 7天前 到现在
     const date = new Date(new Date().setDate(new Date().getDate() - 7))
     supabaseOrder.gte('created_at', date.toISOString())
+  }
+  // 查状态
+  if (params?.status) {
+    supabaseOrder.eq('status', params.status)
+  }
+  // 查订单编号/会员手机号/会员姓名
+  if (params?.query) {
+    supabaseOrder.ilike('order_no', `%${params.query}%`)
+    supabaseOrder.ilike('member_phone', `%${params.query}%`)
+    supabaseOrder.ilike('member_name', `%${params.query}%`)
+  }
+  // 查日期
+  if (params?.date) {
+    supabaseOrder.gte('created_at', params.date)
   }
   const { data: orders, error: orders_error } = await supabaseOrder
   if (orders_error) {
