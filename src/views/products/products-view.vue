@@ -93,12 +93,14 @@
     </div>
   </div>
 
-  <product-modal
-    :visible="productModalVisible"
-    :mode="productModalMode"
-    :product-data="productModalData"
-    @close="closeProductModal"
-  />
+  <template v-if="productModalVisible">
+    <product-modal
+      :visible="productModalVisible"
+      :mode="productModalMode"
+      :product-data="productModalData"
+      @close="closeProductModal"
+    />
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -187,7 +189,9 @@ const productColumns: TableColumn<Product>[] = [
 
 // 操作函数
 const editProduct = (product: Product) => {
-  console.log('编辑商品:', product)
+  productModalData.value = product
+  productModalMode.value = 'edit'
+  productModalVisible.value = true
 }
 
 const toggleProductStatus = (product: Product) => {

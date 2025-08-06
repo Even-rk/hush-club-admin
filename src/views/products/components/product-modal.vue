@@ -1,105 +1,145 @@
 <template>
-  <div v-if="visible" class="product-modal-overlay" @click="onOverlayClick">
-    <div class="product-modal" @click.stop>
-      <!-- 弹窗头部 -->
-      <div class="product-modal-header">
-        <h3 class="modal-title">
-          {{ mode === 'add' ? '添加商品' : '编辑商品' }}
-        </h3>
-        <button class="modal-close" @click="close">×</button>
-      </div>
-
-      <!-- 弹窗内容 -->
-      <div class="product-modal-body">
-        <!-- 编辑/添加模式 -->
-        <form class="product-form">
-          <!-- 商品名称 -->
-          <div class="form-group">
-            <label class="form-label required">商品名称</label>
-            <input type="text" class="form-control" placeholder="请输入商品名称" maxlength="100" />
+  <transition name="modal-fade">
+    <div v-if="visible" class="product-modal-overlay" @click="onOverlayClick">
+      <transition name="modal-scale">
+        <div v-if="visible" class="product-modal" @click.stop>
+          <!-- 装饰性背景 -->
+          <div class="modal-decoration">
+            <div class="decoration-circle decoration-circle-1"></div>
+            <div class="decoration-circle decoration-circle-2"></div>
           </div>
 
-          <!-- 商品分类 -->
-          <div class="form-group">
-            <label class="form-label required">商品分类</label>
-            <cool-select
-              v-model="selectedCategory"
-              :options="categoryOptions"
-              placeholder="请选择商品分类"
-            />
+          <!-- 弹窗头部 -->
+          <div class="product-modal-header">
+            <div class="header-content">
+              <div class="header-icon">
+                {{ mode === 'add' ? '➕' : '✏️' }}
+              </div>
+              <h3 class="modal-title">
+                {{ mode === 'add' ? '添加商品' : '编辑商品' }}
+              </h3>
+            </div>
+            <button class="modal-close" @click="close">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
           </div>
 
-          <!-- 商品图片 -->
-          <div class="form-group">
-            <label class="form-label">商品图片</label>
-            <div class="image-upload">
-              <!-- <div class="image-preview">
-                <img alt="商品图片" />
-                <button type="button" class="remove-image">×</button>
-              </div> -->
-              <div class="upload-placeholder">
-                <input ref="fileInputRef" type="file" accept="image/*" class="file-input" />
-                <div class="upload-content">
-                  <div class="upload-icon">📷</div>
-                  <div class="upload-text">点击上传图片</div>
+          <!-- 弹窗内容 -->
+          <div class="product-modal-body">
+            <!-- 编辑/添加模式 -->
+            <form class="product-form">
+              <!-- 商品名称 -->
+              <div class="form-group">
+                <label class="form-label required">商品名称</label>
+                <input
+                  v-model="form.product_name"
+                  type="text"
+                  class="form-control"
+                  placeholder="请输入商品名称"
+                  maxlength="100"
+                />
+              </div>
+
+              <!-- 商品分类 -->
+              <div class="form-group">
+                <label class="form-label required">商品分类</label>
+                <cool-select
+                  v-model="form.category_id"
+                  :options="categoryOptions"
+                  placeholder="请选择商品分类"
+                />
+              </div>
+
+              <!-- 商品图片 -->
+              <div class="form-group">
+                <label class="form-label">商品图片</label>
+                <div class="image-upload">
+                  <div v-if="form.image_url" class="image-preview">
+                    <img alt="商品图片" :src="form.image_url" />
+                    <button type="button" class="remove-image" @click="form.image_url = ''">
+                      ×
+                    </button>
+                  </div>
+                  <div v-else class="upload-placeholder">
+                    <input ref="fileInputRef" type="file" accept="image/*" class="file-input" />
+                    <div class="upload-content" @click="fileInputRef?.click()">
+                      <div class="upload-icon">📷</div>
+                      <div class="upload-text">点击上传图片</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <!-- 会员价格 -->
-          <div class="form-group">
-            <label class="form-label required">价格设置</label>
-            <div class="price-form-grid">
-              <div class="price-form-item">
-                <div class="input-group">
-                  <span class="input-prefix">¥</span>
-                  <input
-                    type="number"
-                    class="form-control"
-                    placeholder="0.00"
-                    min="0"
-                    step="0.01"
-                  />
+              <!-- 会员价格 -->
+              <div class="form-group">
+                <label class="form-label required">价格设置</label>
+                <div class="price-form-grid">
+                  <div class="price-form-item">
+                    <div class="input-group">
+                      <span class="input-prefix">¥</span>
+                      <input
+                        v-model="form.normal_member_price"
+                        type="number"
+                        class="form-control"
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+
+              <!-- 状态 -->
+              <div class="form-group">
+                <label class="form-label">商品状态</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input v-model="form.status" type="radio" value="active" />
+                    <span class="radio-label">上架</span>
+                  </label>
+                  <label class="radio-item">
+                    <input v-model="form.status" type="radio" value="inactive" />
+                    <span class="radio-label">下架</span>
+                  </label>
+                </div>
+              </div>
+            </form>
           </div>
 
-          <!-- 状态 -->
-          <div class="form-group">
-            <label class="form-label">商品状态</label>
-            <div class="radio-group">
-              <label class="radio-item">
-                <input v-model="form.status" type="radio" value="active" />
-                <span class="radio-label">上架</span>
-              </label>
-              <label class="radio-item">
-                <input v-model="form.status" type="radio" value="inactive" />
-                <span class="radio-label">下架</span>
-              </label>
-            </div>
+          <!-- 弹窗底部 -->
+          <div class="product-modal-footer">
+            <button class="btn btn-secondary" @click="close">
+              <span class="btn-icon">❌</span>
+              取消
+            </button>
+            <button class="btn btn-primary" :disabled="loading" @click="handleSubmit">
+              <span v-if="!loading" class="btn-icon">✅</span>
+              <span v-if="loading" class="loading-spinner"></span>
+              {{ loading ? '提交中...' : '确定' }}
+            </button>
           </div>
-        </form>
-      </div>
-
-      <!-- 弹窗底部 -->
-      <div class="product-modal-footer">
-        <button class="btn btn-secondary" @click="close">取消</button>
-        <button class="btn btn-primary" :disabled="loading" :class="{ 'btn-loading': loading }">
-          <span v-if="loading" class="loading-spinner"></span>
-          {{ loading ? '提交中...' : '确定' }}
-        </button>
-      </div>
+        </div>
+      </transition>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { reqGetAllCategory } from '@/api/supabase'
 import type { Product, ProductCategory } from '@/types/supabase'
-import CoolSelect from './cool-select.vue'
+import CoolSelect from '@/components/cool-select.vue'
 
 interface ProductForm {
   id?: number
@@ -124,7 +164,7 @@ const emit = defineEmits<{
 }>()
 
 // 表单数据
-const form = reactive({} as Product)
+const form = ref({} as ProductForm)
 // 文件输入引用
 const fileInputRef = ref<HTMLInputElement>()
 
@@ -133,9 +173,6 @@ const loading = ref(false)
 
 // 商品分类列表
 const categories = ref<ProductCategory[]>([])
-
-// 选择器状态
-const selectedCategory = ref<string | number>('')
 
 // 分类选项 - 将分类数据转换为选择器选项格式
 const categoryOptions = computed(() => {
@@ -162,137 +199,347 @@ const close = () => {
   currentMode.value = props.mode
   emit('close')
 }
+
 // 点击遮罩层关闭
 const onOverlayClick = () => {
   close()
 }
 
+// 提交表单
+const handleSubmit = async () => {
+  loading.value = true
+  // 模拟提交延迟
+  setTimeout(() => {
+    emit('success', form.value, props.mode || 'add')
+    loading.value = false
+    close()
+  }, 1000)
+}
+
 // 组件挂载时加载分类数据
 onMounted(() => {
+  form.value = props.productData
   loadCategories()
 })
 </script>
 
 <style scoped lang="scss">
+// 动画效果
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalScaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// 过渡动画
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-scale-enter-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-scale-leave-active {
+  transition: all 0.2s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.modal-scale-enter-from {
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+.modal-scale-leave-to {
+  transform: scale(0.9);
+  opacity: 0;
+}
+
 .product-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 20px;
+  animation: modalFadeIn 0.2s ease;
 }
 
 .product-modal {
-  background: var(--bg-white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, var(--bg-white) 0%, #fafafa 100%);
+  border-radius: 20px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
   width: 100%;
   max-width: 800px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
+}
+
+// 装饰性背景
+.modal-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+
+  .decoration-circle {
+    position: absolute;
+    border-radius: 50%;
+
+    &.decoration-circle-1 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+      top: -150px;
+      right: -150px;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    &.decoration-circle-2 {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 140, 97, 0.08) 0%, transparent 70%);
+      bottom: -100px;
+      left: -100px;
+      animation: float 15s infinite ease-in-out reverse;
+    }
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
 }
 
 .product-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 24px 28px;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .header-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+  }
 
   .modal-title {
     margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--bg-white);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .modal-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--bg-white);
     cursor: pointer;
     padding: 0;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s ease;
+    border-radius: 10px;
+    transition: all 0.3s ease;
 
     &:hover {
-      background: var(--bg-gray);
-      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg);
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
     }
   }
 }
 
 .product-modal-body {
-  padding: 24px;
+  padding: 28px;
   overflow-y: auto;
   flex: 1;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+
+    &:hover {
+      background: var(--text-light);
+    }
+  }
 }
 
 .product-modal-footer {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
-  padding: 16px 24px;
-  border-top: 1px solid var(--border-color);
+  padding: 20px 28px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.02) 100%);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
 
   .btn {
-    min-width: 80px;
-    padding: 8px 16px;
-    border-radius: var(--radius);
+    min-width: 100px;
+    padding: 10px 20px;
+    border-radius: 12px;
     font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+
+    .btn-icon {
+      font-size: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover .btn-icon {
+      transform: scale(1.2);
+    }
 
     &.btn-secondary {
-      background: var(--bg-gray);
+      background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
       color: var(--text-primary);
+      border: 1px solid var(--border-color);
 
       &:hover {
-        background: #e0e0e0;
+        background: linear-gradient(135deg, #e0e0e0 0%, #d0d0d0 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      &:active {
+        transform: translateY(0);
       }
     }
 
     &.btn-primary {
-      background: var(--primary-color);
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
       color: white;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
 
-      &:hover:not(:disabled) {
-        background: var(--primary-dark);
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition:
+          width 0.6s,
+          height 0.6s;
       }
 
-      &:disabled,
-      &.btn-loading {
-        opacity: 0.7;
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+
+        &::before {
+          width: 300px;
+          height: 300px;
+        }
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        opacity: 0.6;
         cursor: not-allowed;
+        box-shadow: none;
       }
     }
 
     .loading-spinner {
-      width: 14px;
-      height: 14px;
-      border: 2px solid transparent;
-      border-top: 2px solid currentColor;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid white;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
   }
 }
@@ -300,7 +547,15 @@ onMounted(() => {
 // 表单样式
 .product-form {
   .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    animation: slideInUp 0.4s ease-out;
+    animation-fill-mode: both;
+
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.05}s;
+      }
+    }
 
     &:last-child {
       margin-bottom: 0;
@@ -309,40 +564,58 @@ onMounted(() => {
 
   .form-label {
     display: block;
-    margin-bottom: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-primary);
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 
     &.required::after {
       content: ' *';
-      color: var(--error-color);
+      color: var(--primary-color);
+      font-size: 14px;
     }
   }
 
   .form-control {
     width: 100%;
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
+    padding: 10px 14px;
+    border: 2px solid var(--border-light);
+    border-radius: 10px;
     font-size: 14px;
-    transition: border-color 0.3s ease;
+    background: var(--bg-white);
+    transition: all 0.3s ease;
 
     &:focus {
       outline: none;
       border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+      transform: translateY(-2px);
     }
 
     &::placeholder {
       color: var(--text-light);
+      font-size: 13px;
+    }
+
+    &:hover:not(:focus) {
+      border-color: var(--border-hover);
     }
   }
 
   .image-upload {
     border: 2px dashed var(--border-color);
-    border-radius: var(--radius);
+    border-radius: 12px;
     overflow: hidden;
     margin-bottom: 8px;
+    background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: var(--primary-color);
+      background: linear-gradient(135deg, #fff8f5 0%, #fff4f0 100%);
+    }
 
     .image-preview {
       position: relative;
@@ -352,26 +625,32 @@ onMounted(() => {
         height: 200px;
         object-fit: contain;
         display: block;
+        background: var(--bg-white);
       }
 
       .remove-image {
         position: absolute;
-        top: 8px;
-        right: 8px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.6);
-        color: white;
+        top: 12px;
+        right: 12px;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        color: var(--error-color);
         border: none;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 16px;
+        font-size: 18px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
         &:hover {
-          background: rgba(0, 0, 0, 0.8);
+          background: var(--error-color);
+          color: white;
+          transform: rotate(90deg);
         }
       }
     }
@@ -382,23 +661,44 @@ onMounted(() => {
       }
 
       .upload-content {
-        padding: 40px 20px;
+        padding: 48px 20px;
         text-align: center;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &::before {
+          content: '';
+          position: absolute;
+          inset: 20px;
+          border: 2px dashed var(--primary-light);
+          border-radius: 8px;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
 
         &:hover {
-          background-color: var(--bg-gray);
+          background-color: rgba(255, 107, 53, 0.05);
+
+          &::before {
+            opacity: 1;
+          }
+
+          .upload-icon {
+            transform: scale(1.1);
+          }
         }
 
         .upload-icon {
-          font-size: 32px;
-          margin-bottom: 8px;
+          font-size: 40px;
+          margin-bottom: 12px;
+          transition: transform 0.3s ease;
         }
 
         .upload-text {
           font-size: 14px;
-          color: var(--text-primary);
+          color: var(--text-secondary);
+          font-weight: 500;
         }
       }
     }
@@ -427,14 +727,22 @@ onMounted(() => {
 
     .input-prefix {
       position: absolute;
-      left: 12px;
-      color: var(--text-secondary);
-      font-size: 14px;
+      left: 14px;
+      color: var(--primary-color);
+      font-size: 16px;
+      font-weight: 600;
       z-index: 1;
+      transition: all 0.3s ease;
     }
 
     .form-control {
-      padding-left: 28px;
+      padding-left: 32px;
+      font-weight: 500;
+    }
+
+    &:has(.form-control:focus) .input-prefix {
+      color: var(--primary-dark);
+      transform: scale(1.1);
     }
   }
 
@@ -445,16 +753,38 @@ onMounted(() => {
     .radio-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       cursor: pointer;
+      padding: 8px 16px;
+      border: 2px solid var(--border-light);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: var(--primary-light);
+        background: rgba(255, 107, 53, 0.05);
+      }
+
+      &:has(input:checked) {
+        border-color: var(--primary-color);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 107, 53, 0.1) 0%,
+          rgba(255, 107, 53, 0.05) 100%
+        );
+      }
 
       input[type='radio'] {
         margin: 0;
+        accent-color: var(--primary-color);
+        width: 16px;
+        height: 16px;
       }
 
       .radio-label {
         font-size: 14px;
         color: var(--text-primary);
+        font-weight: 500;
       }
     }
   }
@@ -521,6 +851,18 @@ onMounted(() => {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+// Slide in up animation
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 </style>
