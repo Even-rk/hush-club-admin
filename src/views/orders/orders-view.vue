@@ -27,7 +27,7 @@
         </div>
         <div class="filter-item">
           <label class="filter-label">日期:</label>
-          <input type="date" class="form-input date-input" />
+          <date-picker v-model="selectedDate" placeholder="选择日期" />
         </div>
         <div class="filter-item">
           <button class="btn btn-primary">筛选</button>
@@ -78,6 +78,7 @@ import { onMounted, ref } from 'vue'
 import { supabase } from '@/utils/supabase'
 import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
+import DatePicker from '@/components/date-picker.vue'
 
 // 数据状态
 const orderList = ref<OrderDetail[]>([])
@@ -86,6 +87,7 @@ const loading = ref(false)
 // 筛选器状态
 const selectedStatus = ref('')
 const selectedPayment = ref('')
+const selectedDate = ref('')
 
 // 订单状态选项
 const statusOptions = [
@@ -280,10 +282,6 @@ onMounted(() => {
 
 .card-body {
   padding: 20px;
-}
-
-.date-input {
-  max-width: 150px;
 }
 
 .customer-phone {

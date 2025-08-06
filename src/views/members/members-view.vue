@@ -36,9 +36,16 @@
           </div>
           <div class="filter-item">
             <label class="filter-label">注册时间:</label>
-            <input type="date" class="form-control filter-date" />
-            <span class="filter-separator">至</span>
-            <input type="date" class="form-control filter-date" />
+            <date-picker
+              :start-value="startDate"
+              :end-value="endDate"
+              :range="true"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              class="filter-date-range"
+              @update:start-value="startDate = $event"
+              @update:end-value="endDate = $event"
+            />
           </div>
           <div class="filter-item">
             <input
@@ -69,6 +76,7 @@ import { reqGetMemberList } from '@/api/supabase'
 import { Member, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
+import DatePicker from '@/components/date-picker.vue'
 
 // 数据状态
 const memberList = ref<Member[]>([])
@@ -79,6 +87,8 @@ const loading = ref(false)
 
 // 筛选器状态
 const selectedLevel = ref('')
+const startDate = ref('')
+const endDate = ref('')
 
 // 会员等级选项
 const levelOptions = [
@@ -270,5 +280,10 @@ onMounted(async () => {
 .filter-separator {
   font-size: 14px;
   color: var(--text-secondary);
+}
+
+.filter-date-range {
+  display: flex;
+  align-items: center;
 }
 </style>
