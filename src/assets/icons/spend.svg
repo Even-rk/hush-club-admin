@@ -1,0 +1,7 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 圆形背景 -->
+  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+  <!-- 美元符号 -->
+  <path d="M12 6V18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <path d="M15 8.5C15 7.67 14.33 7 13.5 7H10.5C9.67 7 9 7.67 9 8.5C9 9.33 9.67 10 10.5 10H13.5C14.33 10 15 10.67 15 11.5C15 12.33 14.33 13 13.5 13H10.5C9.67 13 9 13.67 9 14.5C9 15.33 9.67 16 10.5 16H13.5C14.33 16 15 15.33 15 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>

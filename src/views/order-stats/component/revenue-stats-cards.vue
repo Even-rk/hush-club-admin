@@ -1,5 +1,6 @@
 <template>
   <div class="stats-grid">
+    <!-- 本月订单总数 -->
     <div class="stat-card stat-card-orders">
       <div class="stat-decoration"></div>
       <div class="stat-content">
@@ -10,7 +11,7 @@
           </div>
           <div class="stat-icon-wrapper">
             <div class="stat-icon">
-              <img src="/src/assets/icons/order-message.svg" alt="订单图标" />
+              <img src="@/assets/icons/order-message.svg" alt="订单图标" />
             </div>
           </div>
         </div>
@@ -21,6 +22,7 @@
       </div>
     </div>
 
+    <!-- 本月营业额 -->
     <div class="stat-card stat-card-revenue">
       <div class="stat-decoration"></div>
       <div class="stat-content">
@@ -31,7 +33,7 @@
           </div>
           <div class="stat-icon-wrapper">
             <div class="stat-icon">
-              <img src="/src/assets/icons/money-circle.svg" alt="营业额图标" />
+              <img src="@/assets/icons/money-circle.svg" alt="营业额图标" />
             </div>
           </div>
         </div>
@@ -42,6 +44,7 @@
       </div>
     </div>
 
+    <!-- 平均客单价 -->
     <div class="stat-card stat-card-avg">
       <div class="stat-decoration"></div>
       <div class="stat-content">
@@ -52,7 +55,7 @@
           </div>
           <div class="stat-icon-wrapper">
             <div class="stat-icon">
-              <img src="/src/assets/icons/stack.svg" alt="客单价图标" />
+              <img src="@/assets/icons/stack.svg" alt="客单价图标" />
             </div>
           </div>
         </div>
@@ -62,30 +65,175 @@
         </div>
       </div>
     </div>
+
+    <!-- 微信支付订单数量 -->
+    <div class="stat-card stat-card-wechat">
+      <div class="stat-decoration"></div>
+      <div class="stat-content">
+        <div class="stat-header">
+          <div class="stat-info">
+            <div class="stat-title">微信支付订单数量</div>
+            <div class="stat-subtitle">WeChat Payment Orders</div>
+          </div>
+          <div class="stat-icon-wrapper">
+            <div class="stat-icon">
+              <img src="@/assets/icons/wechat-simple.svg" alt="微信支付图标" />
+            </div>
+          </div>
+        </div>
+        <div class="stat-value">
+          <span class="stat-number" data-value="2156">
+            {{ props.statsData?.wechatOrders || 2156 }}
+          </span>
+          <span class="stat-unit">单</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 余额支付订单数量 -->
+    <div class="stat-card stat-card-balance">
+      <div class="stat-decoration"></div>
+      <div class="stat-content">
+        <div class="stat-header">
+          <div class="stat-info">
+            <div class="stat-title">余额支付订单数量</div>
+            <div class="stat-subtitle">Balance Payment Orders</div>
+          </div>
+          <div class="stat-icon-wrapper">
+            <div class="stat-icon">
+              <img src="@/assets/icons/stack.svg" alt="余额支付图标" />
+            </div>
+          </div>
+        </div>
+        <div class="stat-value">
+          <span class="stat-number" data-value="1264">{{
+            props.statsData?.balanceOrders || 1264
+          }}</span>
+          <span class="stat-unit">单</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 储值金额 -->
+    <div class="stat-card stat-card-deposit">
+      <div class="stat-decoration"></div>
+      <div class="stat-content">
+        <div class="stat-header">
+          <div class="stat-info">
+            <div class="stat-title">储值金额</div>
+            <div class="stat-subtitle">Deposit Amount</div>
+          </div>
+          <div class="stat-icon-wrapper">
+            <div class="stat-icon">
+              <img src="@/assets/icons/wallet.svg" alt="储值图标" />
+            </div>
+          </div>
+        </div>
+        <div class="stat-value">
+          <span class="stat-currency">¥</span>
+          <span class="stat-number" data-value="128500">{{
+            props.statsData?.depositAmount || 128500
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 余额总花费 -->
+    <div class="stat-card stat-card-spent">
+      <div class="stat-decoration"></div>
+      <div class="stat-content">
+        <div class="stat-header">
+          <div class="stat-info">
+            <div class="stat-title">余额总花费</div>
+            <div class="stat-subtitle">Total Balance Spent</div>
+          </div>
+          <div class="stat-icon-wrapper">
+            <div class="stat-icon">
+              <img src="@/assets/icons/spend.svg" alt="花费图标" />
+            </div>
+          </div>
+        </div>
+        <div class="stat-value">
+          <span class="stat-currency">¥</span>
+          <span class="stat-number" data-value="89600">
+            {{ props.statsData?.balanceSpent || 89600 }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 剩余储值金额 -->
+    <div class="stat-card stat-card-remaining">
+      <div class="stat-decoration"></div>
+      <div class="stat-content">
+        <div class="stat-header">
+          <div class="stat-info">
+            <div class="stat-title">剩余储值金额</div>
+            <div class="stat-subtitle">Remaining Balance</div>
+          </div>
+          <div class="stat-icon-wrapper">
+            <div class="stat-icon">
+              <img src="@/assets/icons/wallet.svg" alt="余额图标" />
+            </div>
+          </div>
+        </div>
+        <div class="stat-value">
+          <span class="stat-currency">¥</span>
+          <span class="stat-number" data-value="38900">{{
+            props.statsData?.remainingBalance || 38900
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 新增会员数量 -->
+    <div class="stat-card stat-card-members">
+      <div class="stat-decoration"></div>
+      <div class="stat-content">
+        <div class="stat-header">
+          <div class="stat-info">
+            <div class="stat-title">新增会员数量</div>
+            <div class="stat-subtitle">New Members</div>
+          </div>
+          <div class="stat-icon-wrapper">
+            <div class="stat-icon">
+              <img src="@/assets/icons/grid.svg" alt="会员图标" />
+            </div>
+          </div>
+        </div>
+        <div class="stat-value">
+          <span class="stat-number" data-value="156">{{ props.statsData?.newMembers || 156 }}</span>
+          <span class="stat-unit">人</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 interface StatsData {
   // 订单总数
-  orders?: {
-    value: number
-    trend: number
-  }
+  orders?: number
   // 营业额
-  revenue?: {
-    value: number
-    trend: number
-  }
+  revenue?: number
   // 平均客单价
-  averageValue?: {
-    value: number
-    trend: number
-  }
+  averageValue?: number
+  // 微信支付订单数量
+  wechatOrders?: number
+  // 余额支付订单数量
+  balanceOrders?: number
+  // 储值金额
+  depositAmount?: number
+  // 余额总花费
+  balanceSpent?: number
+  // 剩余储值金额
+  remainingBalance?: number
+  // 新增会员数量
+  newMembers?: number
 }
 
 // 定义 props
-defineProps<{
+const props = defineProps<{
   statsData?: StatsData
 }>()
 </script>
@@ -94,9 +242,8 @@ defineProps<{
 /* 统计卡片 */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 20px;
 
   .stat-card {
     background: white;
@@ -150,6 +297,66 @@ defineProps<{
       }
     }
 
+    &.stat-card-wechat {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-balance {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-deposit {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-spent {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-remaining {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #5f72bd 0%, #9b23ea 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-members {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
     .stat-decoration {
       position: absolute;
       top: -50px;
@@ -162,7 +369,7 @@ defineProps<{
     }
 
     .stat-content {
-      padding: 28px;
+      padding: 24px;
       position: relative;
       z-index: 1;
     }
@@ -171,17 +378,17 @@ defineProps<{
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
 
       .stat-info {
         .stat-title {
-          font-size: 15px;
+          font-size: 14px;
           font-weight: 600;
           color: var(--text-heading);
           margin-bottom: 4px;
         }
         .stat-subtitle {
-          font-size: 12px;
+          font-size: 11px;
           color: var(--text-subtitle);
           opacity: 0.7;
           text-transform: uppercase;
@@ -193,16 +400,17 @@ defineProps<{
         transition: transform 0.3s ease;
 
         .stat-icon {
-          width: 52px;
-          height: 52px;
-          border-radius: 16px;
+          width: 48px;
+          height: 48px;
+          border-radius: 14px;
           display: flex;
           align-items: center;
           justify-content: center;
           box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
           img {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
+            filter: brightness(0) invert(1);
           }
         }
       }
@@ -214,37 +422,27 @@ defineProps<{
       gap: 4px;
 
       .stat-currency {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: 600;
         color: var(--text-subtitle);
         opacity: 0.5;
       }
 
       .stat-number {
-        font-size: 36px;
+        font-size: 28px;
         font-weight: 700;
         color: var(--text-heading);
-        letter-spacing: -1px;
+        letter-spacing: -0.5px;
         transition: transform 0.3s ease;
       }
 
       .stat-unit {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 500;
         color: var(--text-subtitle);
         margin-left: 4px;
       }
     }
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-3px);
   }
 }
 </style>
