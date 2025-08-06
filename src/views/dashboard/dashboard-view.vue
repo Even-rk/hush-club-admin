@@ -24,40 +24,64 @@
 
     <!-- 统计卡片 -->
     <div class="stats-grid">
-      <div class="stat-card">
+      <div class="stat-card stat-revenue">
         <div class="stat-header">
           <div class="stat-title">今日营业额</div>
-          <div class="stat-icon" style="background: var(--success-color)">💰</div>
+          <div class="stat-icon">💰</div>
         </div>
         <div class="stat-number">¥15,680</div>
-        <div class="stat-trend trend-up">↗️ +12.5% 较昨日</div>
+        <div class="stat-footer">
+          <div class="stat-trend trend-up">
+            <span class="trend-icon">↗️</span>
+            <span class="trend-value">+12.5%</span>
+          </div>
+          <span class="stat-compare">较昨日</span>
+        </div>
       </div>
 
-      <div class="stat-card">
+      <div class="stat-card stat-orders">
         <div class="stat-header">
           <div class="stat-title">今日订单</div>
-          <div class="stat-icon" style="background: var(--info-color)">📋</div>
+          <div class="stat-icon">📋</div>
         </div>
         <div class="stat-number">168</div>
-        <div class="stat-trend trend-up">↗️ +8.3% 较昨日</div>
+        <div class="stat-footer">
+          <div class="stat-trend trend-up">
+            <span class="trend-icon">↗️</span>
+            <span class="trend-value">+8.3%</span>
+          </div>
+          <span class="stat-compare">较昨日</span>
+        </div>
       </div>
 
-      <div class="stat-card">
+      <div class="stat-card stat-members">
         <div class="stat-header">
           <div class="stat-title">新增会员</div>
-          <div class="stat-icon" style="background: var(--warning-color)">👥</div>
+          <div class="stat-icon">👥</div>
         </div>
         <div class="stat-number">28</div>
-        <div class="stat-trend trend-down">↘️ -5.2% 较昨日</div>
+        <div class="stat-footer">
+          <div class="stat-trend trend-down">
+            <span class="trend-icon">↘️</span>
+            <span class="trend-value">-5.2%</span>
+          </div>
+          <span class="stat-compare">较昨日</span>
+        </div>
       </div>
 
-      <div class="stat-card">
+      <div class="stat-card stat-price">
         <div class="stat-header">
           <div class="stat-title">客单价</div>
-          <div class="stat-icon" style="background: var(--primary-color)">💳</div>
+          <div class="stat-icon">💳</div>
         </div>
         <div class="stat-number">¥93.33</div>
-        <div class="stat-trend trend-up">↗️ +3.8% 较昨日</div>
+        <div class="stat-footer">
+          <div class="stat-trend trend-up">
+            <span class="trend-icon">↗️</span>
+            <span class="trend-value">+3.8%</span>
+          </div>
+          <span class="stat-compare">较昨日</span>
+        </div>
       </div>
     </div>
 
@@ -79,70 +103,52 @@
         </div>
       </div>
 
-      <div class="content-card">
+      <div class="content-card hot-products-card">
         <div class="card-header">
           <div class="card-title">热门商品</div>
+          <div class="card-subtitle">今日热销TOP4</div>
         </div>
         <div class="card-body">
-          <div style="display: flex; flex-direction: column; gap: 12px">
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px 0;
-                border-bottom: 1px solid var(--border-color);
-              "
-            >
-              <div>
-                <div style="font-weight: 500">经典美式咖啡</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">销量: 89杯</div>
+          <div class="hot-products-list">
+            <div class="hot-product-item">
+              <span class="rank-badge rank-1">1</span>
+              <div class="product-info">
+                <div class="product-name">经典美式咖啡</div>
+                <div class="product-stats">
+                  <span class="sales-count">销量: 89杯</span>
+                </div>
               </div>
-              <div style="color: var(--primary-color); font-weight: 600">¥1,425</div>
+              <div class="product-revenue">¥1,425</div>
             </div>
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px 0;
-                border-bottom: 1px solid var(--border-color);
-              "
-            >
-              <div>
-                <div style="font-weight: 500">香草拿铁</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">销量: 67杯</div>
+            <div class="hot-product-item">
+              <span class="rank-badge rank-2">2</span>
+              <div class="product-info">
+                <div class="product-name">香草拿铁</div>
+                <div class="product-stats">
+                  <span class="sales-count">销量: 67杯</span>
+                </div>
               </div>
-              <div style="color: var(--primary-color); font-weight: 600">¥1,675</div>
+              <div class="product-revenue">¥1,675</div>
             </div>
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px 0;
-                border-bottom: 1px solid var(--border-color);
-              "
-            >
-              <div>
-                <div style="font-weight: 500">经典卡布奇诺</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">销量: 45杯</div>
+            <div class="hot-product-item">
+              <span class="rank-badge rank-3">3</span>
+              <div class="product-info">
+                <div class="product-name">经典卡布奇诺</div>
+                <div class="product-stats">
+                  <span class="sales-count">销量: 45杯</span>
+                </div>
               </div>
-              <div style="color: var(--primary-color); font-weight: 600">¥990</div>
+              <div class="product-revenue">¥990</div>
             </div>
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px 0;
-              "
-            >
-              <div>
-                <div style="font-weight: 500">焦糖玛奇朵</div>
-                <div style="font-size: 12px; color: var(--text-secondary)">销量: 38杯</div>
+            <div class="hot-product-item">
+              <span class="rank-badge">4</span>
+              <div class="product-info">
+                <div class="product-name">焦糖玛奇朵</div>
+                <div class="product-stats">
+                  <span class="sales-count">销量: 38杯</span>
+                </div>
               </div>
-              <div style="color: var(--primary-color); font-weight: 600">¥1,064</div>
+              <div class="product-revenue">¥1,064</div>
             </div>
           </div>
         </div>
@@ -153,43 +159,16 @@
     <div class="content-card">
       <div class="card-header">
         <div class="card-title">最近订单</div>
-        <a href="#" class="btn btn-primary btn-sm">查看全部</a>
+        <div class="btn btn-primary btn-sm" @click="$router.push('/orders')">查看全部</div>
       </div>
       <div class="card-body">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>订单号</th>
-              <th>客户</th>
-              <th>商品</th>
-              <th>金额</th>
-              <th>状态</th>
-              <th>时间</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>HU20241201001</td>
-              <td>张先生</td>
-              <td>美式咖啡 x2, 拿铁 x1</td>
-              <td>¥45.60</td>
-              <td>
-                <span class="status-badge status-success">已完成</span>
-              </td>
-              <td>14:30</td>
-            </tr>
-            <tr>
-              <td>HU20241201002</td>
-              <td>李女士</td>
-              <td>卡布奇诺 x1</td>
-              <td>¥18.70</td>
-              <td>
-                <span class="status-badge status-warning">制作中</span>
-              </td>
-              <td>14:25</td>
-            </tr>
-          </tbody>
-        </table>
+        <data-table
+          :data="recentOrders"
+          :columns="orderColumns"
+          :show-actions="false"
+          row-key="id"
+          empty-text="暂无订单数据"
+        />
       </div>
     </div>
   </div>
@@ -198,6 +177,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import CoolSelect from '@/components/cool-select.vue'
+import DataTable from '@/components/data-table.vue'
+import type { TableColumn } from '@/types/supabase'
 
 // 时间段选择器选项
 const periodOptions = [
@@ -207,6 +188,65 @@ const periodOptions = [
 ]
 
 const selectedPeriod = ref('7days')
+
+// 最近订单数据
+const recentOrders = ref([
+  {
+    id: 1,
+    order_no: 'HU20241201001',
+    customer: '张先生',
+    items: '美式咖啡 x2, 拿铁 x1',
+    amount: 45.6,
+    status: 'completed',
+    time: '14:30'
+  },
+  {
+    id: 2,
+    order_no: 'HU20241201002',
+    customer: '李女士',
+    items: '卡布奇诺 x1',
+    amount: 18.7,
+    status: 'processing',
+    time: '14:25'
+  },
+  {
+    id: 3,
+    order_no: 'HU20241201003',
+    customer: '王先生',
+    items: '焦糖玛奇朵 x2',
+    amount: 56.0,
+    status: 'completed',
+    time: '14:20'
+  },
+  {
+    id: 4,
+    order_no: 'HU20241201004',
+    customer: '赵女士',
+    items: '香草拿铁 x1, 提拉米苏 x1',
+    amount: 68.0,
+    status: 'pending',
+    time: '14:15'
+  }
+])
+
+// 表格列配置
+const orderColumns: TableColumn[] = [
+  { key: 'order_no', title: '订单号' },
+  { key: 'customer', title: '客户' },
+  { key: 'items', title: '商品' },
+  { key: 'amount', title: '金额', type: 'price' },
+  {
+    key: 'status',
+    title: '状态',
+    type: 'status',
+    statusMap: {
+      completed: { text: '已完成', className: 'status-success' },
+      processing: { text: '制作中', className: 'status-warning' },
+      pending: { text: '待支付', className: 'status-info' }
+    }
+  },
+  { key: 'time', title: '时间' }
+]
 </script>
 
 <style lang="scss" scoped>
@@ -319,59 +359,115 @@ const selectedPeriod = ref('7days')
   position: relative;
   overflow: hidden;
   transition: all 0.3s;
+  border: 1px solid var(--border-light);
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
-  }
-}
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
 
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    .stat-icon {
+      transform: scale(1.1);
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  &.stat-revenue::before {
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-color) 100%);
+  }
+
+  &.stat-orders::before {
+    background: linear-gradient(135deg, var(--info-color) 0%, var(--info-color) 100%);
+  }
+
+  &.stat-members::before {
+    background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-color) 100%);
+  }
+
+  &.stat-price::before {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  }
 }
 
 .stat-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .stat-title {
-  font-size: 14px;
-  color: var(--text-secondary);
+  font-size: 13px;
+  color: var(--text-muted);
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-lg);
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  background: var(--bg-light);
+  transition: transform 0.3s;
+}
+
+.stat-revenue .stat-icon {
+  background: var(--success-bg);
+}
+
+.stat-orders .stat-icon {
+  background: var(--info-bg);
+}
+
+.stat-members .stat-icon {
+  background: var(--warning-bg);
+}
+
+.stat-price .stat-icon {
+  background: rgba(255, 107, 53, 0.1);
 }
 
 .stat-number {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 8px;
+  color: var(--text-heading);
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.stat-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
 }
 
 .stat-trend {
-  font-size: 12px;
   display: flex;
   align-items: center;
   gap: 4px;
+
+  .trend-icon {
+    font-size: 14px;
+  }
+
+  .trend-value {
+    font-size: 13px;
+    font-weight: 600;
+  }
 }
 
 .trend-up {
@@ -380,6 +476,11 @@ const selectedPeriod = ref('7days')
 
 .trend-down {
   color: var(--error-color);
+}
+
+.stat-compare {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 /* 内容卡片 */
@@ -462,41 +563,92 @@ const selectedPeriod = ref('7days')
   color: var(--info-color);
 }
 
-/* 数据表格样式增强 */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
+/* 热门商品卡片 */
+.hot-products-card {
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+}
 
-  thead {
-    tr {
-      th {
-        padding: 12px 16px;
-        text-align: left;
-        font-weight: 600;
-        color: var(--text-subtitle);
-        font-size: 13px;
-        text-transform: uppercase;
-        background: var(--bg-light);
-        border-bottom: 1px solid var(--border-medium);
-      }
-    }
+.hot-products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hot-product-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-light);
+  border-radius: var(--radius-md);
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow);
+  }
+}
+
+.rank-badge {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  background: var(--bg-white);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 14px;
+
+  &.rank-1 {
+    background: linear-gradient(135deg, var(--gold-color) 0%, var(--gold-dark) 100%);
+    color: var(--gold-text);
   }
 
-  tbody {
-    tr {
-      transition: all 0.2s;
+  &.rank-2 {
+    background: linear-gradient(135deg, var(--silver-color) 0%, var(--silver-dark) 100%);
+    color: var(--silver-text);
+  }
 
-      &:hover {
-        background: var(--bg-light);
-      }
+  &.rank-3 {
+    background: linear-gradient(135deg, var(--bronze-color) 0%, var(--bronze-dark) 100%);
+    color: var(--bronze-text);
+  }
+}
 
-      td {
-        padding: 14px 16px;
-        color: var(--text-heading);
-        font-size: 14px;
-        border-bottom: 1px solid var(--border-light);
-      }
+.product-info {
+  flex: 1;
+
+  .product-name {
+    font-weight: 600;
+    color: var(--text-heading);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .product-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .sales-count {
+      font-size: 12px;
+      color: var(--text-muted);
     }
   }
+}
+
+.product-revenue {
+  font-size: 16px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 </style>
