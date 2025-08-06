@@ -86,9 +86,9 @@ const productList = ref<Product[]>([])
 const loading = ref(false)
 
 // 筛选器状态
-const selectedCategory = ref()
-const selectedStatus = ref()
-const searchQuery = ref()
+const selectedCategory = ref(0)
+const selectedStatus = ref('')
+const searchQuery = ref('')
 
 // 分类选项
 const categoryOptions = ref([] as { label: string; value: number }[])
@@ -116,8 +116,8 @@ const searchProducts = async () => {
 
 // 重置商品
 const resetProducts = () => {
-  selectedCategory.value = undefined
-  selectedStatus.value = undefined
+  selectedCategory.value = 0
+  selectedStatus.value = ''
   searchQuery.value = ''
 }
 
