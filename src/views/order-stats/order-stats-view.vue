@@ -28,24 +28,6 @@
       <div class="card-body">
         <div class="filters">
           <div class="filter-item">
-            <label class="filter-label">年份:</label>
-            <cool-select
-              v-model="selectedYear"
-              :options="yearOptions"
-              class="filter-select"
-              @change="onYearChange"
-            />
-          </div>
-          <div class="filter-item">
-            <label class="filter-label">月份:</label>
-            <cool-select
-              v-model="selectedMonth"
-              :options="monthOptions"
-              class="filter-select"
-              @change="onMonthChange"
-            />
-          </div>
-          <div class="filter-item">
             <label class="filter-label">快速筛选:</label>
             <cool-select
               v-model="selectedQuickFilter"
@@ -54,7 +36,25 @@
               @change="applyQuickFilter"
             />
           </div>
-          <div class="filter-item">
+          <div v-if="showYearFilter" class="filter-item">
+            <label class="filter-label">年份:</label>
+            <cool-select
+              v-model="selectedYear"
+              :options="yearOptions"
+              class="filter-select"
+              @change="onYearChange"
+            />
+          </div>
+          <div v-if="showMonthFilter" class="filter-item">
+            <label class="filter-label">月份:</label>
+            <cool-select
+              v-model="selectedMonth"
+              :options="monthOptions"
+              class="filter-select"
+              @change="onMonthChange"
+            />
+          </div>
+          <div v-if="showCompareFilter" class="filter-item">
             <label class="filter-label">对比:</label>
             <cool-select
               v-model="selectedCompareFilter"
@@ -68,125 +68,20 @@
     </div>
 
     <!-- 统计卡片数据对比 -->
-    <RevenueStatsCards :compare="selectedCompareFilter" />
-
-    <!-- 订单状态统计 -->
-    <div class="order-status-section">
-      <div class="section-header">
-        <h3 class="section-title">订单状态分布</h3>
-        <span class="period-badge">2024年12月</span>
-      </div>
-
-      <div class="status-stats-grid">
-        <div class="status-stat-card completed">
-          <div class="stat-decoration"></div>
-          <div class="stat-body">
-            <div class="stat-icon-box">
-              <img src="/src/assets/icons/check.svg" alt="完成图标" />
-            </div>
-            <div class="stat-info">
-              <div class="stat-label">已完成</div>
-              <div class="stat-value">142</div>
-            </div>
-            <div class="stat-badge">85%</div>
-          </div>
-        </div>
-
-        <div class="status-stat-card processing">
-          <div class="stat-decoration"></div>
-          <div class="stat-body">
-            <div class="stat-icon-box">
-              <img src="/src/assets/icons/clock.svg" alt="制作中图标" />
-            </div>
-            <div class="stat-info">
-              <div class="stat-label">制作中</div>
-              <div class="stat-value">18</div>
-            </div>
-            <div class="stat-badge">11%</div>
-          </div>
-        </div>
-
-        <div class="status-stat-card cancelled">
-          <div class="stat-decoration"></div>
-          <div class="stat-body">
-            <div class="stat-icon-box">
-              <img src="/src/assets/icons/close-x.svg" alt="取消图标" />
-            </div>
-            <div class="stat-info">
-              <div class="stat-label">已取消</div>
-              <div class="stat-value">3</div>
-            </div>
-            <div class="stat-badge">2%</div>
-          </div>
-        </div>
-
-        <div class="status-stat-card total">
-          <div class="stat-decoration"></div>
-          <div class="stat-body">
-            <div class="stat-icon-box">
-              <img src="/src/assets/icons/grid.svg" alt="总订单图标" />
-            </div>
-            <div class="stat-info">
-              <div class="stat-label">总订单</div>
-              <div class="stat-value">163</div>
-            </div>
-            <div class="stat-badge">100%</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 高峰时段分析 -->
-    <div class="content-card">
-      <div class="card-header">
-        <div class="card-title">高峰时段分析</div>
-      </div>
-      <div class="card-body">
-        <div class="time-analysis">
-          <div class="time-item">
-            <div class="time-period">08:00 - 10:00</div>
-            <div class="time-stats">
-              <span class="order-count">28单</span>
-              <span class="order-percentage">16.7%</span>
-            </div>
-          </div>
-          <div class="time-item">
-            <div class="time-period">10:00 - 12:00</div>
-            <div class="time-stats">
-              <span class="order-count">45单</span>
-              <span class="order-percentage">26.8%</span>
-            </div>
-          </div>
-          <div class="time-item">
-            <div class="time-period">14:00 - 16:00</div>
-            <div class="time-stats">
-              <span class="order-count">52单</span>
-              <span class="order-percentage">31.0%</span>
-            </div>
-          </div>
-          <div class="time-item">
-            <div class="time-period">19:00 - 21:00</div>
-            <div class="time-stats">
-              <span class="order-count">43单</span>
-              <span class="order-percentage">25.6%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <RevenueStatsCards :compare="actualCompareValue" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import CoolSelect from '@/components/cool-select.vue'
 import RevenueStatsCards from './component/revenue-stats-cards.vue'
 
 // 筛选器状态
 const selectedYear = ref(new Date().getFullYear())
 const selectedMonth = ref(new Date().getMonth() + 1)
-const selectedQuickFilter = ref('month')
-const selectedCompareFilter = ref('lastMonth')
+const selectedQuickFilter = ref('year') // 默认为本年
+const selectedCompareFilter = ref('')
 
 // 年份选项 前10年 + 后10年
 const yearOptions = Array.from({ length: 20 }, (_, i) => ({
@@ -209,12 +104,80 @@ const quickFilterOptions = [
   { label: '本年', value: 'year' }
 ]
 
-// 对比选项
-const compareFilterOptions = [
-  { label: '较上月', value: 'lastMonth' },
-  { label: '较去年同期', value: 'lastYear' },
-  { label: '较上季度', value: 'lastQuarter' }
-]
+// 动态计算对比选项
+const compareFilterOptions = computed(() => {
+  switch (selectedQuickFilter.value) {
+    case 'today':
+      // 今天不显示对比选项，默认为较昨日
+      return []
+    case 'week':
+      // 本周不显示对比选项，默认为较上周
+      return []
+    case 'month':
+      // 本月只显示：较上月、去年同期
+      return [
+        { label: '较上月', value: 'lastMonth' },
+        { label: '去年同期', value: 'lastYearSameMonth' }
+      ]
+    case 'quarter':
+      // 本季度只显示：较上季度、去年同期
+      return [
+        { label: '较上季度', value: 'lastQuarter' },
+        { label: '去年同期', value: 'lastYearSameQuarter' }
+      ]
+    case 'year':
+      // 本年不显示对比选项
+      return []
+    default:
+      return []
+  }
+})
+
+// 控制年份选择器显示
+const showYearFilter = computed(() => {
+  return ['month', 'quarter', 'year'].includes(selectedQuickFilter.value)
+})
+
+// 控制月份选择器显示
+const showMonthFilter = computed(() => {
+  return ['month', 'quarter'].includes(selectedQuickFilter.value)
+})
+
+// 控制对比选择器显示
+const showCompareFilter = computed(() => {
+  return ['month', 'quarter'].includes(selectedQuickFilter.value)
+})
+
+// 计算实际的对比值
+const actualCompareValue = computed(() => {
+  switch (selectedQuickFilter.value) {
+    case 'today':
+      return 'lastDay' // 较昨日
+    case 'week':
+      return 'lastWeek' // 较上周
+    case 'year':
+      return '' // 本年不对比
+    default:
+      return selectedCompareFilter.value
+  }
+})
+
+// 监听快速筛选变化，自动设置对比选项
+watch(selectedQuickFilter, newValue => {
+  switch (newValue) {
+    case 'today':
+    case 'week':
+    case 'year':
+      selectedCompareFilter.value = ''
+      break
+    case 'month':
+      selectedCompareFilter.value = 'lastMonth'
+      break
+    case 'quarter':
+      selectedCompareFilter.value = 'lastQuarter'
+      break
+  }
+})
 
 // 事件处理函数
 const onYearChange = (value: string | number) => {
@@ -396,29 +359,6 @@ const onCompareChange = (value: string | number) => {
   font-weight: 500;
 }
 
-/* 订单状态分布 */
-.order-status-section {
-  background: white;
-  border-radius: 20px;
-  padding: 24px;
-  margin-bottom: 32px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-
-    .section-title {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text-heading);
-      margin: 0;
-    }
-  }
-}
-
 .period-badge {
   display: inline-flex;
   align-items: center;
@@ -581,36 +521,6 @@ const onCompareChange = (value: string | number) => {
   }
   50% {
     transform: scale(1.05);
-  }
-}
-
-.time-analysis {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  .time-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border-color);
-    &:last-child {
-      border-bottom: none;
-    }
-    .time-period {
-      color: var(--text-primary);
-    }
-    .time-stats {
-      .order-count {
-        font-weight: 600;
-        color: var(--primary-color);
-      }
-      .order-percentage {
-        margin-left: 8px;
-        font-size: 12px;
-        color: var(--text-secondary);
-      }
-    }
   }
 }
 </style>
