@@ -233,6 +233,11 @@ const productActions: TableAction<Product>[] = [
     type: 'warning',
     visible: product => product.status === 'active',
     onClick: product => toggleProductStatus(product)
+  },
+  {
+    text: '删除',
+    type: 'error',
+    onClick: product => toggleProductStatus(product)
   }
 ]
 

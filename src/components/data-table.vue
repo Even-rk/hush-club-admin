@@ -337,6 +337,17 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
 
     &:hover:not(:disabled) {
       opacity: 0.9;
+      color: var(--bg-white);
+    }
+  }
+
+  &.btn-warning {
+    background: var(--warning-color);
+    color: var(--bg-white);
+
+    &:hover:not(:disabled) {
+      opacity: 0.9;
+      color: var(--text-dark);
     }
   }
 
@@ -346,7 +357,18 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
     border: 1px solid var(--border-light);
 
     &:hover:not(:disabled) {
-      background: var(--bg-gray);
+      background: var(--border-light);
+      color: var(--text-subtitle);
+    }
+  }
+
+  &.btn-error {
+    background: var(--error-bg);
+    color: var(--error-color);
+
+    &:hover:not(:disabled) {
+      background: var(--bg-error);
+      color: var(--bg-white);
     }
   }
 
