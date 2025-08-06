@@ -165,7 +165,13 @@
 
       <!-- 主内容区域 -->
       <div class="content-area">
-        <router-view></router-view>
+        <router-view v-slot="{ Component }">
+          <transition name="slide-fade" mode="out-in">
+            <div :key="$route.path">
+              <component :is="Component" />
+            </div>
+          </transition>
+        </router-view>
       </div>
     </div>
   </div>
@@ -260,6 +266,7 @@ onMounted(() => {
   font-weight: 700;
   color: var(--primary-color);
   margin-bottom: 8px;
+  animation: logo-glow 3s ease-in-out infinite;
 }
 
 .logo-subtitle {
@@ -273,6 +280,27 @@ onMounted(() => {
 
 .nav-section {
   margin-bottom: 24px;
+  animation: slide-in-left 0.4s ease-out;
+  animation-fill-mode: both;
+
+  &:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  &:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  &:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  &:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+  &:nth-child(6) {
+    animation-delay: 0.6s;
+  }
 }
 
 .nav-section-title {
@@ -289,8 +317,34 @@ onMounted(() => {
   padding: 12px 20px;
   color: var(--text-secondary);
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-left: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--secondary-color), transparent);
+    transition: width 0.5s ease;
+    z-index: -1;
+  }
+
+  &:hover::before {
+    width: 100%;
+  }
+
+  .nav-icon {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover .nav-icon {
+    transform: translateX(2px) scale(1.1);
+  }
 }
 
 .nav-item:hover,
@@ -298,6 +352,36 @@ onMounted(() => {
   background-color: var(--secondary-color);
   color: var(--primary-color);
   border-left-color: var(--primary-color);
+  transform: translateX(4px);
+
+  &.active {
+    font-weight: 600;
+
+    &::after {
+      content: '';
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 4px;
+      background: var(--primary-color);
+      border-radius: 50%;
+      animation: pulse-dot 2s infinite;
+    }
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translateY(-50%) scale(1.5);
+  }
 }
 
 .nav-icon {
@@ -336,6 +420,8 @@ onMounted(() => {
 /* 内容区域 */
 .content-area {
   padding: 36px;
+  position: relative;
+  overflow-x: hidden;
 }
 
 /* 用户菜单 */
@@ -348,6 +434,7 @@ onMounted(() => {
   border-radius: var(--radius);
   cursor: pointer;
   transition: background-color 0.2s ease;
+  animation: fade-in 0.5s ease-out;
 
   &:hover {
     background-color: var(--bg-gray);
@@ -394,6 +481,8 @@ onMounted(() => {
   z-index: 1000;
   padding: 8px 0;
   margin-top: 4px;
+  animation: dropdown-slide 0.2s ease-out;
+  transform-origin: top right;
 }
 
 .dropdown-item {
@@ -446,5 +535,135 @@ onMounted(() => {
 .danger {
   color: var(--error-color);
   font-size: 20px;
+}
+
+/* 路由切换滑动动画 */
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s ease-in;
+}
+
+.slide-fade-enter-from {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.slide-fade-enter-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-fade-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-fade-leave-to {
+  transform: translateX(-20px);
+  opacity: 0;
+}
+
+/* 淡入淡出动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+
+/* 缩放动画 */
+.scale-enter-active,
+.scale-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scale-enter-from {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.scale-leave-to {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+/* 向上滑动动画 */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* Logo 动画 */
+
+@keyframes logo-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+  }
+  50% {
+    text-shadow:
+      0 0 20px rgba(255, 107, 53, 0.5),
+      0 0 30px rgba(255, 107, 53, 0.3);
+  }
+}
+
+/* 侧边栏加载动画 */
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 用户菜单动画 */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 下拉菜单动画 */
+
+@keyframes dropdown-slide {
+  from {
+    opacity: 0;
+    transform: scaleY(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
 }
 </style>
