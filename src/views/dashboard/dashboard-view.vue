@@ -10,7 +10,7 @@
             <div class="spinner-circle"></div>
             <div class="spinner-circle"></div>
           </div>
-          <div class="loading-icon">☕</div>
+          <div class="loading-icon">📊</div>
         </div>
         <div class="loading-text">正在加载数据...</div>
         <div class="loading-progress">

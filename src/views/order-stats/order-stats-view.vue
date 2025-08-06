@@ -21,184 +21,128 @@
 
     <!-- 筛选器 -->
     <div class="content-card filter-card">
-      <div class="card-header">
-        <div class="card-title">数据筛选</div>
-        <button class="btn btn-primary">应用筛选</button>
-      </div>
       <div class="card-body">
-        <div class="filters">
-          <div class="filter-item">
-            <label class="filter-label">快速筛选:</label>
-            <cool-select
-              v-model="selectedQuickFilter"
-              :options="quickFilterOptions"
-              class="filter-select"
-              @change="applyQuickFilter"
+        <div class="filter-container">
+          <!-- 时间区间选择 -->
+          <div class="date-range-filter">
+            <label class="filter-label">时间区间：</label>
+            <date-picker
+              v-model:start-value="startDate"
+              v-model:end-value="endDate"
+              :range="true"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              @change="onDateRangeChange"
             />
           </div>
-          <div v-if="showYearFilter" class="filter-item">
-            <label class="filter-label">年份:</label>
-            <cool-select
-              v-model="selectedYear"
-              :options="yearOptions"
-              class="filter-select"
-              @change="onYearChange"
-            />
-          </div>
-          <div v-if="showMonthFilter" class="filter-item">
-            <label class="filter-label">月份:</label>
-            <cool-select
-              v-model="selectedMonth"
-              :options="monthOptions"
-              class="filter-select"
-              @change="onMonthChange"
-            />
-          </div>
-          <div v-if="showCompareFilter" class="filter-item">
-            <label class="filter-label">对比:</label>
-            <cool-select
-              v-model="selectedCompareFilter"
-              :options="compareFilterOptions"
-              class="filter-select"
-              @change="onCompareChange"
-            />
+          <!-- 快速选择标签 -->
+          <div class="quick-filter-tabs">
+            <button
+              v-for="tab in quickTabs"
+              :key="tab.value"
+              class="tab-button"
+              :class="{ active: activeTab === tab.value }"
+              @click="selectTab(tab.value)"
+            >
+              {{ tab.label }}
+            </button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 统计卡片数据对比 -->
-    <RevenueStatsCards :compare="actualCompareValue" />
+    <RevenueStatsCards />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import CoolSelect from '@/components/cool-select.vue'
+import { ref } from 'vue'
+import DatePicker from '@/components/date-picker.vue'
 import RevenueStatsCards from './component/revenue-stats-cards.vue'
+import { formatDate } from '@/utils/format'
 
-// 筛选器状态
-const selectedYear = ref(new Date().getFullYear())
-const selectedMonth = ref(new Date().getMonth() + 1)
-const selectedQuickFilter = ref('year') // 默认为本年
-const selectedCompareFilter = ref('')
-
-// 年份选项 前10年 + 后10年
-const yearOptions = Array.from({ length: 20 }, (_, i) => ({
-  label: `${new Date().getFullYear() - 10 + i}年`,
-  value: new Date().getFullYear() - 10 + i
-}))
-
-// 月份选项
-const monthOptions = Array.from({ length: 12 }, (_, i) => ({
-  label: `${i + 1}月`,
-  value: i + 1
-}))
-
-// 快速筛选选项
-const quickFilterOptions = [
+// Tab选项定义
+const quickTabs = [
   { label: '今天', value: 'today' },
-  { label: '本周', value: 'week' },
-  { label: '本月', value: 'month' },
-  { label: '本季度', value: 'quarter' },
-  { label: '本年', value: 'year' }
+  { label: '昨天', value: 'yesterday' },
+  { label: '近7天', value: 'last7days' },
+  { label: '近30天', value: 'last30days' }
 ]
 
-// 动态计算对比选项
-const compareFilterOptions = computed(() => {
-  switch (selectedQuickFilter.value) {
+// 当前激活的tab
+const activeTab = ref<string>('today')
+
+// 时间区间
+const startDate = ref<string>('')
+const endDate = ref<string>('')
+
+// 更新数据（TODO: 实现实际的数据获取逻辑）
+const updateData = (start: string, end: string) => {
+  console.log(`更新数据，时间范围：${start} 至 ${end}`)
+  // TODO: 调用API获取数据
+}
+
+// 应用筛选函数 - 打印日期区间并更新数据
+const applyFilter = (start: string, end: string) => {
+  // 更新数据
+  updateData(start, end)
+}
+
+// 选择tab
+const selectTab = (tabValue: string) => {
+  activeTab.value = tabValue
+  // 清空时间区间选择
+  startDate.value = ''
+  endDate.value = ''
+
+  // 根据tab计算时间范围
+  const today = new Date()
+
+  switch (tabValue) {
     case 'today':
-      // 今天不显示对比选项，默认为较昨日
-      return []
-    case 'week':
-      // 本周不显示对比选项，默认为较上周
-      return []
-    case 'month':
-      // 本月只显示：较上月、去年同期
-      return [
-        { label: '较上月', value: 'lastMonth' },
-        { label: '去年同期', value: 'lastYearSameMonth' }
-      ]
-    case 'quarter':
-      // 本季度只显示：较上季度、去年同期
-      return [
-        { label: '较上季度', value: 'lastQuarter' },
-        { label: '去年同期', value: 'lastYearSameQuarter' }
-      ]
-    case 'year':
-      // 本年不显示对比选项
-      return []
+      // 今天到今天
+      startDate.value = formatDate(today)
+      endDate.value = formatDate(today)
+      break
+    case 'yesterday': {
+      // 昨天到昨天
+      const yesterday = new Date(today)
+      yesterday.setDate(today.getDate() - 1)
+      startDate.value = formatDate(yesterday)
+      endDate.value = formatDate(yesterday)
+      break
+    }
+    case 'last7days':
+      // 近7天 - 6天前到今天（包含今天共7天）
+      startDate.value = formatDate(new Date(today))
+      endDate.value = formatDate(today)
+      break
+    case 'last30days':
+      // 近30天 - 29天前到今天（包含今天共30天）
+      startDate.value = formatDate(new Date(today))
+      endDate.value = formatDate(today)
+      break
     default:
-      return []
+      return
   }
-})
 
-// 控制年份选择器显示
-const showYearFilter = computed(() => {
-  return ['month', 'quarter', 'year'].includes(selectedQuickFilter.value)
-})
+  // 调用应用筛选函数
+  applyFilter(startDate.value, endDate.value)
+}
 
-// 控制月份选择器显示
-const showMonthFilter = computed(() => {
-  return ['month', 'quarter'].includes(selectedQuickFilter.value)
-})
-
-// 控制对比选择器显示
-const showCompareFilter = computed(() => {
-  return ['month', 'quarter'].includes(selectedQuickFilter.value)
-})
-
-// 计算实际的对比值
-const actualCompareValue = computed(() => {
-  switch (selectedQuickFilter.value) {
-    case 'today':
-      return 'lastDay' // 较昨日
-    case 'week':
-      return 'lastWeek' // 较上周
-    case 'year':
-      return '' // 本年不对比
-    default:
-      return selectedCompareFilter.value
+// 时间区间变化
+const onDateRangeChange = (value: string | { start: string; end: string }) => {
+  if (typeof value === 'object' && value.start && value.end) {
+    // 清空tab选择
+    activeTab.value = ''
+    // 调用应用筛选函数
+    applyFilter(value.start, value.end)
   }
-})
-
-// 监听快速筛选变化，自动设置对比选项
-watch(selectedQuickFilter, newValue => {
-  switch (newValue) {
-    case 'today':
-    case 'week':
-    case 'year':
-      selectedCompareFilter.value = ''
-      break
-    case 'month':
-      selectedCompareFilter.value = 'lastMonth'
-      break
-    case 'quarter':
-      selectedCompareFilter.value = 'lastQuarter'
-      break
-  }
-})
-
-// 事件处理函数
-const onYearChange = (value: string | number) => {
-  console.log('年份变更:', value)
-  // TODO: 实现年份变更逻辑
 }
 
-const onMonthChange = (value: string | number) => {
-  console.log('月份变更:', value)
-  // TODO: 实现月份变更逻辑
-}
-
-const applyQuickFilter = (value: string | number) => {
-  console.log('快速筛选:', value)
-  // TODO: 实现快速筛选逻辑
-}
-
-const onCompareChange = (value: string | number) => {
-  console.log('对比变更:', value)
-  // TODO: 实现对比逻辑
-}
+// 初始化时选择今天
+selectTab('today')
 </script>
 
 <style scoped lang="scss">
@@ -317,29 +261,71 @@ const onCompareChange = (value: string | number) => {
 
 .filter-card {
   margin-bottom: 24px;
+
+  .card-body {
+    padding: 24px;
+  }
 }
 
-.filters {
+.filter-container {
   display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
+  gap: 20px;
 }
 
-.filter-item {
+// 快速选择标签样式
+.quick-filter-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  .tab-button {
+    padding: 10px 24px;
+    border: 2px solid var(--border-color);
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: var(--primary-light);
+      color: var(--primary-color);
+      background: linear-gradient(
+        135deg,
+        rgba(255, 107, 53, 0.05) 0%,
+        rgba(255, 107, 53, 0.02) 100%
+      );
+    }
+
+    &.active {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+      border-color: transparent;
+      color: var(--bg-white);
+      box-shadow: var(--shadow-primary);
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+      }
+    }
+  }
+}
+
+// 时间区间筛选样式
+.date-range-filter {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
+  gap: 12px;
+  flex-wrap: wrap;
 
-.filter-label {
-  font-size: 14px;
-  color: var(--text-dark);
-  white-space: nowrap;
-  font-weight: 500;
-}
-
-.filter-select {
-  min-width: 140px;
+  .filter-label {
+    font-size: 14px;
+    color: var(--text-dark);
+    font-weight: 500;
+    white-space: nowrap;
+  }
 }
 
 @keyframes float {
