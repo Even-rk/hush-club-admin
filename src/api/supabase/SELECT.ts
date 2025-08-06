@@ -168,12 +168,6 @@ export const reqGetAllOrder = async (params?: {
   if (params?.status) {
     supabaseOrder.eq('status', params.status)
   }
-  // 查订单编号/会员手机号/会员姓名
-  if (params?.query) {
-    supabaseOrder.ilike('order_no', `%${params.query}%`)
-    supabaseOrder.ilike('member_phone', `%${params.query}%`)
-    supabaseOrder.ilike('member_name', `%${params.query}%`)
-  }
   // 查日期
   if (params?.date) {
     supabaseOrder.gte('created_at', params.date)
@@ -206,6 +200,21 @@ export const reqGetAllOrder = async (params?: {
       }
     })
   )
+
+  // 查订单编号/会员手机号/会员姓名
+  if (params?.query) {
+    // 查订单编号/会员手机号/会员姓名
+    return orderDetails.filter(item => {
+      // 订单编号
+      const order_no = item.order_no.includes(params.query)
+      // 会员手机号
+      const member_phone = item.member?.phone.includes(params.query)
+      // 会员姓名
+      const member_name = item.member?.real_name.includes(params.query)
+      // 返回过滤后的订单
+      return order_no || member_phone || member_name
+    })
+  }
 
   return orderDetails as OrderDetail[]
 }

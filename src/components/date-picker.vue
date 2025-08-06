@@ -12,9 +12,13 @@
           readonly
           title="点击选择日期"
           @click="!disabled && openDatePicker('single')"
-          @focus="!disabled && openDatePicker('single')"
         />
-        <span class="calendar-icon" @click="!disabled && openDatePicker('single')">📅</span>
+        <span
+          class="calendar-icon"
+          :class="{ disabled }"
+          @click="!disabled && openDatePicker('single')"
+          >📅</span
+        >
         <span v-if="modelValue && clearable" class="clear-btn" @click="clearDate">×</span>
 
         <!-- 隐藏的原生日期输入 -->
@@ -43,9 +47,13 @@
             readonly
             title="点击选择开始日期"
             @click="!disabled && openDatePicker('start')"
-            @focus="!disabled && openDatePicker('start')"
           />
-          <span class="calendar-icon" @click="!disabled && openDatePicker('start')">📅</span>
+          <span
+            class="calendar-icon"
+            :class="{ disabled }"
+            @click="!disabled && openDatePicker('start')"
+            >📅</span
+          >
 
           <!-- 隐藏的原生日期输入 -->
           <input
@@ -71,9 +79,13 @@
             readonly
             title="点击选择结束日期"
             @click="!disabled && openDatePicker('end')"
-            @focus="!disabled && openDatePicker('end')"
           />
-          <span class="calendar-icon" @click="!disabled && openDatePicker('end')">📅</span>
+          <span
+            class="calendar-icon"
+            :class="{ disabled }"
+            @click="!disabled && openDatePicker('end')"
+            >📅</span
+          >
 
           <!-- 隐藏的原生日期输入 -->
           <input
@@ -178,25 +190,13 @@ const formatDisplayDate = (dateStr: string) => {
 // 打开日期选择器
 const openDatePicker = (type: 'single' | 'start' | 'end') => {
   // 触发隐藏的原生日期输入框
+  // 使用 click() 方法来触发日期选择器
   if (type === 'single' && hiddenDateInput.value) {
-    // 优先使用 showPicker，如果不支持则使用 click
-    if (hiddenDateInput.value.showPicker) {
-      hiddenDateInput.value.showPicker()
-    } else {
-      hiddenDateInput.value.click()
-    }
+    hiddenDateInput.value.click()
   } else if (type === 'start' && hiddenStartInput.value) {
-    if (hiddenStartInput.value.showPicker) {
-      hiddenStartInput.value.showPicker()
-    } else {
-      hiddenStartInput.value.click()
-    }
+    hiddenStartInput.value.click()
   } else if (type === 'end' && hiddenEndInput.value) {
-    if (hiddenEndInput.value.showPicker) {
-      hiddenEndInput.value.showPicker()
-    } else {
-      hiddenEndInput.value.click()
-    }
+    hiddenEndInput.value.click()
   }
 }
 
@@ -254,10 +254,26 @@ const clearRangeDate = () => {
 // 隐藏的原生日期输入
 .hidden-date-input {
   position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-  pointer-events: none;
+  opacity: 0.01; // 几乎透明但不完全透明
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+
+  &::-webkit-calendar-picker-indicator {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
 }
 
 // 日历图标
@@ -268,16 +284,16 @@ const clearRangeDate = () => {
   font-size: 18px;
   opacity: 0.6;
   transition: all 0.2s ease;
-  pointer-events: none; // 让点击事件穿透到输入框
   user-select: none;
 
   .date-input-wrapper:hover & {
     opacity: 0.8;
   }
 
-  input:disabled ~ & {
+  &.disabled {
     opacity: 0.3;
     cursor: not-allowed;
+    pointer-events: none;
   }
 }
 
