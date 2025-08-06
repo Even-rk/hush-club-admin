@@ -138,7 +138,6 @@ onMounted(async () => {
 <style lang="scss" scoped>
 /* 会员等级页面 */
 .member-level-page {
-  padding: 24px;
   background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
   min-height: 100vh;
 }

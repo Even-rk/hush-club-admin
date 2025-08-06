@@ -237,7 +237,6 @@ onMounted(async () => {
 <style lang="scss" scoped>
 /* 商品管理页面 */
 .product-management-page {
-  padding: 24px;
   background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
   min-height: 100vh;
 }

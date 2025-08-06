@@ -127,7 +127,6 @@ const selectedDate = ref('')
 
 // 订单状态选项
 const statusOptions = [
-  { label: '全部状态', value: '' },
   { label: '已完成', value: 'completed' },
   { label: '制作中', value: 'processing' },
   { label: '待支付', value: 'pending' },
@@ -136,7 +135,6 @@ const statusOptions = [
 
 // 支付方式选项
 const paymentOptions = [
-  { label: '全部方式', value: '' },
   { label: '微信支付', value: 'wechat' },
   { label: '余额支付', value: 'balance' }
 ]
@@ -180,14 +178,6 @@ const viewOrderDetail = (order: OrderDetail) => {
   console.log('查看订单详情:', order)
 }
 
-// const editOrder = (order: OrderDetail) => {
-//   console.log('编辑订单:', order)
-// }
-
-// const cancelOrder = (order: OrderDetail) => {
-//   console.log('取消订单:', order)
-// }
-
 // 表格操作配置
 const orderActions: TableAction<OrderDetail>[] = [
   {
@@ -195,18 +185,6 @@ const orderActions: TableAction<OrderDetail>[] = [
     type: 'secondary',
     onClick: order => viewOrderDetail(order)
   }
-  // {
-  //   text: '编辑',
-  //   type: 'primary',
-  //   visible: order => order.status !== 'completed' && order.status !== 'cancelled',
-  //   onClick: order => editOrder(order)
-  // },
-  // {
-  //   text: '取消订单',
-  //   type: 'error',
-  //   visible: order => order.status === 'pending',
-  //   onClick: order => cancelOrder(order)
-  // }
 ]
 
 // 加载数据

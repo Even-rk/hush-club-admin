@@ -12,15 +12,10 @@
     <table v-else class="data-table" :class="[`data-table--${size}`]">
       <thead>
         <tr>
-          <th
-            v-for="column in columns"
-            :key="String(column.key)"
-            class="table-cell--left"
-            :style="{ width: column.width }"
-          >
+          <th v-for="column in columns" :key="String(column.key)" :style="{ width: column.width }">
             {{ column.title }}
           </th>
-          <th v-if="showActions" class="table-cell--left">操作</th>
+          <th v-if="showActions">操作</th>
         </tr>
       </thead>
       <tbody>
@@ -36,7 +31,7 @@
 
         <!-- 数据行 -->
         <tr v-for="(row, rowIndex) in data" :key="getRowKey(row, rowIndex)">
-          <td v-for="column in columns" :key="String(column.key)" class="table-cell--left">
+          <td v-for="column in columns" :key="String(column.key)">
             <!-- 插槽内容 -->
             <slot
               v-if="column.slot"
@@ -90,7 +85,7 @@
           </td>
 
           <!-- 操作列 -->
-          <td v-if="showActions" class="table-cell--left">
+          <td v-if="showActions">
             <div class="table-actions">
               <template v-for="action in actions" :key="action.text">
                 <button
@@ -197,7 +192,10 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
 
 <style lang="scss" scoped>
 .data-table-wrapper {
-  position: relative;
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  overflow: auto;
+  box-shadow: var(--shadow-md);
 }
 
 .table-loading {
@@ -210,13 +208,12 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: var(--text-secondary);
   }
 
   .spinner {
     width: 32px;
     height: 32px;
-    border: 3px solid var(--border-color);
+    border: 3px solid var(--border-light);
     border-top: 3px solid var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -224,6 +221,7 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
 
   .loading-text {
     font-size: 14px;
+    color: var(--text-subtitle);
   }
 }
 
@@ -239,72 +237,41 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 16px;
-
-  &--small {
-    font-size: 12px;
-
-    th,
-    td {
-      padding: 8px 12px;
-    }
-  }
-
-  &--medium {
-    font-size: 14px;
-
-    th,
-    td {
-      padding: 12px 16px;
-    }
-  }
-
-  &--large {
-    font-size: 16px;
-
-    th,
-    td {
-      padding: 16px 20px;
-    }
-  }
 
   th {
-    background: var(--bg-gray);
-    color: var(--text-primary);
+    background: var(--bg-light);
+    color: var(--text-muted);
     font-weight: 600;
-    border-bottom: 1px solid var(--border-color);
     text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--border-light);
+    white-space: nowrap;
   }
 
   td {
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-primary);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-dark);
     vertical-align: middle;
   }
 
-  tbody tr:hover {
-    background: var(--secondary-color);
-  }
-}
+  tbody tr {
+    &:hover {
+      background: var(--bg-light);
+    }
 
-.table-cell {
-  &--left {
-    text-align: left;
-  }
-
-  &--center {
-    text-align: center;
-  }
-
-  &--right {
-    text-align: right;
+    &:last-child td {
+      border-bottom: none;
+    }
   }
 }
 
 .table-empty {
   text-align: center;
   padding: 60px 20px !important;
-  border-bottom: none !important;
 
   .empty-state {
     display: flex;
@@ -318,8 +285,8 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
     }
 
     .empty-text {
-      font-size: 16px;
-      color: var(--text-secondary);
+      font-size: 14px;
+      color: var(--text-subtitle);
     }
   }
 }
@@ -328,94 +295,46 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
   img {
     width: 40px;
     height: 40px;
-    object-fit: contain;
-    border-radius: 4px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-light);
   }
 }
 
 .table-actions {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
 }
 
 .status-badge {
   display: inline-block;
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 4px 10px;
+  border-radius: 16px;
   font-size: 12px;
-  font-weight: 500;
-  text-align: center;
+  font-weight: 600;
 
   &.status-success {
-    background: rgba(76, 175, 80, 0.1);
+    background: var(--success-bg);
     color: var(--success-color);
   }
 
   &.status-warning {
-    background: rgba(255, 193, 7, 0.1);
+    background: var(--warning-bg);
     color: var(--warning-color);
   }
 
   &.status-error,
   &.status-danger {
-    background: rgba(244, 67, 54, 0.1);
+    background: var(--error-bg);
     color: var(--error-color);
   }
 
   &.status-info {
-    background: rgba(33, 150, 243, 0.1);
+    background: var(--info-bg);
     color: var(--info-color);
   }
-
-  &.status-silver {
-    background: rgba(192, 192, 192, 0.1);
-    color: var(--silver-color);
-  }
-
-  &.status-gold {
-    background: rgba(255, 215, 0, 0.1);
-    color: var(--gold-color);
-  }
-
-  &.status-diamond {
-    background: var(--secondary-color);
-    color: var(--primary-color);
-  }
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .data-table {
-    font-size: 12px;
-
-    th,
-    td {
-      padding: 8px 12px;
-    }
-  }
-
-  .table-actions {
-    gap: 4px;
-
-    .btn {
-      font-size: 11px;
-      padding: 4px 8px;
-    }
-  }
-
-  .empty-state {
-    .empty-icon {
-      font-size: 32px;
-    }
-
-    .empty-text {
-      font-size: 14px;
-    }
-  }
-}
-
-/* 按钮样式优化 */
 .btn {
   &.btn-sm {
     padding: 6px 12px;
@@ -423,73 +342,31 @@ const isActionDisabled = (action: TableAction<T>, row: T): boolean => {
     border-radius: var(--radius);
     border: none;
     cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+    transition: opacity 0.2s;
     font-weight: 500;
   }
 
   &.btn-primary {
     background: var(--primary-color);
-    color: white;
+    color: var(--bg-white);
 
     &:hover:not(:disabled) {
-      background: var(--primary-dark);
+      opacity: 0.9;
     }
   }
 
   &.btn-secondary {
-    flex-shrink: 0;
-    background: var(--bg-gray);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
+    background: var(--bg-light);
+    color: var(--text-dark);
+    border: 1px solid var(--border-light);
 
     &:hover:not(:disabled) {
-      background: #e0e0e0;
-    }
-  }
-
-  &.btn-success {
-    background: var(--success-color);
-    color: white;
-
-    &:hover:not(:disabled) {
-      background: #45a049;
-    }
-  }
-
-  &.btn-warning {
-    background: var(--warning-color);
-    color: white;
-
-    &:hover:not(:disabled) {
-      background: #e6a800;
-    }
-  }
-
-  &.btn-error,
-  &.btn-danger {
-    background: var(--error-color);
-    color: white;
-
-    &:hover:not(:disabled) {
-      background: #d32f2f;
-    }
-  }
-
-  &.btn-info {
-    background: var(--info-color);
-    color: white;
-
-    &:hover:not(:disabled) {
-      background: #1976d2;
+      background: var(--bg-gray);
     }
   }
 
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 }

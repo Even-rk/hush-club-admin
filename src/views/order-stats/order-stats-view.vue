@@ -20,146 +20,146 @@
 
     <!-- 筛选器 -->
     <div class="content-card filter-card">
-    <div class="card-header">
-      <div class="card-title">数据筛选</div>
-      <button class="btn btn-primary">应用筛选</button>
-    </div>
-    <div class="card-body">
-      <div class="filters">
-        <div class="filter-item">
-          <label class="filter-label">年份:</label>
-          <cool-select
-            v-model="selectedYear"
-            :options="yearOptions"
-            class="filter-select"
-            @change="onYearChange"
-          />
-        </div>
-        <div class="filter-item">
-          <label class="filter-label">月份:</label>
-          <cool-select
-            v-model="selectedMonth"
-            :options="monthOptions"
-            class="filter-select"
-            @change="onMonthChange"
-          />
-        </div>
-        <div class="filter-item">
-          <label class="filter-label">快速筛选:</label>
-          <cool-select
-            v-model="selectedQuickFilter"
-            :options="quickFilterOptions"
-            class="filter-select"
-            @change="applyQuickFilter"
-          />
-        </div>
-        <div class="filter-item">
-          <label class="filter-label">对比:</label>
-          <cool-select
-            v-model="selectedCompareFilter"
-            :options="compareFilterOptions"
-            class="filter-select"
-            @change="onCompareChange"
-          />
+      <div class="card-header">
+        <div class="card-title">数据筛选</div>
+        <button class="btn btn-primary">应用筛选</button>
+      </div>
+      <div class="card-body">
+        <div class="filters">
+          <div class="filter-item">
+            <label class="filter-label">年份:</label>
+            <cool-select
+              v-model="selectedYear"
+              :options="yearOptions"
+              class="filter-select"
+              @change="onYearChange"
+            />
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">月份:</label>
+            <cool-select
+              v-model="selectedMonth"
+              :options="monthOptions"
+              class="filter-select"
+              @change="onMonthChange"
+            />
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">快速筛选:</label>
+            <cool-select
+              v-model="selectedQuickFilter"
+              :options="quickFilterOptions"
+              class="filter-select"
+              @change="applyQuickFilter"
+            />
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">对比:</label>
+            <cool-select
+              v-model="selectedCompareFilter"
+              :options="compareFilterOptions"
+              class="filter-select"
+              @change="onCompareChange"
+            />
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
     <!-- 统计卡片 -->
     <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-header">
-        <div class="stat-title">本月订单总数</div>
-        <div class="stat-icon">📋</div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">本月订单总数</div>
+          <div class="stat-icon">📋</div>
+        </div>
+        <div class="stat-number">3,420</div>
+        <div class="stat-trend trend-up">↗️ +15.2% 较上月</div>
       </div>
-      <div class="stat-number">3,420</div>
-      <div class="stat-trend trend-up">↗️ +15.2% 较上月</div>
-    </div>
 
-    <div class="stat-card">
-      <div class="stat-header">
-        <div class="stat-title">本月营业额</div>
-        <div class="stat-icon">💰</div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">本月营业额</div>
+          <div class="stat-icon">💰</div>
+        </div>
+        <div class="stat-number">¥356,800</div>
+        <div class="stat-trend trend-up">↗️ +22.5% 较上月</div>
       </div>
-      <div class="stat-number">¥356,800</div>
-      <div class="stat-trend trend-up">↗️ +22.5% 较上月</div>
-    </div>
 
-    <div class="stat-card">
-      <div class="stat-header">
-        <div class="stat-title">平均客单价</div>
-        <div class="stat-icon">💳</div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">平均客单价</div>
+          <div class="stat-icon">💳</div>
+        </div>
+        <div class="stat-number">¥104.33</div>
+        <div class="stat-trend trend-up">↗️ +6.8% 较上月</div>
       </div>
-      <div class="stat-number">¥104.33</div>
-      <div class="stat-trend trend-up">↗️ +6.8% 较上月</div>
-    </div>
     </div>
 
     <!-- 订单状态统计 -->
     <div class="content-card">
-    <div class="card-header">
-      <div class="card-title">订单状态分布</div>
-      <div class="card-actions">
-        <span class="current-period">2024年12月</span>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="status-grid">
-        <div class="status-card status-completed">
-          <div class="status-number">142</div>
-          <div class="status-label">已完成</div>
-        </div>
-        <div class="status-card status-processing">
-          <div class="status-number">18</div>
-          <div class="status-label">制作中</div>
-        </div>
-        <div class="status-card status-cancelled">
-          <div class="status-number">3</div>
-          <div class="status-label">已取消</div>
+      <div class="card-header">
+        <div class="card-title">订单状态分布</div>
+        <div class="card-actions">
+          <span class="current-period">2024年12月</span>
         </div>
       </div>
-      <div class="chart-placeholder">📈 订单状态趋势图</div>
-    </div>
+      <div class="card-body">
+        <div class="status-grid">
+          <div class="status-card status-completed">
+            <div class="status-number">142</div>
+            <div class="status-label">已完成</div>
+          </div>
+          <div class="status-card status-processing">
+            <div class="status-number">18</div>
+            <div class="status-label">制作中</div>
+          </div>
+          <div class="status-card status-cancelled">
+            <div class="status-number">3</div>
+            <div class="status-label">已取消</div>
+          </div>
+        </div>
+        <div class="chart-placeholder">📈 订单状态趋势图</div>
+      </div>
     </div>
 
     <!-- 高峰时段分析 -->
     <div class="content-card">
-    <div class="card-header">
-      <div class="card-title">高峰时段分析</div>
-    </div>
-    <div class="card-body">
-      <div class="time-analysis">
-        <div class="time-item">
-          <div class="time-period">08:00 - 10:00</div>
-          <div class="time-stats">
-            <span class="order-count">28单</span>
-            <span class="order-percentage">16.7%</span>
+      <div class="card-header">
+        <div class="card-title">高峰时段分析</div>
+      </div>
+      <div class="card-body">
+        <div class="time-analysis">
+          <div class="time-item">
+            <div class="time-period">08:00 - 10:00</div>
+            <div class="time-stats">
+              <span class="order-count">28单</span>
+              <span class="order-percentage">16.7%</span>
+            </div>
           </div>
-        </div>
-        <div class="time-item">
-          <div class="time-period">10:00 - 12:00</div>
-          <div class="time-stats">
-            <span class="order-count">45单</span>
-            <span class="order-percentage">26.8%</span>
+          <div class="time-item">
+            <div class="time-period">10:00 - 12:00</div>
+            <div class="time-stats">
+              <span class="order-count">45单</span>
+              <span class="order-percentage">26.8%</span>
+            </div>
           </div>
-        </div>
-        <div class="time-item">
-          <div class="time-period">14:00 - 16:00</div>
-          <div class="time-stats">
-            <span class="order-count">52单</span>
-            <span class="order-percentage">31.0%</span>
+          <div class="time-item">
+            <div class="time-period">14:00 - 16:00</div>
+            <div class="time-stats">
+              <span class="order-count">52单</span>
+              <span class="order-percentage">31.0%</span>
+            </div>
           </div>
-        </div>
-        <div class="time-item">
-          <div class="time-period">19:00 - 21:00</div>
-          <div class="time-stats">
-            <span class="order-count">43单</span>
-            <span class="order-percentage">25.6%</span>
+          <div class="time-item">
+            <div class="time-period">19:00 - 21:00</div>
+            <div class="time-stats">
+              <span class="order-count">43单</span>
+              <span class="order-percentage">25.6%</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   </div>
 </template>
@@ -227,7 +227,6 @@ const onCompareChange = (value: string | number) => {
 <style scoped lang="scss">
 /* 订单统计页面 */
 .order-stats-page {
-  padding: 24px;
   background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
   min-height: 100vh;
 }

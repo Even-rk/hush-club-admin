@@ -335,7 +335,7 @@ onMounted(() => {
 
 /* 内容区域 */
 .content-area {
-  padding: 24px;
+  padding: 36px;
 }
 
 /* 用户菜单 */

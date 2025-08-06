@@ -25,62 +25,62 @@
     <!-- 统计卡片 -->
     <div class="stats-grid">
       <div class="stat-card stat-revenue">
-        <div class="stat-header">
-          <div class="stat-title">今日营业额</div>
-          <div class="stat-icon">💰</div>
+        <div class="stat-decoration"></div>
+        <div class="stat-icon-wrapper">
+          <span class="stat-icon">💰</span>
         </div>
-        <div class="stat-number">¥15,680</div>
-        <div class="stat-footer">
-          <div class="stat-trend trend-up">
-            <span class="trend-icon">↗️</span>
-            <span class="trend-value">+12.5%</span>
+        <div class="stat-content">
+          <div class="stat-title">今日营业额</div>
+          <div class="stat-number">¥15,680</div>
+          <div class="stat-trend">
+            <span class="trend-badge trend-up">+12.5%</span>
+            <span class="trend-text">较昨日</span>
           </div>
-          <span class="stat-compare">较昨日</span>
         </div>
       </div>
 
       <div class="stat-card stat-orders">
-        <div class="stat-header">
-          <div class="stat-title">今日订单</div>
-          <div class="stat-icon">📋</div>
+        <div class="stat-decoration"></div>
+        <div class="stat-icon-wrapper">
+          <span class="stat-icon">📋</span>
         </div>
-        <div class="stat-number">168</div>
-        <div class="stat-footer">
-          <div class="stat-trend trend-up">
-            <span class="trend-icon">↗️</span>
-            <span class="trend-value">+8.3%</span>
+        <div class="stat-content">
+          <div class="stat-title">今日订单</div>
+          <div class="stat-number">168</div>
+          <div class="stat-trend">
+            <span class="trend-badge trend-up">+8.3%</span>
+            <span class="trend-text">较昨日</span>
           </div>
-          <span class="stat-compare">较昨日</span>
         </div>
       </div>
 
       <div class="stat-card stat-members">
-        <div class="stat-header">
-          <div class="stat-title">新增会员</div>
-          <div class="stat-icon">👥</div>
+        <div class="stat-decoration"></div>
+        <div class="stat-icon-wrapper">
+          <span class="stat-icon">👥</span>
         </div>
-        <div class="stat-number">28</div>
-        <div class="stat-footer">
-          <div class="stat-trend trend-down">
-            <span class="trend-icon">↘️</span>
-            <span class="trend-value">-5.2%</span>
+        <div class="stat-content">
+          <div class="stat-title">新增会员</div>
+          <div class="stat-number">28</div>
+          <div class="stat-trend">
+            <span class="trend-badge trend-down">-5.2%</span>
+            <span class="trend-text">较昨日</span>
           </div>
-          <span class="stat-compare">较昨日</span>
         </div>
       </div>
 
       <div class="stat-card stat-price">
-        <div class="stat-header">
-          <div class="stat-title">客单价</div>
-          <div class="stat-icon">💳</div>
+        <div class="stat-decoration"></div>
+        <div class="stat-icon-wrapper">
+          <span class="stat-icon">💳</span>
         </div>
-        <div class="stat-number">¥93.33</div>
-        <div class="stat-footer">
-          <div class="stat-trend trend-up">
-            <span class="trend-icon">↗️</span>
-            <span class="trend-value">+3.8%</span>
+        <div class="stat-content">
+          <div class="stat-title">客单价</div>
+          <div class="stat-number">¥93.33</div>
+          <div class="stat-trend">
+            <span class="trend-badge trend-up">+3.8%</span>
+            <span class="trend-text">较昨日</span>
           </div>
-          <span class="stat-compare">较昨日</span>
         </div>
       </div>
     </div>
@@ -252,7 +252,6 @@ const orderColumns: TableColumn[] = [
 <style lang="scss" scoped>
 /* 数据概览页面 */
 .dashboard-page {
-  padding: 24px;
   background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
   min-height: 100vh;
 }
@@ -347,140 +346,258 @@ const orderColumns: TableColumn[] = [
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 24px;
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
 .stat-card {
   background: var(--bg-white);
-  border-radius: var(--radius-xl);
-  padding: 24px;
-  box-shadow: var(--shadow-md);
+  border-radius: 20px;
+  padding: 28px;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid var(--border-light);
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-2xl);
 
-    .stat-icon {
-      transform: scale(1.1);
+    .stat-icon-wrapper {
+      transform: rotate(10deg) scale(1.1);
+    }
+
+    .stat-decoration {
+      transform: scale(1.2);
+      opacity: 0.2;
     }
   }
 
-  &::before {
-    content: '';
+  // 装饰元素
+  .stat-decoration {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
+    top: -30px;
+    right: -30px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    transition: all 0.4s;
+    opacity: 0.15;
   }
 
-  &.stat-revenue::before {
-    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-color) 100%);
+  // 营业额卡片 - 绿色主题
+  &.stat-revenue {
+    background: linear-gradient(
+      135deg,
+      var(--bg-success-strong-start) 0%,
+      var(--bg-success-strong-end) 100%
+    );
+    border: 1px solid var(--success-color);
+
+    .stat-decoration {
+      background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark-end) 100%);
+    }
+
+    .stat-icon-wrapper {
+      background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark-end) 100%);
+      box-shadow: var(--shadow-success);
+    }
+
+    .stat-number {
+      color: var(--text-success-dark);
+      font-weight: 800;
+    }
+
+    .stat-title {
+      color: var(--success-color);
+      font-weight: 600;
+    }
   }
 
-  &.stat-orders::before {
-    background: linear-gradient(135deg, var(--info-color) 0%, var(--info-color) 100%);
+  // 订单卡片 - 蓝色主题
+  &.stat-orders {
+    background: linear-gradient(
+      135deg,
+      var(--bg-info-strong-start) 0%,
+      var(--bg-info-strong-end) 100%
+    );
+    border: 1px solid var(--info-color);
+
+    .stat-decoration {
+      background: linear-gradient(135deg, var(--info-color) 0%, var(--info-dark-end) 100%);
+    }
+
+    .stat-icon-wrapper {
+      background: linear-gradient(135deg, var(--info-color) 0%, var(--info-dark-end) 100%);
+      box-shadow: var(--shadow-info);
+    }
+
+    .stat-number {
+      color: var(--text-info-dark);
+      font-weight: 800;
+    }
+
+    .stat-title {
+      color: var(--info-color);
+      font-weight: 600;
+    }
   }
 
-  &.stat-members::before {
-    background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-color) 100%);
+  // 会员卡片 - 黄色主题
+  &.stat-members {
+    background: linear-gradient(
+      135deg,
+      var(--bg-warning-strong-start) 0%,
+      var(--bg-warning-strong-end) 100%
+    );
+    border: 1px solid var(--warning-color);
+
+    .stat-decoration {
+      background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-dark-end) 100%);
+    }
+
+    .stat-icon-wrapper {
+      background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-dark-end) 100%);
+      box-shadow: var(--shadow-warning);
+    }
+
+    .stat-number {
+      color: var(--text-warning-dark);
+      font-weight: 800;
+    }
+
+    .stat-title {
+      color: var(--warning-color);
+      font-weight: 600;
+    }
   }
 
-  &.stat-price::before {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  // 客单价卡片 - 主题色
+  &.stat-price {
+    background: linear-gradient(
+      135deg,
+      var(--bg-primary-strong-start) 0%,
+      var(--bg-primary-strong-end) 100%
+    );
+    border: 1px solid var(--primary-color);
+
+    .stat-decoration {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark-end) 100%);
+    }
+
+    .stat-icon-wrapper {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark-end) 100%);
+      box-shadow: var(--shadow-primary);
+    }
+
+    .stat-number {
+      color: var(--text-primary-dark);
+      font-weight: 800;
+    }
+
+    .stat-title {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
   }
 }
 
-.stat-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.stat-title {
-  font-size: 13px;
-  color: var(--text-muted);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.stat-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-md);
+// 图标容器
+.stat-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  background: var(--bg-light);
-  transition: transform 0.3s;
-}
+  margin-bottom: 20px;
+  transition: all 0.4s;
+  position: relative;
 
-.stat-revenue .stat-icon {
-  background: var(--success-bg);
-}
-
-.stat-orders .stat-icon {
-  background: var(--info-bg);
-}
-
-.stat-members .stat-icon {
-  background: var(--warning-bg);
-}
-
-.stat-price .stat-icon {
-  background: rgba(255, 107, 53, 0.1);
-}
-
-.stat-number {
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--text-heading);
-  margin-bottom: 12px;
-  line-height: 1;
-}
-
-.stat-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-light);
-}
-
-.stat-trend {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  .trend-icon {
-    font-size: 14px;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: var(--bg-white);
+    opacity: 0.9;
+    z-index: 0;
   }
 
-  .trend-value {
+  .stat-icon {
+    font-size: 24px;
+    filter: var(--shadow-drop);
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// 内容区域
+.stat-content {
+  position: relative;
+  z-index: 1;
+
+  .stat-title {
     font-size: 13px;
+    color: var(--text-muted);
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
   }
-}
 
-.trend-up {
-  color: var(--success-color);
-}
+  .stat-number {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 16px;
+    transition: all 0.3s;
+  }
 
-.trend-down {
-  color: var(--error-color);
-}
+  .stat-trend {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
-.stat-compare {
-  font-size: 12px;
-  color: var(--text-muted);
+    .trend-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+
+      &.trend-up {
+        background: linear-gradient(135deg, var(--trend-up-start) 0%, var(--trend-up-end) 100%);
+        color: var(--trend-up-text);
+        border: 1px solid var(--trend-up-end);
+
+        &::before {
+          content: '↑';
+          margin-right: 4px;
+          font-weight: bold;
+        }
+      }
+
+      &.trend-down {
+        background: linear-gradient(135deg, var(--trend-down-start) 0%, var(--trend-down-end) 100%);
+        color: var(--trend-down-text);
+        border: 1px solid var(--trend-down-end);
+
+        &::before {
+          content: '↓';
+          margin-right: 4px;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .trend-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+  }
 }
 
 /* 内容卡片 */

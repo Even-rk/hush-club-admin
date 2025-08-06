@@ -244,7 +244,6 @@ onMounted(async () => {
 <style scoped lang="scss">
 /* 用户管理页面样式 */
 .user-management-page {
-  padding: 24px;
   background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
   min-height: 100vh;
 }
