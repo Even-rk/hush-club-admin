@@ -353,8 +353,7 @@ export const reqGetMemberList = async (params?: {
   }
   // 查会员姓名/手机号
   if (params?.query) {
-    supabaseMember.ilike('real_name', `%${params.query}%`)
-    supabaseMember.or(`phone.ilike.%${params.query}%`)
+    supabaseMember.or(`real_name.ilike.%${params.query}%,phone.ilike.%${params.query}%`)
   }
   const { data, error } = await supabaseMember
   if (error) {
@@ -401,11 +400,26 @@ export const reqGetMemberLevels = async (): Promise<MemberLevel[]> => {
 }
 
 // 用户列表
-export const reqGetUserList = async (role_code?: string): Promise<User[]> => {
+export const reqGetUserList = async (params?: {
+  // 角色
+  role?: number
+  // 状态
+  status?: string
+  // 用户名/手机号/邮箱
+  query?: string
+}): Promise<User[]> => {
   const supabaseUser = supabase.from('system_users').select('*')
   // 查权限对应的用户
-  if (role_code) {
-    supabaseUser.eq('role_code', role_code)
+  if (params?.role) {
+    supabaseUser.eq('role_id', params.role)
+  }
+  // 查状态
+  if (params?.status) {
+    supabaseUser.eq('status', params.status)
+  }
+  // 查用户名/手机号/邮箱
+  if (params?.query) {
+    supabaseUser.or(`username.ilike.%${params.query}%,email.ilike.%${params.query}%`)
   }
   const { data, error } = await supabaseUser
   if (error) {

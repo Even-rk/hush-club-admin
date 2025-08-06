@@ -110,7 +110,7 @@ const productList = ref<Product[]>([])
 const loading = ref(false)
 
 // 筛选器状态
-const selectedCategory = ref(0)
+const selectedCategory = ref()
 const selectedStatus = ref('')
 const searchQuery = ref('')
 

@@ -34,9 +34,10 @@
               v-model="search"
               type="text"
               class="search-input-enhanced"
-              placeholder="搜索用户名、邮箱或手机号..."
+              placeholder="搜索用户名或邮箱..."
+              @change="searchChange()"
             />
-            <button class="search-btn" @click="searchUser">搜索</button>
+            <button class="search-btn" @click="searchUser()">搜索</button>
           </div>
 
           <div class="filter-group">
@@ -44,16 +45,16 @@
               <cool-select
                 v-model="selectedRole"
                 :options="roleOptions"
-                class="filter-select-enhanced"
                 placeholder="全部角色"
+                @change="searchUser()"
               />
             </div>
             <div class="filter-item-enhanced">
               <cool-select
                 v-model="selectedStatus"
                 :options="statusOptions"
-                class="filter-select-enhanced"
                 placeholder="全部状态"
+                @change="searchUser()"
               />
             </div>
             <button class="btn btn-secondary" @click="resetFilter">重置筛选</button>
@@ -95,6 +96,7 @@ import route from '@/router/route'
 import CoolSelect from '@/components/cool-select.vue'
 import UserStatsCards from './components/user-stats-cards.vue'
 import RolePermissionsPanel from './components/role-permissions-panel.vue'
+import { ElMessage } from 'element-plus'
 
 // 用户列表
 const userList = ref<User[]>([])
@@ -102,18 +104,14 @@ const userList = ref<User[]>([])
 const loading = ref(false)
 
 // 筛选器状态
-const selectedRole = ref('')
+const selectedRole = ref()
 // 筛选状态
 const selectedStatus = ref('')
 // 搜索
 const search = ref('')
 
 // 角色选项
-const roleOptions = [
-  { label: '超级管理员', value: 'superadmin' },
-  { label: '管理员', value: 'admin' },
-  { label: '店员', value: 'staff' }
-]
+const roleOptions = ref<{ label: string; value: number }[]>([])
 
 // 状态选项
 const statusOptions = [
@@ -198,17 +196,42 @@ const userActions: TableAction<User>[] = [
 ]
 
 // 搜索
-const searchUser = () => {
-  console.log('搜索:', search.value)
+const searchUser = async (params?: { role?: number; status?: string; query?: string }) => {
+  loading.value = true
+  try {
+    const users = await reqGetUserList({
+      role: params?.role || selectedRole.value,
+      status: params?.status || selectedStatus.value,
+      query: params?.query || search.value
+    })
+    userList.value = users
+  } finally {
+    loading.value = false
+  }
 }
 
 // 重置筛选
 const resetFilter = () => {
+  if (selectedRole.value || selectedStatus.value) {
+    searchUser({
+      role: selectedRole.value,
+      status: selectedStatus.value,
+      query: search.value
+    })
+  } else {
+    ElMessage.warning('没有筛选条件')
+  }
   selectedRole.value = ''
   selectedStatus.value = ''
   search.value = ''
 }
 
+// 查询变化
+const searchChange = () => {
+  if (!search.value) {
+    searchUser()
+  }
+}
 // 加载数据
 onMounted(async () => {
   loading.value = true
@@ -217,9 +240,12 @@ onMounted(async () => {
       reqGetUserList(),
       reqGetRolePermissionList()
     ])
-    console.log(users)
     userList.value = users
     rolePermissionList.value = rolePermissions
+    roleOptions.value = rolePermissions.map(i => ({
+      label: i.role_name,
+      value: i.id
+    }))
   } finally {
     loading.value = false
   }
