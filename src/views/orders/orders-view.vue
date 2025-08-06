@@ -22,14 +22,6 @@
     <div class="content-card">
       <div class="card-header">
         <div class="card-title">订单列表</div>
-        <div class="card-tools">
-          <button class="tool-btn" title="刷新" @click="searchOrders()">
-            <span>🔄</span>
-          </button>
-          <button class="tool-btn" title="筛选">
-            <span>🎯</span>
-          </button>
-        </div>
       </div>
       <div class="card-body">
         <!-- 搜索和筛选区域 -->
@@ -425,33 +417,6 @@ onMounted(() => {
     font-size: 18px;
     font-weight: 600;
     color: var(--text-heading);
-  }
-
-  .card-tools {
-    display: flex;
-    gap: 8px;
-
-    .tool-btn {
-      width: 32px;
-      height: 32px;
-      border: 1px solid var(--border-medium);
-      border-radius: var(--radius);
-      background: var(--bg-white);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-
-      &:hover {
-        background: var(--bg-light);
-        border-color: var(--border-hover);
-      }
-
-      span {
-        font-size: 16px;
-      }
-    }
   }
 }
 
