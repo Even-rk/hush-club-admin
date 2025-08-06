@@ -22,11 +22,11 @@
           <!-- 商品分类 -->
           <div class="form-group">
             <label class="form-label required">商品分类</label>
-            <select class="form-control" placeholder="请选择商品分类">
-              <option v-for="category in categories" :key="category.id" :value="category.id">
-                {{ category.category_name }}
-              </option>
-            </select>
+            <cool-select
+              v-model="selectedCategory"
+              :options="categoryOptions"
+              placeholder="请选择商品分类"
+            />
           </div>
 
           <!-- 商品图片 -->
@@ -123,9 +123,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { reqGetAllCategory } from '@/api/supabase'
 import type { Product, ProductCategory } from '@/types/supabase'
+import CoolSelect from './cool-select.vue'
 
 interface ProductForm {
   id?: number
@@ -159,6 +160,17 @@ const loading = ref(false)
 
 // 商品分类列表
 const categories = ref<ProductCategory[]>([])
+
+// 选择器状态
+const selectedCategory = ref<string | number>('')
+
+// 分类选项 - 将分类数据转换为选择器选项格式
+const categoryOptions = computed(() => {
+  return categories.value.map(category => ({
+    label: category.category_name,
+    value: category.id
+  }))
+})
 
 // 当前模式
 const currentMode = ref(props.mode)

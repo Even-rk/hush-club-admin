@@ -308,8 +308,8 @@ export const reqGetMemberLevels = async (): Promise<MemberLevel[]> => {
 }
 
 // 用户列表
-export const reqGetUserList = async (): Promise<User[]> => {
-  const { data, error } = await supabase.from('system_users').select('*')
+export const reqGetUserList = async (role_code?: string): Promise<User[]> => {
+  const { data, error } = await supabase.from('system_users').select('*').eq('role_code', role_code)
   if (error) {
     return []
   }

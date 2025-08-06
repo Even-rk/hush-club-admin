@@ -10,24 +10,30 @@
       <div class="filters">
         <div class="filter-item">
           <label class="filter-label">商品分类:</label>
-          <select class="form-select filter-select">
-            <option>全部分类</option>
-            <option>咖啡</option>
-            <option>茶饮</option>
-            <option>甜品</option>
-          </select>
+          <cool-select
+            v-model="selectedCategory"
+            :options="categoryOptions"
+            class="filter-select"
+            placeholder="全部分类"
+          />
         </div>
         <div class="filter-item">
           <label class="filter-label">商品状态:</label>
-          <select class="form-select filter-select">
-            <option>全部状态</option>
-            <option>上架中</option>
-            <option>已下架</option>
-          </select>
+          <cool-select
+            v-model="selectedStatus"
+            :options="statusOptions"
+            class="filter-select"
+            placeholder="全部状态"
+          />
         </div>
         <div class="filter-item">
-          <input type="text" class="form-control filter-search" placeholder="搜索商品名称" />
-          <button class="btn btn-secondary">搜索</button>
+          <input
+            v-model="searchQuery"
+            type="text"
+            class="form-control filter-search"
+            placeholder="搜索商品名称"
+          />
+          <button class="btn btn-secondary" @click="searchProducts">搜索</button>
         </div>
       </div>
 
@@ -72,10 +78,41 @@ import { reqGetProductList } from '@/api/supabase'
 import { Product, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
 import ProductModal from '@/components/product-modal.vue'
+import CoolSelect from '@/components/cool-select.vue'
 
 // 数据状态
 const productList = ref<Product[]>([])
 const loading = ref(false)
+
+// 筛选器状态
+const selectedCategory = ref('')
+const selectedStatus = ref('')
+const searchQuery = ref('')
+
+// 分类选项
+const categoryOptions = [
+  { label: '全部分类', value: '' },
+  { label: '咖啡', value: 'coffee' },
+  { label: '茶饮', value: 'tea' },
+  { label: '甜品', value: 'dessert' }
+]
+
+// 状态选项
+const statusOptions = [
+  { label: '全部状态', value: '' },
+  { label: '上架中', value: 'active' },
+  { label: '已下架', value: 'inactive' }
+]
+
+// 搜索商品
+const searchProducts = () => {
+  console.log('搜索参数:', {
+    category: selectedCategory.value,
+    status: selectedStatus.value,
+    query: searchQuery.value
+  })
+  // TODO: 实现搜索逻辑
+}
 
 // 商品弹窗
 const productModalVisible = ref(false)
@@ -267,7 +304,7 @@ onMounted(async () => {
   .no-image {
     width: 50px;
     height: 50px;
-    background: var(--bg-gray);
+    background: var(--bg-secondary);
     border-radius: 6px;
     display: flex;
     align-items: center;

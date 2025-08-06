@@ -27,12 +27,12 @@
         <div class="filters">
           <div class="filter-item">
             <label class="filter-label">会员等级:</label>
-            <select class="form-select filter-select">
-              <option>全部等级</option>
-              <option>普通会员</option>
-              <option>银牌会员</option>
-              <option>金牌会员</option>
-            </select>
+            <cool-select
+              v-model="selectedLevel"
+              :options="levelOptions"
+              class="filter-select"
+              placeholder="全部等级"
+            />
           </div>
           <div class="filter-item">
             <label class="filter-label">注册时间:</label>
@@ -68,6 +68,7 @@ import { ref, onMounted } from 'vue'
 import { reqGetMemberList } from '@/api/supabase'
 import { Member, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
+import CoolSelect from '@/components/cool-select.vue'
 
 // 数据状态
 const memberList = ref<Member[]>([])
@@ -75,6 +76,17 @@ const memberTotal = ref(0)
 const totalRecharge = ref(0)
 const maxRecharge = ref(0)
 const loading = ref(false)
+
+// 筛选器状态
+const selectedLevel = ref('')
+
+// 会员等级选项
+const levelOptions = [
+  { label: '全部等级', value: '' },
+  { label: '普通会员', value: 'normal' },
+  { label: '银牌会员', value: 'silver' },
+  { label: '金牌会员', value: 'gold' }
+]
 
 // 表格列配置
 const memberColumns: TableColumn<Member>[] = [

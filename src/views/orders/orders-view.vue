@@ -9,21 +9,21 @@
       <div class="filters">
         <div class="filter-item">
           <label class="filter-label">订单状态:</label>
-          <select class="form-select filter-select">
-            <option>全部状态</option>
-            <option>已完成</option>
-            <option>制作中</option>
-            <option>待支付</option>
-            <option>已取消</option>
-          </select>
+          <cool-select
+            v-model="selectedStatus"
+            :options="statusOptions"
+            class="filter-select"
+            placeholder="全部状态"
+          />
         </div>
         <div class="filter-item">
           <label class="filter-label">支付方式:</label>
-          <select class="form-select filter-select">
-            <option>全部方式</option>
-            <option>微信支付</option>
-            <option>余额支付</option>
-          </select>
+          <cool-select
+            v-model="selectedPayment"
+            :options="paymentOptions"
+            class="filter-select"
+            placeholder="全部方式"
+          />
         </div>
         <div class="filter-item">
           <label class="filter-label">日期:</label>
@@ -77,10 +77,31 @@ import { formatDate } from '@/utils/format'
 import { onMounted, ref } from 'vue'
 import { supabase } from '@/utils/supabase'
 import DataTable from '@/components/data-table.vue'
+import CoolSelect from '@/components/cool-select.vue'
 
 // 数据状态
 const orderList = ref<OrderDetail[]>([])
 const loading = ref(false)
+
+// 筛选器状态
+const selectedStatus = ref('')
+const selectedPayment = ref('')
+
+// 订单状态选项
+const statusOptions = [
+  { label: '全部状态', value: '' },
+  { label: '已完成', value: 'completed' },
+  { label: '制作中', value: 'processing' },
+  { label: '待支付', value: 'pending' },
+  { label: '已取消', value: 'cancelled' }
+]
+
+// 支付方式选项
+const paymentOptions = [
+  { label: '全部方式', value: '' },
+  { label: '微信支付', value: 'wechat' },
+  { label: '余额支付', value: 'balance' }
+]
 
 // 表格列配置
 const orderColumns: TableColumn<OrderDetail>[] = [

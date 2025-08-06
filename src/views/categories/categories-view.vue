@@ -10,15 +10,21 @@
       <div class="filters">
         <div class="filter-item">
           <label class="filter-label">状态:</label>
-          <select class="form-select filter-select">
-            <option>全部状态</option>
-            <option>已启用</option>
-            <option>已禁用</option>
-          </select>
+          <cool-select
+            v-model="selectedStatus"
+            :options="statusOptions"
+            class="filter-select"
+            placeholder="全部状态"
+          />
         </div>
         <div class="filter-item">
-          <input type="text" class="form-control filter-search" placeholder="搜索分类名称" />
-          <button class="btn btn-secondary">搜索</button>
+          <input
+            v-model="searchQuery"
+            type="text"
+            class="form-control filter-search"
+            placeholder="搜索分类名称"
+          />
+          <button class="btn btn-secondary" @click="searchCategories">搜索</button>
         </div>
       </div>
 
@@ -59,10 +65,31 @@ import { ref, onMounted } from 'vue'
 import { reqGetAllCategory } from '@/api/supabase'
 import { ProductCategory, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
+import CoolSelect from '@/components/cool-select.vue'
 
 // 数据状态
 const categoryList = ref<ProductCategory[]>([])
 const loading = ref(false)
+
+// 筛选器状态
+const selectedStatus = ref('')
+const searchQuery = ref('')
+
+// 状态选项
+const statusOptions = [
+  { label: '全部状态', value: '' },
+  { label: '已启用', value: 'active' },
+  { label: '已禁用', value: 'inactive' }
+]
+
+// 搜索分类
+const searchCategories = () => {
+  console.log('搜索参数:', {
+    status: selectedStatus.value,
+    query: searchQuery.value
+  })
+  // TODO: 实现搜索逻辑
+}
 
 // 表格列配置
 const categoryColumns: TableColumn<ProductCategory>[] = [

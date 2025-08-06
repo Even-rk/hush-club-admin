@@ -226,7 +226,7 @@ onMounted(async () => {
 }
 
 .level-perks {
-  background: var(--bg-gray);
+  background: var(--bg-secondary);
   padding: 12px;
   border-radius: var(--radius);
 

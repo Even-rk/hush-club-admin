@@ -10,50 +10,39 @@
       <div class="filters">
         <div class="filter-item">
           <label class="filter-label">年份:</label>
-          <select id="yearFilter" class="form-select filter-select">
-            <option value="2024" selected>2024年</option>
-            <option value="2023">2023年</option>
-            <option value="2022">2022年</option>
-            <option value="2021">2021年</option>
-          </select>
+          <cool-select
+            v-model="selectedYear"
+            :options="yearOptions"
+            class="filter-select"
+            @change="onYearChange"
+          />
         </div>
         <div class="filter-item">
           <label class="filter-label">月份:</label>
-          <select id="monthFilter" class="form-select filter-select">
-            <option value="">全年</option>
-            <option value="1">1月</option>
-            <option value="2">2月</option>
-            <option value="3">3月</option>
-            <option value="4">4月</option>
-            <option value="5">5月</option>
-            <option value="6">6月</option>
-            <option value="7">7月</option>
-            <option value="8">8月</option>
-            <option value="9">9月</option>
-            <option value="10">10月</option>
-            <option value="11">11月</option>
-            <option value="12" selected>12月</option>
-          </select>
+          <cool-select
+            v-model="selectedMonth"
+            :options="monthOptions"
+            class="filter-select"
+            @change="onMonthChange"
+          />
         </div>
         <div class="filter-item">
           <label class="filter-label">快速筛选:</label>
-          <select id="quickFilter" class="form-select filter-select" onchange="applyQuickFilter()">
-            <option value="">自定义</option>
-            <option value="today">今天</option>
-            <option value="week">本周</option>
-            <option value="month">本月</option>
-            <option value="quarter">本季度</option>
-            <option value="year">本年</option>
-          </select>
+          <cool-select
+            v-model="selectedQuickFilter"
+            :options="quickFilterOptions"
+            class="filter-select"
+            @change="applyQuickFilter"
+          />
         </div>
         <div class="filter-item">
           <label class="filter-label">对比:</label>
-          <select id="compareFilter" class="form-select filter-select">
-            <option value="none">无对比</option>
-            <option value="lastMonth" selected>较上月</option>
-            <option value="lastYear">较去年同期</option>
-            <option value="lastQuarter">较上季度</option>
-          </select>
+          <cool-select
+            v-model="selectedCompareFilter"
+            :options="compareFilterOptions"
+            class="filter-select"
+            @change="onCompareChange"
+          />
         </div>
       </div>
     </div>
@@ -157,7 +146,78 @@
 </template>
 
 <script setup lang="ts">
-// 订单统计页面逻辑
+import { ref } from 'vue'
+import CoolSelect from '@/components/cool-select.vue'
+
+// 筛选器状态
+const selectedYear = ref('2024')
+const selectedMonth = ref('12')
+const selectedQuickFilter = ref('')
+const selectedCompareFilter = ref('lastMonth')
+
+// 年份选项
+const yearOptions = [
+  { label: '2024年', value: '2024' },
+  { label: '2023年', value: '2023' },
+  { label: '2022年', value: '2022' },
+  { label: '2021年', value: '2021' }
+]
+
+// 月份选项
+const monthOptions = [
+  { label: '全年', value: '' },
+  { label: '1月', value: '1' },
+  { label: '2月', value: '2' },
+  { label: '3月', value: '3' },
+  { label: '4月', value: '4' },
+  { label: '5月', value: '5' },
+  { label: '6月', value: '6' },
+  { label: '7月', value: '7' },
+  { label: '8月', value: '8' },
+  { label: '9月', value: '9' },
+  { label: '10月', value: '10' },
+  { label: '11月', value: '11' },
+  { label: '12月', value: '12' }
+]
+
+// 快速筛选选项
+const quickFilterOptions = [
+  { label: '自定义', value: '' },
+  { label: '今天', value: 'today' },
+  { label: '本周', value: 'week' },
+  { label: '本月', value: 'month' },
+  { label: '本季度', value: 'quarter' },
+  { label: '本年', value: 'year' }
+]
+
+// 对比选项
+const compareFilterOptions = [
+  { label: '无对比', value: 'none' },
+  { label: '较上月', value: 'lastMonth' },
+  { label: '较去年同期', value: 'lastYear' },
+  { label: '较上季度', value: 'lastQuarter' }
+]
+
+// 事件处理函数
+const onYearChange = (value: string | number) => {
+  console.log('年份变更:', value)
+  // TODO: 实现年份变更逻辑
+}
+
+const onMonthChange = (value: string | number) => {
+  console.log('月份变更:', value)
+  // TODO: 实现月份变更逻辑
+}
+
+const applyQuickFilter = (value: string | number) => {
+  console.log('快速筛选:', value)
+  // TODO: 实现快速筛选逻辑
+}
+
+const onCompareChange = (value: string | number) => {
+  console.log('对比变更:', value)
+  // TODO: 实现对比逻辑
+}
 </script>
 
 <style scoped lang="scss">

@@ -1,120 +1,264 @@
 <template>
   <!-- 用户管理页面 -->
-  <div class="content-card">
-    <div class="card-header">
-      <div class="card-title">系统用户管理</div>
-      <button class="btn btn-primary">+ 添加用户</button>
+  <div class="user-management-page">
+    <!-- 页面头部 -->
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">
+          <span class="title-icon">👥</span>
+          系统用户管理
+        </h1>
+        <p class="page-subtitle">管理系统用户账号、角色权限和访问控制</p>
+      </div>
+      <button class="btn btn-primary btn-with-icon">
+        <span class="btn-icon">✨</span>
+        添加用户
+      </button>
     </div>
-    <div class="card-body">
-      <!-- 用户统计 -->
-      <div v-if="!loading" class="stats-grid">
-        <div class="stat-card stat-info">
-          <div class="stat-number">{{ userList.length }}</div>
-          <div class="stat-label">系统用户总数</div>
+
+    <!-- 用户统计卡片 -->
+    <div v-if="!loading" class="stats-container">
+      <div class="stat-card-enhanced stat-total">
+        <div class="stat-icon-wrapper">
+          <span class="stat-icon">👤</span>
         </div>
-        <div class="stat-card stat-success">
-          <div class="stat-number">
+        <div class="stat-content">
+          <div class="stat-number-large">{{ userList.length }}</div>
+          <div class="stat-label-enhanced">系统用户总数</div>
+          <div class="stat-trend">
+            <span class="trend-badge trend-up">↑ 12%</span>
+            <span class="trend-text">较上月</span>
+          </div>
+        </div>
+        <div class="stat-decoration"></div>
+      </div>
+
+      <div class="stat-card-enhanced stat-active">
+        <div class="stat-icon-wrapper">
+          <span class="stat-icon">✅</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number-large">
             {{ userList.filter(i => i.status == 'active').length }}
           </div>
-          <div class="stat-label">活跃用户</div>
+          <div class="stat-label-enhanced">活跃用户</div>
+          <div class="stat-percentage">
+            占比
+            {{
+              Math.round(
+                (userList.filter(i => i.status == 'active').length / userList.length) * 100
+              )
+            }}%
+          </div>
         </div>
-        <div class="stat-card stat-warning">
-          <div class="stat-number">
+        <div class="stat-decoration"></div>
+      </div>
+
+      <div class="stat-card-enhanced stat-admin">
+        <div class="stat-icon-wrapper">
+          <span class="stat-icon">👑</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number-large">
             {{ userList.filter(i => [1, 2].includes(i.role_id)).length }}
           </div>
-          <div class="stat-label">管理员</div>
+          <div class="stat-label-enhanced">管理员</div>
+          <div class="stat-subtitle">包含超管和普通管理员</div>
         </div>
-        <div class="stat-card stat-error">
-          <div class="stat-number">
+        <div class="stat-decoration"></div>
+      </div>
+
+      <div class="stat-card-enhanced stat-disabled">
+        <div class="stat-icon-wrapper">
+          <span class="stat-icon">🚫</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number-large">
             {{ userList.filter(i => i.status == 'inactive').length }}
           </div>
-          <div class="stat-label">已禁用</div>
-        </div>
-      </div>
-
-      <!-- 搜索和筛选 -->
-      <div class="search-bar">
-        <input type="text" class="search-input" placeholder="搜索用户名..." />
-        <button class="btn btn-secondary">🔍 搜索</button>
-      </div>
-
-      <div class="filters">
-        <div class="filter-item">
-          <label class="filter-label">角色:</label>
-          <select class="form-select filter-select">
-            <option>全部角色</option>
-            <option>超级管理员</option>
-            <option>管理员</option>
-            <option>店员</option>
-          </select>
-        </div>
-        <div class="filter-item">
-          <label class="filter-label">状态:</label>
-          <select class="form-select filter-select">
-            <option>全部状态</option>
-            <option>正常</option>
-            <option>已禁用</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- 用户列表 -->
-      <data-table
-        :data="userList"
-        :columns="userColumns"
-        :actions="userActions"
-        :loading="loading"
-        row-key="id"
-      />
-    </div>
-  </div>
-
-  <!-- 权限管理 -->
-  <div v-if="!loading" class="content-card">
-    <div class="card-header">
-      <div class="card-title">角色权限配置</div>
-    </div>
-    <div class="card-body">
-      <div class="role-grid">
-        <div
-          v-for="(role, index) in rolePermissionList"
-          :key="role.id"
-          class="role-card"
-          :class="`role-${role.role_code.toLowerCase()}`"
-        >
-          <div class="role-header">
-            <div class="role-title">{{ role.role_name }}</div>
-            <template v-if="!editPermission[index].isEdit">
-              <button class="btn btn-secondary btn-sm" @click="editPermissionFn(role.id, index)">
-                编辑
-              </button>
-            </template>
-            <div v-if="editPermission[index].isEdit">
-              <button
-                class="btn btn-secondary btn-sm"
-                @click="editPermission[index].isEdit = false"
-              >
-                取消
-              </button>
-              <button class="btn btn-primary btn-sm" @click="savePermission(role.id)">保存</button>
-            </div>
+          <div class="stat-label-enhanced">已禁用</div>
+          <div v-if="userList.filter(i => i.status == 'inactive').length > 5" class="stat-warning">
+            需要清理
           </div>
-          <div class="role-permissions">
-            <template v-if="!editPermission[index].isEdit">
-              <template v-for="permission in role.permissions" :key="permission.permission_code">
-                {{ permission.menu_name }}<br />
-              </template>
-            </template>
-            <template v-if="editPermission[index].isEdit">
-              <div v-for="routeItem in routeList" :key="routeItem.permission_code">
-                <input
-                  v-model="selectedPermission"
-                  :value="routeItem.permission_code"
-                  type="checkbox"
-                />
-                {{ routeItem.menu_name }}
+        </div>
+        <div class="stat-decoration"></div>
+      </div>
+    </div>
+
+    <!-- 用户列表卡片 -->
+    <div class="content-card user-list-card">
+      <div class="card-header">
+        <div class="card-title">用户列表</div>
+        <div class="card-tools">
+          <button class="tool-btn" title="刷新">
+            <span>🔄</span>
+          </button>
+          <button class="tool-btn" title="导出">
+            <span>📥</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- 搜索和筛选区域 -->
+        <div class="search-filter-container">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              class="search-input-enhanced"
+              placeholder="搜索用户名、邮箱或手机号..."
+            />
+            <button class="search-btn">搜索</button>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-item-enhanced">
+              <cool-select
+                v-model="selectedRole"
+                :options="roleOptions"
+                class="filter-select-enhanced"
+                placeholder="全部角色"
+              />
+            </div>
+            <div class="filter-item-enhanced">
+              <cool-select
+                v-model="selectedStatus"
+                :options="statusOptions"
+                class="filter-select-enhanced"
+                placeholder="全部状态"
+              />
+            </div>
+            <button class="filter-reset">重置筛选</button>
+          </div>
+        </div>
+
+        <!-- 用户列表 -->
+        <data-table
+          :data="userList"
+          :columns="userColumns"
+          :actions="userActions"
+          :loading="loading"
+          row-key="id"
+          class="user-table"
+        />
+      </div>
+    </div>
+
+    <!-- 权限管理卡片 -->
+    <div v-if="!loading" class="content-card permission-card">
+      <div class="card-header">
+        <div class="card-title-section">
+          <div class="card-title">
+            <span class="title-icon">🔐</span>
+            角色权限配置
+          </div>
+          <p class="card-description">配置不同角色的系统访问权限</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="role-grid-enhanced">
+          <div
+            v-for="(role, index) in rolePermissionList"
+            :key="role.id"
+            class="role-card-enhanced"
+            :class="`role-${role.role_code.toLowerCase()}`"
+          >
+            <!-- 角色卡片头部 -->
+            <div class="role-card-header">
+              <div class="role-info">
+                <span class="role-icon">
+                  {{
+                    role.role_code === 'SUPERADMIN'
+                      ? '👑'
+                      : role.role_code === 'ADMIN'
+                        ? '⭐'
+                        : '👤'
+                  }}
+                </span>
+                <div class="role-text">
+                  <h3 class="role-name">{{ role.role_name }}</h3>
+                  <span class="role-code">{{ role.role_code }}</span>
+                </div>
               </div>
-            </template>
+              <div class="role-actions">
+                <template v-if="!editPermission[index].isEdit">
+                  <button
+                    class="btn-icon-only"
+                    title="编辑权限"
+                    @click="editPermissionFn(role.id, index)"
+                  >
+                    ✏️
+                  </button>
+                </template>
+                <div v-if="editPermission[index].isEdit" class="edit-actions">
+                  <button
+                    class="btn-icon-text cancel"
+                    @click="editPermission[index].isEdit = false"
+                  >
+                    <span>❌</span>
+                    取消
+                  </button>
+                  <button class="btn-icon-text save" @click="savePermission(role.id)">
+                    <span>✅</span>
+                    保存
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 权限列表 -->
+            <div class="role-permissions-container">
+              <template v-if="!editPermission[index].isEdit">
+                <div class="permission-tags">
+                  <span
+                    v-for="permission in role.permissions"
+                    :key="permission.permission_code"
+                    class="permission-tag"
+                  >
+                    {{ permission.menu_name }}
+                  </span>
+                  <span
+                    v-if="!role.permissions || role.permissions.length === 0"
+                    class="no-permission"
+                  >
+                    暂无权限
+                  </span>
+                </div>
+              </template>
+
+              <template v-if="editPermission[index].isEdit">
+                <div class="permission-checkboxes">
+                  <label
+                    v-for="routeItem in routeList"
+                    :key="routeItem.permission_code"
+                    class="permission-checkbox"
+                  >
+                    <input
+                      v-model="selectedPermission"
+                      :value="routeItem.permission_code"
+                      type="checkbox"
+                      class="checkbox-input"
+                    />
+                    <span class="checkbox-label">{{ routeItem.menu_name }}</span>
+                  </label>
+                </div>
+              </template>
+            </div>
+
+            <!-- 角色统计 -->
+            <div class="role-stats">
+              <div class="stat-item">
+                <span class="stat-value">{{ role.permissions?.length || 0 }}</span>
+                <span class="stat-name">权限数</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value">
+                  {{ userList.filter(u => u.role_id === role.id).length }}
+                </span>
+                <span class="stat-name">用户数</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -130,11 +274,31 @@ import { formatDate } from '@/utils/format'
 import { onMounted, ref } from 'vue'
 import DataTable from '@/components/data-table.vue'
 import route from '@/router/route'
+import CoolSelect from '@/components/cool-select.vue'
 
 // 用户列表
 const userList = ref<User[]>([])
 // 加载中
 const loading = ref(false)
+
+// 筛选器状态
+const selectedRole = ref('')
+const selectedStatus = ref('')
+
+// 角色选项
+const roleOptions = [
+  { label: '全部角色', value: '' },
+  { label: '超级管理员', value: 'superadmin' },
+  { label: '管理员', value: 'admin' },
+  { label: '店员', value: 'staff' }
+]
+
+// 状态选项
+const statusOptions = [
+  { label: '全部状态', value: '' },
+  { label: '正常', value: 'active' },
+  { label: '已禁用', value: 'inactive' }
+]
 // 角色权限列表
 const rolePermissionList = ref<RolePermission[]>([])
 // 编辑权限

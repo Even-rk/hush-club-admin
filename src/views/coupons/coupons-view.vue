@@ -32,22 +32,21 @@
       <div class="filters">
         <div class="filter-item">
           <label class="filter-label">优惠券状态:</label>
-          <select class="form-select filter-select">
-            <option>全部状态</option>
-            <option>正常</option>
-            <option>已使用</option>
-            <option>已过期</option>
-            <option>已禁用</option>
-          </select>
+          <cool-select
+            v-model="selectedStatus"
+            :options="statusOptions"
+            class="filter-select"
+            placeholder="全部状态"
+          />
         </div>
         <div class="filter-item">
           <label class="filter-label">优惠类型:</label>
-          <select class="form-select filter-select">
-            <option>全部类型</option>
-            <option>满减券</option>
-            <option>折扣券</option>
-            <option>免费券</option>
-          </select>
+          <cool-select
+            v-model="selectedType"
+            :options="typeOptions"
+            class="filter-select"
+            placeholder="全部类型"
+          />
         </div>
       </div>
 
@@ -83,11 +82,33 @@ import { reqGetCouponList } from '@/api/supabase/SELECT'
 import { onMounted, ref } from 'vue'
 import DataTable from '@/components/data-table.vue'
 import { formatDate } from '@/utils/format'
+import CoolSelect from '@/components/cool-select.vue'
 
 // 优惠券列表
 const couponList = ref<Coupon[]>([])
 // 优惠券模版数量
 const coupon_count = ref(0)
+
+// 筛选器状态
+const selectedStatus = ref('')
+const selectedType = ref('')
+
+// 状态选项
+const statusOptions = [
+  { label: '全部状态', value: '' },
+  { label: '正常', value: 'normal' },
+  { label: '已使用', value: 'used' },
+  { label: '已过期', value: 'expired' },
+  { label: '已禁用', value: 'disabled' }
+]
+
+// 类型选项
+const typeOptions = [
+  { label: '全部类型', value: '' },
+  { label: '满减券', value: 'discount' },
+  { label: '折扣券', value: 'percentage' },
+  { label: '免费券', value: 'free' }
+]
 // 正常状态数量
 const active_count = ref(0)
 // 已禁用数量
@@ -248,7 +269,7 @@ onMounted(async () => {
   min-height: 80px;
 }
 
-/* 统计网格容器 */
+/* 优惠券页面特定样式 */
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -256,14 +277,12 @@ onMounted(async () => {
   margin-bottom: 24px;
 }
 
-/* 统计卡片基础样式 */
 .statCard {
   padding: 16px;
   border-radius: var(--radius);
   text-align: center;
 }
 
-/* 不同类型的统计卡片背景色 */
 .statCardSuccess {
   background: rgba(76, 175, 80, 0.1);
 }
@@ -280,7 +299,6 @@ onMounted(async () => {
   background: rgba(244, 67, 54, 0.1);
 }
 
-/* 统计数字样式 */
 .statNumber {
   font-size: 20px;
   font-weight: 600;
@@ -302,7 +320,6 @@ onMounted(async () => {
   color: var(--error-color);
 }
 
-/* 统计标签样式 */
 .statLabel {
   font-size: 12px;
   color: var(--text-secondary);

@@ -45,11 +45,7 @@
       <div class="card-header">
         <div class="card-title">销售趋势</div>
         <div class="card-actions">
-          <select class="form-select" style="min-width: 120px">
-            <option>最近7天</option>
-            <option>最近30天</option>
-            <option>最近90天</option>
-          </select>
+          <cool-select v-model="selectedPeriod" :options="periodOptions" style="min-width: 120px" />
         </div>
       </div>
       <div class="card-body">
@@ -172,7 +168,19 @@
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { ref } from 'vue'
+import CoolSelect from '@/components/cool-select.vue'
+
+// 时间段选择器选项
+const periodOptions = [
+  { label: '最近7天', value: '7days' },
+  { label: '最近30天', value: '30days' },
+  { label: '最近90天', value: '90days' }
+]
+
+const selectedPeriod = ref('7days')
+</script>
 
 <style lang="scss" scoped>
 /* 统计卡片 */
