@@ -17,73 +17,7 @@
     </div>
 
     <!-- 用户统计卡片 -->
-    <div v-if="!loading" class="stats-container">
-      <div class="stat-card-enhanced stat-total">
-        <div class="stat-icon-wrapper">
-          <span class="stat-icon">👤</span>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number-large">{{ userList.length }}</div>
-          <div class="stat-label-enhanced">系统用户总数</div>
-          <div class="stat-trend">
-            <span class="trend-badge trend-up">↑ 12%</span>
-            <span class="trend-text">较上月</span>
-          </div>
-        </div>
-        <div class="stat-decoration"></div>
-      </div>
-
-      <div class="stat-card-enhanced stat-active">
-        <div class="stat-icon-wrapper">
-          <span class="stat-icon">✅</span>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number-large">
-            {{ userList.filter(i => i.status == 'active').length }}
-          </div>
-          <div class="stat-label-enhanced">活跃用户</div>
-          <div class="stat-percentage">
-            占比
-            {{
-              Math.round(
-                (userList.filter(i => i.status == 'active').length / userList.length) * 100
-              )
-            }}%
-          </div>
-        </div>
-        <div class="stat-decoration"></div>
-      </div>
-
-      <div class="stat-card-enhanced stat-admin">
-        <div class="stat-icon-wrapper">
-          <span class="stat-icon">👑</span>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number-large">
-            {{ userList.filter(i => [1, 2].includes(i.role_id)).length }}
-          </div>
-          <div class="stat-label-enhanced">管理员</div>
-          <div class="stat-subtitle">包含超管和普通管理员</div>
-        </div>
-        <div class="stat-decoration"></div>
-      </div>
-
-      <div class="stat-card-enhanced stat-disabled">
-        <div class="stat-icon-wrapper">
-          <span class="stat-icon">🚫</span>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number-large">
-            {{ userList.filter(i => i.status == 'inactive').length }}
-          </div>
-          <div class="stat-label-enhanced">已禁用</div>
-          <div v-if="userList.filter(i => i.status == 'inactive').length > 5" class="stat-warning">
-            需要清理
-          </div>
-        </div>
-        <div class="stat-decoration"></div>
-      </div>
-    </div>
+    <UserStatsCards v-if="!loading" :user-list="userList" />
 
     <!-- 用户列表卡片 -->
     <div class="content-card user-list-card">
@@ -105,11 +39,12 @@
           <div class="search-box">
             <span class="search-icon">🔍</span>
             <input
+              v-model="search"
               type="text"
               class="search-input-enhanced"
               placeholder="搜索用户名、邮箱或手机号..."
             />
-            <button class="search-btn">搜索</button>
+            <button class="search-btn" @click="searchUser">搜索</button>
           </div>
 
           <div class="filter-group">
@@ -129,7 +64,7 @@
                 placeholder="全部状态"
               />
             </div>
-            <button class="filter-reset">重置筛选</button>
+            <button class="btn btn-secondary" @click="resetFilter">重置筛选</button>
           </div>
         </div>
 
@@ -146,123 +81,14 @@
     </div>
 
     <!-- 权限管理卡片 -->
-    <div v-if="!loading" class="content-card permission-card">
-      <div class="card-header">
-        <div class="card-title-section">
-          <div class="card-title">
-            <span class="title-icon">🔐</span>
-            角色权限配置
-          </div>
-          <p class="card-description">配置不同角色的系统访问权限</p>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="role-grid-enhanced">
-          <div
-            v-for="(role, index) in rolePermissionList"
-            :key="role.id"
-            class="role-card-enhanced"
-            :class="`role-${role.role_code.toLowerCase()}`"
-          >
-            <!-- 角色卡片头部 -->
-            <div class="role-card-header">
-              <div class="role-info">
-                <span class="role-icon">
-                  {{
-                    role.role_code === 'SUPERADMIN'
-                      ? '👑'
-                      : role.role_code === 'ADMIN'
-                        ? '⭐'
-                        : '👤'
-                  }}
-                </span>
-                <div class="role-text">
-                  <h3 class="role-name">{{ role.role_name }}</h3>
-                  <span class="role-code">{{ role.role_code }}</span>
-                </div>
-              </div>
-              <div class="role-actions">
-                <template v-if="!editPermission[index].isEdit">
-                  <button
-                    class="btn-icon-only"
-                    title="编辑权限"
-                    @click="editPermissionFn(role.id, index)"
-                  >
-                    ✏️
-                  </button>
-                </template>
-                <div v-if="editPermission[index].isEdit" class="edit-actions">
-                  <button
-                    class="btn-icon-text cancel"
-                    @click="editPermission[index].isEdit = false"
-                  >
-                    <span>❌</span>
-                    取消
-                  </button>
-                  <button class="btn-icon-text save" @click="savePermission(role.id)">
-                    <span>✅</span>
-                    保存
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- 权限列表 -->
-            <div class="role-permissions-container">
-              <template v-if="!editPermission[index].isEdit">
-                <div class="permission-tags">
-                  <span
-                    v-for="permission in role.permissions"
-                    :key="permission.permission_code"
-                    class="permission-tag"
-                  >
-                    {{ permission.menu_name }}
-                  </span>
-                  <span
-                    v-if="!role.permissions || role.permissions.length === 0"
-                    class="no-permission"
-                  >
-                    暂无权限
-                  </span>
-                </div>
-              </template>
-
-              <template v-if="editPermission[index].isEdit">
-                <div class="permission-checkboxes">
-                  <label
-                    v-for="routeItem in routeList"
-                    :key="routeItem.permission_code"
-                    class="permission-checkbox"
-                  >
-                    <input
-                      v-model="selectedPermission"
-                      :value="routeItem.permission_code"
-                      type="checkbox"
-                      class="checkbox-input"
-                    />
-                    <span class="checkbox-label">{{ routeItem.menu_name }}</span>
-                  </label>
-                </div>
-              </template>
-            </div>
-
-            <!-- 角色统计 -->
-            <div class="role-stats">
-              <div class="stat-item">
-                <span class="stat-value">{{ role.permissions?.length || 0 }}</span>
-                <span class="stat-name">权限数</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">
-                  {{ userList.filter(u => u.role_id === role.id).length }}
-                </span>
-                <span class="stat-name">用户数</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <RolePermissionsPanel
+      v-if="!loading"
+      :role-permission-list="rolePermissionList"
+      :user-list="userList"
+      :route-list="routeList"
+      @edit-permission="editPermissionFn"
+      @save-permission="savePermission"
+    />
   </div>
 </template>
 
@@ -275,6 +101,8 @@ import { onMounted, ref } from 'vue'
 import DataTable from '@/components/data-table.vue'
 import route from '@/router/route'
 import CoolSelect from '@/components/cool-select.vue'
+import UserStatsCards from './components/user-stats-cards.vue'
+import RolePermissionsPanel from './components/role-permissions-panel.vue'
 
 // 用户列表
 const userList = ref<User[]>([])
@@ -283,11 +111,13 @@ const loading = ref(false)
 
 // 筛选器状态
 const selectedRole = ref('')
+// 筛选状态
 const selectedStatus = ref('')
+// 搜索
+const search = ref('')
 
 // 角色选项
 const roleOptions = [
-  { label: '全部角色', value: '' },
   { label: '超级管理员', value: 'superadmin' },
   { label: '管理员', value: 'admin' },
   { label: '店员', value: 'staff' }
@@ -295,18 +125,13 @@ const roleOptions = [
 
 // 状态选项
 const statusOptions = [
-  { label: '全部状态', value: '' },
   { label: '正常', value: 'active' },
   { label: '已禁用', value: 'inactive' }
 ]
 // 角色权限列表
 const rolePermissionList = ref<RolePermission[]>([])
-// 编辑权限
-const editPermission = ref<{ isEdit: boolean }[]>([])
 // 路由列表
 const routeList = ref<{ menu_name: string; permission_code: string }[]>([])
-// 当前选择的权限
-const selectedPermission = ref<string[]>([])
 
 // 表格列配置
 const userColumns: TableColumn<User>[] = [
@@ -353,16 +178,7 @@ const viewUser = (user: User) => {
 
 // 编辑权限
 const editPermissionFn = (roleId: number, editIndex: number) => {
-  const target = rolePermissionList.value.find(i => i.id === roleId)
-  if (!target) {
-    selectedPermission.value = []
-  } else {
-    selectedPermission.value = target.permissions.map(i => i.permission_code)
-  }
-  // 先关闭所有的
-  editPermission.value = editPermission.value.map(() => ({ isEdit: false }))
-  // 打开当前的
-  editPermission.value[editIndex].isEdit = true
+  console.log('编辑权限:', roleId, editIndex)
 }
 
 // 保存权限
@@ -389,6 +205,18 @@ const userActions: TableAction<User>[] = [
   }
 ]
 
+// 搜索
+const searchUser = () => {
+  console.log('搜索:', search.value)
+}
+
+// 重置筛选
+const resetFilter = () => {
+  selectedRole.value = ''
+  selectedStatus.value = ''
+  search.value = ''
+}
+
 // 加载数据
 onMounted(async () => {
   loading.value = true
@@ -397,12 +225,9 @@ onMounted(async () => {
       reqGetUserList(),
       reqGetRolePermissionList()
     ])
+    console.log(users)
     userList.value = users
     rolePermissionList.value = rolePermissions
-    // 初始化是否编辑
-    editPermission.value = rolePermissions.map(() => ({
-      isEdit: false
-    }))
   } finally {
     loading.value = false
   }
@@ -417,62 +242,229 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-/* 用户页面特定样式 */
-.role-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+/* 用户管理页面样式 */
+.user-management-page {
+  padding: 24px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  min-height: 100vh;
+}
 
-  .role-card {
-    border: 2px solid var(--info-color);
-    border-radius: var(--radius);
-    padding: 16px;
+/* 页面头部 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 24px 32px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 
-    &.role-superadmin {
-      border-color: var(--error-color);
-    }
-
-    &.role-admin {
-      border-color: var(--warning-color);
-    }
-
-    &.role-staff {
-      border-color: var(--info-color);
-    }
-
-    .role-header {
+  .header-content {
+    .page-title {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      gap: 12px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 0 0 8px 0;
 
-      .role-title {
+      .title-icon {
+        font-size: 32px;
+      }
+    }
+
+    .page-subtitle {
+      color: #6b7280;
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+}
+
+/* 内容卡片 */
+.content-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  margin-bottom: 24px;
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f3f4f6;
+
+    .card-title-section {
+      .card-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 18px;
         font-weight: 600;
-        color: var(--info-color);
+        color: #1f2937;
+        margin: 0;
+
+        .title-icon {
+          font-size: 20px;
+        }
       }
 
-      .btn:last-child {
-        margin-right: 0;
+      .card-description {
+        margin: 4px 0 0 0;
+        font-size: 13px;
+        color: #6b7280;
       }
     }
 
-    &.role-superadmin .role-title {
-      color: var(--error-color);
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
     }
 
-    &.role-admin .role-title {
-      color: var(--warning-color);
+    .card-tools {
+      display: flex;
+      gap: 8px;
+
+      .tool-btn {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background: #f9fafb;
+          border-color: #d1d5db;
+        }
+
+        span {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .card-body {
+    padding: 24px;
+  }
+}
+
+/* 搜索和筛选容器 */
+.search-filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  .search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      opacity: 0.5;
     }
 
-    &.role-staff .role-title {
-      color: var(--info-color);
+    .search-input-enhanced {
+      width: 100%;
+      padding: 10px 100px 10px 36px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: #ff6b35;
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+      }
     }
 
-    .role-permissions {
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.6;
+    .search-btn {
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 6px 16px;
+      background: linear-gradient(135deg, #ff6b35 0%, #ff8c61 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: linear-gradient(135deg, #ff8c61 0%, #ff6b35 100%);
+      }
     }
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    .filter-item-enhanced {
+      min-width: 120px;
+    }
+  }
+}
+
+/* 按钮样式 */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &.btn-primary {
+    background: linear-gradient(135deg, #ff6b35 0%, #ff8c61 100%);
+    color: white;
+
+    &:hover {
+      background: linear-gradient(135deg, #ff8c61 0%, #ff6b35 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    }
+  }
+
+  &.btn-with-icon {
+    .btn-icon {
+      font-size: 16px;
+    }
+  }
+}
+
+/* 用户表格样式 */
+.user-table {
+  :deep(.data-table) {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
   }
 }
 </style>
