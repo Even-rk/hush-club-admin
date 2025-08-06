@@ -104,7 +104,7 @@ const upgradeColumns: TableColumn<UpdateMember>[] = [
     slot: 'newLevel'
   },
   { key: 'recharge_amount', title: '充值金额', type: 'price' },
-  { key: 'upgrade_time', title: '升级时间' }
+  { key: 'upgrade_time', title: '升级时间', type: 'date' }
 ]
 
 // 获取等级对应的样式类

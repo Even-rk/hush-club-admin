@@ -162,23 +162,50 @@
         <div class="btn btn-primary btn-sm" @click="$router.push('/orders')">查看全部</div>
       </div>
       <div class="card-body">
+        <!-- 订单列表 -->
         <data-table
           :data="recentOrders"
           :columns="orderColumns"
           :show-actions="false"
+          :loading="loading"
           row-key="id"
-          empty-text="暂无订单数据"
-        />
+          class="order-table"
+        >
+          <!-- 客户信息插槽 -->
+          <template #customer="{ row }">
+            <div>
+              <div>{{ row.member?.real_name }}</div>
+              <div class="customer-phone">{{ row.member?.phone }}</div>
+            </div>
+          </template>
+
+          <!-- 商品明细插槽 -->
+          <template #items="{ row }">
+            <div>
+              <div v-for="item in row.order_items" :key="item.id">
+                {{ item.product_name }} x{{ item.quantity }}
+              </div>
+            </div>
+          </template>
+
+          <!-- 支付方式插槽 -->
+          <template #payment="{ row }">
+            <span v-if="row.payment_method === 'wechat'">微信支付</span>
+            <span v-else-if="row.payment_method === 'balance'">余额支付</span>
+          </template>
+        </data-table>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import CoolSelect from '@/components/cool-select.vue'
 import DataTable from '@/components/data-table.vue'
-import type { TableColumn } from '@/types/supabase'
+import type { OrderDetail, TableColumn } from '@/types/supabase'
+import { reqGetAllOrder } from '@/api/supabase'
+import { formatDate } from '@/utils/format'
 
 // 时间段选择器选项
 const periodOptions = [
@@ -190,63 +217,48 @@ const periodOptions = [
 const selectedPeriod = ref('7days')
 
 // 最近订单数据
-const recentOrders = ref([
-  {
-    id: 1,
-    order_no: 'HU20241201001',
-    customer: '张先生',
-    items: '美式咖啡 x2, 拿铁 x1',
-    amount: 45.6,
-    status: 'completed',
-    time: '14:30'
-  },
-  {
-    id: 2,
-    order_no: 'HU20241201002',
-    customer: '李女士',
-    items: '卡布奇诺 x1',
-    amount: 18.7,
-    status: 'processing',
-    time: '14:25'
-  },
-  {
-    id: 3,
-    order_no: 'HU20241201003',
-    customer: '王先生',
-    items: '焦糖玛奇朵 x2',
-    amount: 56.0,
-    status: 'completed',
-    time: '14:20'
-  },
-  {
-    id: 4,
-    order_no: 'HU20241201004',
-    customer: '赵女士',
-    items: '香草拿铁 x1, 提拉米苏 x1',
-    amount: 68.0,
-    status: 'pending',
-    time: '14:15'
-  }
-])
+const recentOrders = ref<OrderDetail[]>([])
 
 // 表格列配置
-const orderColumns: TableColumn[] = [
-  { key: 'order_no', title: '订单号' },
-  { key: 'customer', title: '客户' },
-  { key: 'items', title: '商品' },
-  { key: 'amount', title: '金额', type: 'price' },
+const orderColumns: TableColumn<OrderDetail>[] = [
+  { key: 'order_no', title: '订单号', width: '140px' },
   {
-    key: 'status',
-    title: '状态',
-    type: 'status',
-    statusMap: {
-      completed: { text: '已完成', className: 'status-success' },
-      processing: { text: '制作中', className: 'status-warning' },
-      pending: { text: '待支付', className: 'status-info' }
-    }
+    key: 'customer',
+    title: '客户信息',
+    slot: 'customer'
   },
-  { key: 'time', title: '时间' }
+  {
+    key: 'items',
+    title: '商品明细',
+    slot: 'items'
+  },
+  { key: 'final_amount', title: '订单金额', type: 'price' },
+  {
+    key: 'payment',
+    title: '支付方式',
+    slot: 'payment'
+  },
+  { key: 'created_at', title: '下单时间' },
+  { key: 'remark', title: '订单备注' }
 ]
+
+const loading = ref(false)
+
+onMounted(async () => {
+  // 最近订单
+  loading.value = true
+  try {
+    const orders = await reqGetAllOrder()
+    recentOrders.value = orders.map(order => {
+      return {
+        ...order,
+        created_at: formatDate(order.created_at, 'YYYY-MM-DD HH:mm:ss')
+      }
+    })
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -634,6 +646,20 @@ const orderColumns: TableColumn[] = [
 
 .card-body {
   padding: 24px;
+}
+
+.customer-phone {
+  font-size: 12px;
+  color: var(--text-subtitle);
+}
+
+/* 订单表格样式 */
+.order-table {
+  :deep(.data-table) {
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
 }
 
 /* 图表占位符 */

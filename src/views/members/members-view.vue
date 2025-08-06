@@ -46,44 +46,42 @@
               <div class="stat-label">单次最高充值</div>
             </div>
           </div>
-
-          <!-- 搜索和筛选区域 -->
-          <div class="search-filter-container">
-            <div class="search-box">
-              <span class="search-icon">🔍</span>
-              <input
-                type="text"
-                class="search-input-enhanced"
-                placeholder="搜索会员姓名、手机号或会员号..."
-              />
-              <button class="search-btn">搜索</button>
-            </div>
-
-            <div class="filter-group">
-              <div class="filter-item-enhanced">
-                <cool-select
-                  v-model="selectedLevel"
-                  :options="levelOptions"
-                  class="filter-select-enhanced"
-                  placeholder="全部等级"
-                />
-              </div>
-              <div class="filter-item-enhanced">
-                <date-picker
-                  :start-value="startDate"
-                  :end-value="endDate"
-                  :range="true"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  class="filter-date-range"
-                  @update:start-value="startDate = $event"
-                  @update:end-value="endDate = $event"
-                />
-              </div>
-              <button class="btn btn-secondary">重置筛选</button>
-            </div>
-          </div>
         </template>
+
+        <!-- 搜索和筛选区域 -->
+        <div class="search-filter-container">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+              v-model="searchQuery"
+              type="text"
+              class="search-input-enhanced"
+              placeholder="搜索会员姓名、手机号..."
+              @change="queryChange"
+            />
+            <button class="search-btn" @click="searchMembers()">搜索</button>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-item-enhanced">
+              <cool-select
+                v-model="selectedLevel"
+                :options="levelOptions"
+                placeholder="全部等级"
+                @change="searchMembers()"
+              />
+            </div>
+            <div class="filter-item-enhanced">
+              <date-picker
+                v-model="selectedDate"
+                placeholder="选择日期"
+                class="filter-date-range"
+                @change="searchMembers()"
+              />
+            </div>
+            <button class="btn btn-secondary" @click="resetFilter">重置筛选</button>
+          </div>
+        </div>
 
         <!-- 会员列表 -->
         <data-table
@@ -101,11 +99,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { reqGetMemberList } from '@/api/supabase'
+import { reqGetMemberLevels, reqGetMemberList } from '@/api/supabase'
 import { Member, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
 import DatePicker from '@/components/date-picker.vue'
+import { ElMessage } from 'element-plus'
 
 // 数据状态
 const memberList = ref<Member[]>([])
@@ -116,16 +115,11 @@ const loading = ref(false)
 
 // 筛选器状态
 const selectedLevel = ref('')
-const startDate = ref('')
-const endDate = ref('')
+const selectedDate = ref('')
+const searchQuery = ref('')
 
 // 会员等级选项
-const levelOptions = [
-  { label: '全部等级', value: '' },
-  { label: '普通会员', value: 'normal' },
-  { label: '银牌会员', value: 'silver' },
-  { label: '金牌会员', value: 'gold' }
-]
+const levelOptions = ref<{ label: string; value: number }[]>([])
 
 // 表格列配置
 const memberColumns: TableColumn<Member>[] = [
@@ -172,10 +166,58 @@ onMounted(async () => {
     memberTotal.value = data.memberTotal || 0
     totalRecharge.value = data.totalRecharge || 0
     maxRecharge.value = data.maxRecharge || 0
+
+    // 查会员等级
+    const levelList = await reqGetMemberLevels()
+    levelOptions.value = levelList?.map(item => ({
+      label: item.level_name,
+      value: item.id
+    }))
   } finally {
     loading.value = false
   }
 })
+
+// 搜索会员
+const searchMembers = async (params?: { level?: string; date?: string; query?: string }) => {
+  loading.value = true
+  try {
+    const data = await reqGetMemberList({
+      level: params?.level || selectedLevel.value,
+      date: params?.date || selectedDate.value,
+      query: params?.query || searchQuery.value
+    })
+    memberList.value = data.memberList || []
+    memberTotal.value = data.memberTotal || 0
+    totalRecharge.value = data.totalRecharge || 0
+    maxRecharge.value = data.maxRecharge || 0
+  } finally {
+    loading.value = false
+  }
+}
+
+// 重置筛选
+const resetFilter = () => {
+  if (searchQuery.value || selectedLevel.value || selectedDate.value) {
+    searchMembers({
+      level: '',
+      date: '',
+      query: ''
+    })
+  } else {
+    ElMessage.warning('没有筛选条件')
+  }
+  selectedLevel.value = ''
+  selectedDate.value = ''
+  searchQuery.value = ''
+}
+
+// 查询变化
+const queryChange = () => {
+  if (!searchQuery.value) {
+    searchMembers()
+  }
+}
 </script>
 
 <style lang="scss" scoped>

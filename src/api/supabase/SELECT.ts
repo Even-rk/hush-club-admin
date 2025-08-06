@@ -14,6 +14,7 @@ import {
   DatabaseMemoryUsage
 } from '@/types/supabase'
 import { getPublicUrl } from '@/utils/storage'
+import { formatDate } from '@/utils/format'
 
 // 用户菜单权限
 export const reqGetUserPermission = async (userId: number): Promise<string[]> => {
@@ -164,7 +165,7 @@ export const reqGetAllOrder = async (params?: {
   if (params?.is_recent) {
     // 查日期 7天前 到现在
     const date = new Date(new Date().setDate(new Date().getDate() - 7))
-    supabaseOrder.gte('created_at', date.toISOString())
+    supabaseOrder.gte('created_at', formatDate(date, 'YYYY-MM-DD'))
   }
   // 查状态
   if (params?.status) {
@@ -328,13 +329,34 @@ export const reqGetMemberLevelList = async (): Promise<{
 }
 
 // 查会员列表
-export const reqGetMemberList = async (): Promise<{
+export const reqGetMemberList = async (params?: {
+  // 会员等级
+  level?: string
+  // 注册日期
+  date?: string
+  // 会员姓名/手机号/会员号
+  query?: string
+}): Promise<{
   maxRecharge?: number
   totalRecharge?: number
   memberTotal?: number
   memberList?: Member[]
 }> => {
-  const { data, error } = await supabase.from('members').select('*')
+  const supabaseMember = supabase.from('members').select('*')
+  // 查会员等级
+  if (params?.level) {
+    supabaseMember.eq('level_id', params.level)
+  }
+  // 查注册日期
+  if (params?.date) {
+    supabaseMember.gte('created_at', formatDate(params.date, 'YYYY-MM-DD'))
+  }
+  // 查会员姓名/手机号
+  if (params?.query) {
+    supabaseMember.ilike('real_name', `%${params.query}%`)
+    supabaseMember.or(`phone.ilike.%${params.query}%`)
+  }
+  const { data, error } = await supabaseMember
   if (error) {
     return {}
   }

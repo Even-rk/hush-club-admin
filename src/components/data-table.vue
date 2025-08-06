@@ -65,7 +65,7 @@
 
             <!-- 日期类型 -->
             <span v-else-if="column.type === 'date'">
-              {{ formatDate(getValue(row, column.key)) }}
+              {{ formatDate(getValue(row, column.key) as string, 'YYYY-MM-DD') }}
             </span>
 
             <!-- 格式化函数 -->
@@ -108,6 +108,7 @@
 
 <script setup lang="ts" generic="T extends Record<string, unknown>">
 import type { TableColumn, TableAction, TableProps } from '@/types/supabase'
+import { formatDate } from '@/utils/format'
 
 // Props
 const props = withDefaults(defineProps<TableProps<T>>(), {
@@ -135,22 +136,6 @@ const getValue = (row: T, key: keyof T | string): unknown => {
     return row[key as keyof T]
   }
   return row[key]
-}
-
-// 格式化日期
-const formatDate = (dateStr: unknown): string => {
-  if (!dateStr) {
-    return '--'
-  }
-
-  if (typeof dateStr !== 'string') {
-    return String(dateStr)
-  }
-
-  if (dateStr.includes('T')) {
-    return dateStr.split('T')[0]
-  }
-  return dateStr
 }
 
 // 获取状态文本

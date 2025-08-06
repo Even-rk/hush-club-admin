@@ -19,7 +19,6 @@
           @click="!disabled && openDatePicker('single')"
           >📅</span
         >
-        <span v-if="modelValue && clearable" class="clear-btn" @click="clearDate">×</span>
 
         <!-- 隐藏的原生日期输入 -->
         <input
@@ -98,14 +97,6 @@
             @change="onEndDateChange"
           />
         </div>
-
-        <span
-          v-if="(startValue || endValue) && clearable"
-          class="clear-btn range-clear"
-          @click="clearRangeDate"
-        >
-          ×
-        </span>
       </div>
     </template>
   </div>
@@ -135,8 +126,6 @@ interface DatePickerProps {
   max?: string
   // 是否禁用
   disabled?: boolean
-  // 是否可清空
-  clearable?: boolean
   // 范围分隔符
   separator?: string
 }
@@ -152,7 +141,6 @@ const props = withDefaults(defineProps<DatePickerProps>(), {
   min: '',
   max: '',
   disabled: false,
-  clearable: true,
   separator: '至'
 })
 
@@ -219,19 +207,6 @@ const onEndDateChange = (event: Event) => {
   const value = (event.target as HTMLInputElement).value
   emit('update:endValue', value)
   emit('change', { start: props.startValue || '', end: value })
-}
-
-// 清空单个日期
-const clearDate = () => {
-  emit('update:modelValue', '')
-  emit('change', '')
-}
-
-// 清空范围日期
-const clearRangeDate = () => {
-  emit('update:startValue', '')
-  emit('update:endValue', '')
-  emit('change', { start: '', end: '' })
 }
 </script>
 
@@ -392,66 +367,6 @@ const clearRangeDate = () => {
   }
 }
 
-.clear-btn {
-  position: absolute;
-  right: 34px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8c61 100%);
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: bold;
-  color: white;
-  transition: all 0.2s ease;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 2;
-
-  // 当容器悬停或输入框有值时显示
-  .date-input-wrapper:hover &,
-  .date-picker-container:hover & {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  &:hover {
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
-  }
-
-  &:active {
-    transform: translateY(-50%) scale(0.95);
-  }
-
-  &.range-clear {
-    position: relative;
-    right: auto;
-    top: auto;
-    transform: none;
-    margin-left: 4px;
-    opacity: 0;
-
-    .date-range-container:hover & {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    &:hover {
-      transform: scale(1.1);
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
-  }
-}
-
 // 添加动画效果
 @keyframes fadeIn {
   from {
@@ -487,14 +402,6 @@ const clearRangeDate = () => {
 
     .range-separator {
       display: none;
-    }
-
-    .clear-btn.range-clear {
-      position: absolute;
-      right: 12px;
-      top: 12px;
-      margin-left: 0;
-      opacity: 1;
     }
   }
 }
