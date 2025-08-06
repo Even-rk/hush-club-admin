@@ -3,6 +3,9 @@
     ref="selectRef"
     class="cool-select"
     :class="{ 'cool-select--open': isOpen, 'cool-select--disabled': disabled }"
+    tabindex="0"
+    @blur="handleBlur"
+    @keydown="handleKeydown"
   >
     <div
       class="cool-select__trigger"
@@ -23,14 +26,16 @@
         <div v-if="isOpen" ref="dropdownRef" class="cool-select__dropdown" :style="dropdownStyle">
           <div class="cool-select__options">
             <div
-              v-for="option in options"
+              v-for="(option, index) in options"
               :key="option.value"
               class="cool-select__option"
               :class="{
                 'cool-select__option--selected': option.value === modelValue,
-                'cool-select__option--disabled': option.disabled
+                'cool-select__option--disabled': option.disabled,
+                'cool-select__option--highlighted': index === selectedIndex
               }"
               @click="selectOption(option)"
+              @mouseenter="selectedIndex = index"
             >
               <span class="cool-select__option-text">{{ option.label }}</span>
               <span v-if="option.value === modelValue" class="cool-select__check">✓</span>
@@ -52,7 +57,7 @@ interface SelectOption {
 }
 
 interface Props {
-  modelValue: string | number
+  modelValue: string | number | undefined
   options: SelectOption[]
   placeholder?: string
   disabled?: boolean
@@ -74,6 +79,8 @@ const isOpen = ref(false)
 const selectRef = ref<HTMLElement>()
 const dropdownRef = ref<HTMLElement>()
 const dropdownStyle = ref<Record<string, string>>({})
+const selectedIndex = ref(-1)
+const blurTimer = ref<number | null>(null)
 
 const selectedOption = computed(() => {
   return props.options.find(option => option.value === props.modelValue)
@@ -111,6 +118,13 @@ const toggleDropdown = () => {
   isOpen.value = !isOpen.value
   if (isOpen.value) {
     calculateDropdownPosition()
+    // 重置键盘导航索引
+    selectedIndex.value = props.options.findIndex(opt => opt.value === props.modelValue)
+    if (selectedIndex.value === -1) {
+      selectedIndex.value = 0
+    }
+  } else {
+    selectedIndex.value = -1
   }
 }
 
@@ -126,10 +140,117 @@ const selectOption = (option: SelectOption) => {
 
 const closeDropdown = () => {
   isOpen.value = false
+  selectedIndex.value = -1
+}
+
+// 处理失焦事件
+const handleBlur = (event: FocusEvent) => {
+  // 延迟关闭，以允许点击下拉选项
+  blurTimer.value = window.setTimeout(() => {
+    const relatedTarget = event.relatedTarget as HTMLElement
+
+    // 如果焦点移到了下拉框内部，不关闭
+    if (dropdownRef.value?.contains(relatedTarget)) {
+      return
+    }
+
+    closeDropdown()
+  }, 200)
+}
+
+// 键盘导航选项
+const navigateOptions = (direction: number) => {
+  const enabledOptions = props.options.filter(opt => !opt.disabled)
+  if (enabledOptions.length === 0) {
+    return
+  }
+
+  let currentIndex = selectedIndex.value
+
+  if (currentIndex === -1) {
+    // 如果没有选中项，从第一个或最后一个开始
+    selectedIndex.value = direction > 0 ? 0 : props.options.length - 1
+  } else {
+    // 移动到下一个/上一个非禁用选项
+    do {
+      currentIndex = currentIndex + direction
+
+      if (currentIndex < 0) {
+        currentIndex = props.options.length - 1
+      } else if (currentIndex >= props.options.length) {
+        currentIndex = 0
+      }
+
+      selectedIndex.value = currentIndex
+    } while (props.options[currentIndex]?.disabled)
+  }
+
+  // 滚动到可见区域
+  nextTick(() => {
+    const optionElements = dropdownRef.value?.querySelectorAll('.cool-select__option')
+    if (optionElements && optionElements[selectedIndex.value]) {
+      optionElements[selectedIndex.value].scrollIntoView({ block: 'nearest' })
+    }
+  })
+}
+
+// 处理键盘事件
+const handleKeydown = (event: KeyboardEvent) => {
+  if (props.disabled) {
+    return
+  }
+
+  switch (event.key) {
+    case 'Enter':
+    case ' ':
+      event.preventDefault()
+      if (isOpen.value && selectedIndex.value >= 0) {
+        const option = props.options[selectedIndex.value]
+        if (option && !option.disabled) {
+          selectOption(option)
+        }
+      } else {
+        toggleDropdown()
+      }
+      break
+
+    case 'Escape':
+      event.preventDefault()
+      closeDropdown()
+      break
+
+    case 'ArrowDown':
+      event.preventDefault()
+      if (!isOpen.value) {
+        isOpen.value = true
+        calculateDropdownPosition()
+      } else {
+        navigateOptions(1)
+      }
+      break
+
+    case 'ArrowUp':
+      event.preventDefault()
+      if (isOpen.value) {
+        navigateOptions(-1)
+      }
+      break
+
+    case 'Tab':
+      // 让 Tab 键正常工作，自然失焦
+      closeDropdown()
+      break
+  }
 }
 
 // 点击外部关闭下拉框
 const handleClickOutside = (event: Event) => {
+  // 清除失焦定时器
+  if (blurTimer.value) {
+    clearTimeout(blurTimer.value)
+    blurTimer.value = null
+  }
+
   const target = event.target as HTMLElement
 
   // 检查点击是否在当前组件内
@@ -160,6 +281,10 @@ const handleScroll = () => {
 watch(isOpen, newVal => {
   if (newVal) {
     calculateDropdownPosition()
+    // 打开时聚焦到组件，以便键盘导航
+    nextTick(() => {
+      selectRef.value?.focus()
+    })
   }
 })
 
@@ -173,6 +298,12 @@ onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
   window.removeEventListener('resize', handleResize)
   window.removeEventListener('scroll', handleScroll, true)
+
+  // 清理失焦定时器
+  if (blurTimer.value) {
+    clearTimeout(blurTimer.value)
+    blurTimer.value = null
+  }
 })
 </script>
 
@@ -181,6 +312,14 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   font-size: 14px;
+  outline: none;
+
+  &:focus-visible {
+    .cool-select__trigger {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+  }
 
   &--disabled {
     opacity: 0.6;
@@ -324,6 +463,16 @@ onUnmounted(() => {
 
     &::before {
       width: 100%;
+    }
+  }
+
+  &--highlighted {
+    background: var(--bg-glass);
+    color: var(--primary-color);
+
+    &::before {
+      width: 100%;
+      opacity: 0.05;
     }
   }
 
