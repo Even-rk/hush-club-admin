@@ -18,13 +18,6 @@
           <span class="stat-number" data-value="3420">3,420</span>
           <span class="stat-unit">单</span>
         </div>
-        <div class="stat-footer">
-          <div class="stat-trend trend-up">
-            <span class="trend-icon">
-              <img src="/src/assets/icons/trend-up.svg" alt="趋势图标" />
-            </span>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -46,13 +39,6 @@
           <span class="stat-currency">¥</span>
           <span class="stat-number" data-value="356800">356,800</span>
         </div>
-        <div class="stat-footer">
-          <div class="stat-trend trend-up">
-            <span class="trend-icon">
-              <img src="/src/assets/icons/trend-up.svg" alt="趋势图标" />
-            </span>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -73,13 +59,6 @@
         <div class="stat-value">
           <span class="stat-currency">¥</span>
           <span class="stat-number" data-value="104.33">104.33</span>
-        </div>
-        <div class="stat-footer">
-          <div class="stat-trend trend-up">
-            <span class="trend-icon">
-              <img src="/src/assets/icons/trend-up.svg" alt="趋势图标" />
-            </span>
-          </div>
         </div>
       </div>
     </div>
@@ -149,10 +128,6 @@ defineProps<{
       .stat-icon {
         color: white;
       }
-      .stat-trend.trend-up {
-        color: #667eea;
-        background: rgba(102, 126, 234, 0.1);
-      }
     }
 
     &.stat-card-revenue {
@@ -163,10 +138,6 @@ defineProps<{
       .stat-icon {
         color: white;
       }
-      .stat-trend.trend-up {
-        color: #f5576c;
-        background: rgba(245, 87, 108, 0.1);
-      }
     }
 
     &.stat-card-avg {
@@ -176,10 +147,6 @@ defineProps<{
       }
       .stat-icon {
         color: white;
-      }
-      .stat-trend.trend-up {
-        color: #00a8cc;
-        background: rgba(0, 168, 204, 0.1);
       }
     }
 
@@ -245,7 +212,6 @@ defineProps<{
       display: flex;
       align-items: baseline;
       gap: 4px;
-      margin-bottom: 20px;
 
       .stat-currency {
         font-size: 24px;
@@ -267,41 +233,6 @@ defineProps<{
         font-weight: 500;
         color: var(--text-subtitle);
         margin-left: 4px;
-      }
-    }
-
-    .stat-footer {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-
-      .stat-trend {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        .trend-icon {
-          display: inline-flex;
-          align-items: center;
-          img {
-            width: 16px;
-            height: 16px;
-          }
-        }
-        &.trend-up .trend-icon img {
-          animation: float 2s ease-in-out infinite;
-        }
-        &.trend-down .trend-icon img {
-          transform: rotate(180deg);
-        }
-      }
-
-      .stat-compare {
-        font-size: 13px;
-        color: var(--text-subtitle);
       }
     }
   }
