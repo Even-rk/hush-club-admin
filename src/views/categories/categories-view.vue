@@ -21,7 +21,7 @@
       <div class="card-header">
         <div class="card-title">分类列表</div>
         <div class="card-tools">
-          <button class="tool-btn" title="刷新">
+          <button class="tool-btn" title="刷新" @click="searchCategories()">
             <span>🔄</span>
           </button>
         </div>
@@ -36,8 +36,9 @@
               type="text"
               class="search-input-enhanced"
               placeholder="搜索分类名称..."
+              @change="queryChange"
             />
-            <button class="search-btn" @click="searchCategories">搜索</button>
+            <button class="search-btn" @click="searchCategories()">搜索</button>
           </div>
 
           <div class="filter-group">
@@ -47,6 +48,7 @@
                 :options="statusOptions"
                 class="filter-select-enhanced"
                 placeholder="全部状态"
+                @change="searchCategories()"
               />
             </div>
             <button class="btn btn-secondary" @click="resetCategories">重置筛选</button>
@@ -135,6 +137,7 @@ import { reqGetAllCategory } from '@/api/supabase'
 import { ProductCategory, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
+import { ElMessage } from 'element-plus'
 
 // 数据状态
 const categoryList = ref<ProductCategory[]>([])
@@ -158,12 +161,12 @@ const sortedCategories = computed(() => {
 })
 
 // 搜索分类
-const searchCategories = async () => {
+const searchCategories = async (params?: { status?: string; search?: string }) => {
   loading.value = true
   try {
     categoryList.value = await reqGetAllCategory({
-      status: selectedStatus.value,
-      search: searchQuery.value
+      status: params?.status || selectedStatus.value,
+      search: params?.search || searchQuery.value
     })
   } finally {
     loading.value = false
@@ -172,8 +175,24 @@ const searchCategories = async () => {
 
 // 重置分类
 const resetCategories = () => {
+  if (searchQuery.value || selectedStatus.value) {
+    searchCategories({
+      status: '',
+      search: ''
+    })
+  } else {
+    ElMessage.warning('没有需要重置的筛选条件')
+  }
   selectedStatus.value = ''
   searchQuery.value = ''
+}
+
+// 查询变化
+const queryChange = () => {
+  if (!searchQuery.value) {
+    // 内容为空，查询所有
+    searchCategories()
+  }
 }
 
 // 表格列配置

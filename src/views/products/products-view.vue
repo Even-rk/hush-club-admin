@@ -159,7 +159,6 @@ const resetProducts = () => {
       status: '',
       search: ''
     })
-    return
   } else {
     ElMessage.warning('没有需要重置的筛选条件')
   }
