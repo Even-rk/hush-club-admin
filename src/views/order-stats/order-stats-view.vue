@@ -79,17 +79,7 @@
             </div>
             <div class="stat-icon-wrapper">
               <div class="stat-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M9 11H7V13H9V11ZM13 11H11V13H13V11ZM17 11H15V13H17V11Z"
-                    fill="currentColor"
-                    opacity="0.5"
-                  />
-                  <path
-                    d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"
-                    fill="currentColor"
-                  />
-                </svg>
+                <img src="/src/assets/icons/order-message.svg" alt="订单图标" />
               </div>
             </div>
           </div>
@@ -99,14 +89,9 @@
           </div>
           <div class="stat-footer">
             <div class="stat-trend trend-up">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M7 14L12 9L17 14"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
+              <span class="trend-icon">
+                <img src="/src/assets/icons/trend-up.svg" alt="趋势图标" />
+              </span>
               <span>15.2%</span>
             </div>
             <span class="stat-compare">较上月</span>
@@ -124,12 +109,7 @@
             </div>
             <div class="stat-icon-wrapper">
               <div class="stat-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13.41 18.09V20H10.74V18.07C9.03 17.71 7.58 16.61 7.47 14.67H9.43C9.53 15.82 10.31 16.49 12.08 16.49C13.98 16.49 14.54 15.72 14.54 14.91C14.54 14.21 14.15 13.59 12.08 13.14C9.65 12.58 8.14 11.74 8.14 9.91C8.14 8.33 9.43 7.14 11.21 6.79V5H13.89V6.81C15.48 7.21 16.63 8.34 16.73 10.04H14.77C14.72 8.94 14.05 8.31 12.08 8.31C10.31 8.31 9.5 8.87 9.5 9.88C9.5 10.69 10.04 11.12 12.08 11.57C14.12 12.03 15.9 12.72 15.9 14.91C15.9 16.58 14.69 17.73 13.41 18.09Z"
-                    fill="currentColor"
-                  />
-                </svg>
+                <img src="/src/assets/icons/money-circle.svg" alt="营业额图标" />
               </div>
             </div>
           </div>
@@ -139,14 +119,9 @@
           </div>
           <div class="stat-footer">
             <div class="stat-trend trend-up">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M7 14L12 9L17 14"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
+              <span class="trend-icon">
+                <img src="/src/assets/icons/trend-up.svg" alt="趋势图标" />
+              </span>
               <span>22.5%</span>
             </div>
             <span class="stat-compare">较上月</span>
@@ -164,12 +139,7 @@
             </div>
             <div class="stat-icon-wrapper">
               <div class="stat-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M21 18V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V18C3 18.55 3.45 19 4 19H20C20.55 19 21 18.55 21 18ZM20 14H4C3.45 14 3 14.45 3 15V16C3 16.55 3.45 17 4 17H20C20.55 17 21 16.55 21 16V15C21 14.45 20.55 14 20 14ZM20 10H4C3.45 10 3 10.45 3 11V12C3 12.55 3.45 13 4 13H20C20.55 13 21 12.55 21 12V11C21 10.45 20.55 10 20 10ZM7 7V4C7 3.45 7.45 3 8 3H16C16.55 3 17 3.45 17 4V7C17 7.55 16.55 8 16 8H8C7.45 8 7 7.55 7 7Z"
-                    fill="currentColor"
-                  />
-                </svg>
+                <img src="/src/assets/icons/stack.svg" alt="客单价图标" />
               </div>
             </div>
           </div>
@@ -179,14 +149,9 @@
           </div>
           <div class="stat-footer">
             <div class="stat-trend trend-up">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M7 14L12 9L17 14"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
+              <span class="trend-icon">
+                <img src="/src/assets/icons/trend-up.svg" alt="趋势图标" />
+              </span>
               <span>6.8%</span>
             </div>
             <span class="stat-compare">较上月</span>
@@ -207,9 +172,7 @@
           <div class="stat-decoration"></div>
           <div class="stat-body">
             <div class="stat-icon-box">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M9 16.2L4.8 12L3.4 13.4L9 19L21 7L19.6 5.6L9 16.2Z" fill="currentColor" />
-              </svg>
+              <img src="/src/assets/icons/check.svg" alt="完成图标" />
             </div>
             <div class="stat-info">
               <div class="stat-label">已完成</div>
@@ -223,15 +186,7 @@
           <div class="stat-decoration"></div>
           <div class="stat-body">
             <div class="stat-icon-box">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
-                <path
-                  d="M12 6V12L16 16"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
+              <img src="/src/assets/icons/clock.svg" alt="制作中图标" />
             </div>
             <div class="stat-info">
               <div class="stat-label">制作中</div>
@@ -245,14 +200,7 @@
           <div class="stat-decoration"></div>
           <div class="stat-body">
             <div class="stat-icon-box">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M18 6L6 18M6 6L18 18"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
+              <img src="/src/assets/icons/close-x.svg" alt="取消图标" />
             </div>
             <div class="stat-info">
               <div class="stat-label">已取消</div>
@@ -266,18 +214,7 @@
           <div class="stat-decoration"></div>
           <div class="stat-body">
             <div class="stat-icon-box">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect
-                  x="3"
-                  y="3"
-                  width="18"
-                  height="18"
-                  rx="2"
-                  stroke="currentColor"
-                  stroke-width="2"
-                />
-                <path d="M3 9H21M9 3V21" stroke="currentColor" stroke-width="2" />
-              </svg>
+              <img src="/src/assets/icons/grid.svg" alt="总订单图标" />
             </div>
             <div class="stat-info">
               <div class="stat-label">总订单</div>
@@ -549,29 +486,24 @@ const onCompareChange = (value: string | number) => {
 
     &:hover {
       transform: translateY(-4px);
-      box-shadow:
-        0 20px 40px rgba(0, 0, 0, 0.08),
-        0 0 0 1px rgba(0, 0, 0, 0.04);
-
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
       .stat-decoration {
         transform: scale(1.1) rotate(10deg);
       }
-
       .stat-icon-wrapper {
         transform: rotate(-5deg) scale(1.05);
       }
-
       .stat-number {
         transform: scale(1.02);
       }
     }
 
     &.stat-card-orders {
-      .stat-decoration {
+      .stat-decoration,
+      .stat-icon {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       }
       .stat-icon {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
       }
       .stat-trend.trend-up {
@@ -581,11 +513,11 @@ const onCompareChange = (value: string | number) => {
     }
 
     &.stat-card-revenue {
-      .stat-decoration {
+      .stat-decoration,
+      .stat-icon {
         background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
       }
       .stat-icon {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         color: white;
       }
       .stat-trend.trend-up {
@@ -595,11 +527,11 @@ const onCompareChange = (value: string | number) => {
     }
 
     &.stat-card-avg {
-      .stat-decoration {
+      .stat-decoration,
+      .stat-icon {
         background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
       }
       .stat-icon {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         color: white;
       }
       .stat-trend.trend-up {
@@ -638,7 +570,6 @@ const onCompareChange = (value: string | number) => {
           color: var(--text-heading);
           margin-bottom: 4px;
         }
-
         .stat-subtitle {
           font-size: 12px;
           color: var(--text-subtitle);
@@ -659,8 +590,7 @@ const onCompareChange = (value: string | number) => {
           align-items: center;
           justify-content: center;
           box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-
-          svg {
+          img {
             width: 28px;
             height: 28px;
           }
@@ -710,22 +640,19 @@ const onCompareChange = (value: string | number) => {
         border-radius: 8px;
         font-size: 14px;
         font-weight: 600;
-
-        svg {
-          width: 16px;
-          height: 16px;
-        }
-
-        &.trend-up {
-          svg {
-            animation: float 2s ease-in-out infinite;
+        .trend-icon {
+          display: inline-flex;
+          align-items: center;
+          img {
+            width: 16px;
+            height: 16px;
           }
         }
-
-        &.trend-down {
-          svg {
-            transform: rotate(180deg);
-          }
+        &.trend-up .trend-icon img {
+          animation: float 2s ease-in-out infinite;
+        }
+        &.trend-down .trend-icon img {
+          transform: rotate(180deg);
         }
       }
 
@@ -842,8 +769,7 @@ const onCompareChange = (value: string | number) => {
       justify-content: center;
       transition: transform 0.3s ease;
       flex-shrink: 0;
-
-      svg {
+      img {
         width: 24px;
         height: 24px;
       }
@@ -851,13 +777,11 @@ const onCompareChange = (value: string | number) => {
 
     .stat-info {
       flex: 1;
-
       .stat-label {
         font-size: 13px;
         color: var(--text-subtitle);
         margin-bottom: 4px;
       }
-
       .stat-value {
         font-size: 24px;
         font-weight: 700;
@@ -948,87 +872,29 @@ const onCompareChange = (value: string | number) => {
   display: flex;
   flex-direction: column;
   gap: 12px;
-
   .time-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 12px 0;
     border-bottom: 1px solid var(--border-color);
-
     &:last-child {
       border-bottom: none;
     }
-
     .time-period {
       color: var(--text-primary);
     }
-
     .time-stats {
       .order-count {
         font-weight: 600;
         color: var(--primary-color);
       }
-
       .order-percentage {
         margin-left: 8px;
         font-size: 12px;
         color: var(--text-secondary);
       }
     }
-  }
-}
-
-.chart-placeholder {
-  height: 260px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 16px;
-  border: 2px dashed #e2e8f0;
-  margin-top: 24px;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-      45deg,
-      transparent 30%,
-      rgba(255, 255, 255, 0.5) 50%,
-      transparent 70%
-    );
-    animation: shimmer 2s infinite;
-  }
-
-  svg {
-    width: 48px;
-    height: 48px;
-    color: #94a3b8;
-    z-index: 1;
-  }
-
-  span {
-    font-size: 16px;
-    font-weight: 500;
-    color: #64748b;
-    z-index: 1;
-  }
-}
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%) translateY(-100%) rotate(45deg);
-  }
-  100% {
-    transform: translateX(100%) translateY(100%) rotate(45deg);
   }
 }
 </style>
