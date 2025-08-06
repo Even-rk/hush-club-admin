@@ -629,3 +629,18 @@ export const reqGetDataOverview = async (): Promise<DataOverview> => {
     yesterday_order_price: yesterday_order_amount / (yesterday_order_count || 1) || 0
   }
 }
+
+// 查今日销量的前4名商品
+export const reqGetHotProduct = async (): Promise<Product[]> => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('status', 'active')
+    .order('sales_count', { ascending: false })
+    .limit(4)
+
+  if (error) {
+    return []
+  }
+  return data as Product[]
+}

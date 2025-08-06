@@ -82,49 +82,22 @@
       <div class="content-card hot-products-card">
         <div class="card-header">
           <div class="card-title">热门商品</div>
-          <div class="card-subtitle">今日热销TOP4</div>
+          <div class="card-subtitle">热销TOP4</div>
         </div>
         <div class="card-body">
           <div class="hot-products-list">
-            <div class="hot-product-item">
-              <span class="rank-badge rank-1">1</span>
+            <div v-for="(product, index) in hotProducts" :key="product.id" class="hot-product-item">
+              <span class="rank-badge" :class="`rank-${index + 1}`">{{ index + 1 }}</span>
               <div class="product-info">
-                <div class="product-name">经典美式咖啡</div>
+                <div class="product-name">{{ product.category_name }}</div>
                 <div class="product-stats">
-                  <span class="sales-count">销量: 89杯</span>
+                  <span class="sales-count">销量: </span>
+                  <span class="sales-count">{{ product.sales_count }}杯</span>
                 </div>
               </div>
-              <div class="product-revenue">¥1,425</div>
-            </div>
-            <div class="hot-product-item">
-              <span class="rank-badge rank-2">2</span>
-              <div class="product-info">
-                <div class="product-name">香草拿铁</div>
-                <div class="product-stats">
-                  <span class="sales-count">销量: 67杯</span>
-                </div>
+              <div class="product-revenue">
+                ¥{{ product.normal_member_price * product.sales_count }}
               </div>
-              <div class="product-revenue">¥1,675</div>
-            </div>
-            <div class="hot-product-item">
-              <span class="rank-badge rank-3">3</span>
-              <div class="product-info">
-                <div class="product-name">经典卡布奇诺</div>
-                <div class="product-stats">
-                  <span class="sales-count">销量: 45杯</span>
-                </div>
-              </div>
-              <div class="product-revenue">¥990</div>
-            </div>
-            <div class="hot-product-item">
-              <span class="rank-badge">4</span>
-              <div class="product-info">
-                <div class="product-name">焦糖玛奇朵</div>
-                <div class="product-stats">
-                  <span class="sales-count">销量: 38杯</span>
-                </div>
-              </div>
-              <div class="product-revenue">¥1,064</div>
             </div>
           </div>
         </div>
@@ -180,8 +153,8 @@ import { onMounted, ref } from 'vue'
 import CoolSelect from '@/components/cool-select.vue'
 import DataTable from '@/components/data-table.vue'
 import StatCard from './component/stat-card.vue'
-import type { DataOverview, OrderDetail, TableColumn } from '@/types/supabase'
-import { reqGetAllOrder, reqGetDataOverview } from '@/api/supabase'
+import type { DataOverview, OrderDetail, Product, TableColumn } from '@/types/supabase'
+import { reqGetAllOrder, reqGetDataOverview, reqGetHotProduct } from '@/api/supabase'
 import { formatDate } from '@/utils/format'
 
 // 时间段选择器选项
@@ -197,6 +170,8 @@ const selectedPeriod = ref('7days')
 const recentOrders = ref<OrderDetail[]>([])
 // 数据概览
 const dataOverview = ref<DataOverview>({})
+// 热门商品
+const hotProducts = ref<Product[]>([])
 
 // 表格列配置
 const orderColumns: TableColumn<OrderDetail>[] = [
@@ -227,20 +202,25 @@ onMounted(async () => {
   // 最近订单
   loading.value = true
   try {
-    const orders = await reqGetAllOrder()
+    const [orders, overview, hotProductsData] = await Promise.all([
+      reqGetAllOrder(),
+      reqGetDataOverview(),
+      reqGetHotProduct()
+    ])
+    // 最近订单
     recentOrders.value = orders.map(order => {
       return {
         ...order,
         created_at: formatDate(order.created_at, 'YYYY-MM-DD HH:mm:ss')
       }
     })
+    // 数据概览
+    dataOverview.value = overview
+    // 热门商品
+    hotProducts.value = hotProductsData
   } finally {
     loading.value = false
   }
-
-  // 数据概览
-  const overview = await reqGetDataOverview()
-  dataOverview.value = overview
 })
 </script>
 
@@ -509,8 +489,8 @@ onMounted(async () => {
 
   .product-stats {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    gap: 4px;
 
     .sales-count {
       font-size: 12px;
