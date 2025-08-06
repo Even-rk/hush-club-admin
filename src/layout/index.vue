@@ -239,7 +239,10 @@ onMounted(() => {
   position: fixed;
   height: 100vh;
   z-index: 1000;
-  overflow-y: auto;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .sidebar-header {

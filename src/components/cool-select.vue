@@ -269,7 +269,10 @@ onUnmounted(() => {
   z-index: 9999;
   overflow: hidden;
   max-height: 240px;
-  overflow-y: auto;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .cool-select__options {
