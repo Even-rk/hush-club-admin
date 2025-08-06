@@ -21,7 +21,7 @@
       <div class="card-header">
         <div class="card-title">商品列表</div>
         <div class="card-tools">
-          <button class="tool-btn" title="刷新">
+          <button class="tool-btn" title="刷新" @click="searchProducts()">
             <span>🔄</span>
           </button>
           <button class="tool-btn" title="导出">
@@ -41,7 +41,7 @@
               placeholder="搜索商品名称、编号或分类..."
               @change="queryChange"
             />
-            <button class="search-btn" @click="searchProducts">搜索</button>
+            <button class="search-btn" @click="searchProducts()">搜索</button>
           </div>
 
           <div class="filter-group">
@@ -50,7 +50,7 @@
                 v-model="selectedCategory"
                 :options="categoryOptions"
                 placeholder="全部分类"
-                @change="searchProducts"
+                @change="searchProducts()"
               />
             </div>
             <div class="filter-item-enhanced">
@@ -58,7 +58,7 @@
                 v-model="selectedStatus"
                 :options="statusOptions"
                 placeholder="全部状态"
-                @change="searchProducts"
+                @change="searchProducts()"
               />
             </div>
             <button class="btn btn-secondary" @click="resetProducts">重置筛选</button>
@@ -105,6 +105,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue'
 import { reqGetAllCategory, reqGetProductList } from '@/api/supabase'
 import { Product, TableColumn, TableAction } from '@/types/supabase'
@@ -131,14 +132,18 @@ const statusOptions = [
 ]
 
 // 搜索商品
-const searchProducts = async () => {
+const searchProducts = async (params?: {
+  category_id?: number
+  status?: string
+  search?: string
+}) => {
   loading.value = true
   try {
     // 查商品
     productList.value = await reqGetProductList({
-      category_id: selectedCategory.value,
-      status: selectedStatus.value,
-      search: searchQuery.value
+      category_id: params?.category_id || selectedCategory.value,
+      status: params?.status || selectedStatus.value,
+      search: params?.search || searchQuery.value
     })
   } finally {
     loading.value = false
@@ -147,11 +152,20 @@ const searchProducts = async () => {
 
 // 重置商品
 const resetProducts = () => {
+  if (searchQuery.value || selectedCategory.value || selectedStatus.value) {
+    // 重置后查询
+    searchProducts({
+      category_id: 0,
+      status: '',
+      search: ''
+    })
+    return
+  } else {
+    ElMessage.warning('没有需要重置的筛选条件')
+  }
   selectedCategory.value = 0
   selectedStatus.value = ''
   searchQuery.value = ''
-  // 重置后查询
-  searchProducts()
 }
 
 // 查询变化
