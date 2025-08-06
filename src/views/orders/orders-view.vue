@@ -56,7 +56,7 @@
               />
             </div>
             <div class="filter-item-enhanced">
-              <date-picker v-model="selectedDate" placeholder="选择日期" />
+              <date-picker v-model="selectedDate" placeholder="选择日期" @change="searchOrders()" />
             </div>
             <button class="btn btn-secondary" @click="resetFilter">重置筛选</button>
           </div>
@@ -196,10 +196,10 @@ const searchOrders = async (params?: {
   loading.value = true
   try {
     const orders = await reqGetAllOrder({
-      payment: params?.payment || selectedPayment.value,
-      status: params?.status || selectedStatus.value,
-      query: params?.search || searchQuery.value,
-      date: params?.date || selectedDate.value
+      payment: params?.payment ?? selectedPayment.value,
+      status: params?.status ?? selectedStatus.value,
+      query: params?.search ?? searchQuery.value,
+      date: params?.date ?? selectedDate.value
     })
     orderList.value = orders.map(order => {
       return {

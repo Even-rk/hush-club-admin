@@ -302,3 +302,23 @@ export type Coupon = {
   // 更新时间
   updated_at: string
 }
+
+// 数据概览
+export type DataOverview = {
+  // 今日订单金额
+  today_order_amount?: number
+  // 今日订单数量
+  today_order_count?: number
+  // 今日会员数量
+  today_member_count?: number
+  // 客单价格
+  today_order_price?: number
+  // 昨日订单金额
+  yesterday_order_amount?: number
+  // 昨日订单数量
+  yesterday_order_count?: number
+  // 昨日会员数量
+  yesterday_member_count?: number
+  // 昨日客单价格
+  yesterday_order_price?: number
+}

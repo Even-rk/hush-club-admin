@@ -10,7 +10,7 @@
         </h1>
         <p class="page-subtitle">实时监控店铺运营数据和销售状况</p>
       </div>
-      <div class="header-actions">
+      <!-- <div class="header-actions">
         <button class="btn btn-secondary btn-with-icon">
           <span class="btn-icon">📥</span>
           导出报表
@@ -19,70 +19,46 @@
           <span class="btn-icon">🔄</span>
           刷新数据
         </button>
-      </div>
+      </div> -->
     </div>
 
     <!-- 统计卡片 -->
     <div class="stats-grid">
-      <div class="stat-card stat-revenue">
-        <div class="stat-decoration"></div>
-        <div class="stat-icon-wrapper">
-          <span class="stat-icon">💰</span>
-        </div>
-        <div class="stat-content">
-          <div class="stat-title">今日营业额</div>
-          <div class="stat-number">¥15,680</div>
-          <div class="stat-trend">
-            <span class="trend-badge trend-up">+12.5%</span>
-            <span class="trend-text">较昨日</span>
-          </div>
-        </div>
-      </div>
+      <stat-card
+        type="revenue"
+        icon="💰"
+        title="今日营业额"
+        :value="dataOverview.today_order_amount || 0"
+        :compare-value="dataOverview.yesterday_order_amount"
+        prefix="¥"
+      />
 
-      <div class="stat-card stat-orders">
-        <div class="stat-decoration"></div>
-        <div class="stat-icon-wrapper">
-          <span class="stat-icon">📋</span>
-        </div>
-        <div class="stat-content">
-          <div class="stat-title">今日订单</div>
-          <div class="stat-number">168</div>
-          <div class="stat-trend">
-            <span class="trend-badge trend-up">+8.3%</span>
-            <span class="trend-text">较昨日</span>
-          </div>
-        </div>
-      </div>
+      <stat-card
+        type="orders"
+        icon="📋"
+        title="今日订单"
+        :value="dataOverview.today_order_count || 0"
+        :compare-value="dataOverview.yesterday_order_count"
+        suffix="单"
+      />
 
-      <div class="stat-card stat-members">
-        <div class="stat-decoration"></div>
-        <div class="stat-icon-wrapper">
-          <span class="stat-icon">👥</span>
-        </div>
-        <div class="stat-content">
-          <div class="stat-title">新增会员</div>
-          <div class="stat-number">28</div>
-          <div class="stat-trend">
-            <span class="trend-badge trend-down">-5.2%</span>
-            <span class="trend-text">较昨日</span>
-          </div>
-        </div>
-      </div>
+      <stat-card
+        type="members"
+        icon="👥"
+        title="新增会员"
+        :value="dataOverview.today_member_count || 0"
+        :compare-value="dataOverview.yesterday_member_count"
+        suffix="人"
+      />
 
-      <div class="stat-card stat-price">
-        <div class="stat-decoration"></div>
-        <div class="stat-icon-wrapper">
-          <span class="stat-icon">💳</span>
-        </div>
-        <div class="stat-content">
-          <div class="stat-title">客单价</div>
-          <div class="stat-number">¥93.33</div>
-          <div class="stat-trend">
-            <span class="trend-badge trend-up">+3.8%</span>
-            <span class="trend-text">较昨日</span>
-          </div>
-        </div>
-      </div>
+      <stat-card
+        type="price"
+        icon="💳"
+        title="客单价"
+        :value="dataOverview.today_order_price || 0"
+        :compare-value="dataOverview.yesterday_order_price"
+        prefix="¥"
+      />
     </div>
 
     <!-- 图表区域 -->
@@ -203,8 +179,9 @@
 import { onMounted, ref } from 'vue'
 import CoolSelect from '@/components/cool-select.vue'
 import DataTable from '@/components/data-table.vue'
-import type { OrderDetail, TableColumn } from '@/types/supabase'
-import { reqGetAllOrder } from '@/api/supabase'
+import StatCard from './component/stat-card.vue'
+import type { DataOverview, OrderDetail, TableColumn } from '@/types/supabase'
+import { reqGetAllOrder, reqGetDataOverview } from '@/api/supabase'
 import { formatDate } from '@/utils/format'
 
 // 时间段选择器选项
@@ -218,6 +195,8 @@ const selectedPeriod = ref('7days')
 
 // 最近订单数据
 const recentOrders = ref<OrderDetail[]>([])
+// 数据概览
+const dataOverview = ref<DataOverview>({})
 
 // 表格列配置
 const orderColumns: TableColumn<OrderDetail>[] = [
@@ -258,6 +237,10 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+
+  // 数据概览
+  const overview = await reqGetDataOverview()
+  dataOverview.value = overview
 })
 </script>
 
@@ -301,10 +284,10 @@ onMounted(async () => {
     }
   }
 
-  .header-actions {
-    display: flex;
-    gap: 12px;
-  }
+  // .header-actions {
+  //   display: flex;
+  //   gap: 12px;
+  // }
 }
 
 /* 按钮样式 */
@@ -354,262 +337,12 @@ onMounted(async () => {
   }
 }
 
-/* 统计卡片 */
+/* 统计卡片网格布局 */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 24px;
   margin-bottom: 32px;
-}
-
-.stat-card {
-  background: var(--bg-white);
-  border-radius: 20px;
-  padding: 28px;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid var(--border-light);
-
-  &:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: var(--shadow-2xl);
-
-    .stat-icon-wrapper {
-      transform: rotate(10deg) scale(1.1);
-    }
-
-    .stat-decoration {
-      transform: scale(1.2);
-      opacity: 0.2;
-    }
-  }
-
-  // 装饰元素
-  .stat-decoration {
-    position: absolute;
-    top: -30px;
-    right: -30px;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    transition: all 0.4s;
-    opacity: 0.15;
-  }
-
-  // 营业额卡片 - 绿色主题
-  &.stat-revenue {
-    background: linear-gradient(
-      135deg,
-      var(--bg-success-strong-start) 0%,
-      var(--bg-success-strong-end) 100%
-    );
-    border: 1px solid var(--success-color);
-
-    .stat-decoration {
-      background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark-end) 100%);
-    }
-
-    .stat-icon-wrapper {
-      background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark-end) 100%);
-      box-shadow: var(--shadow-success);
-    }
-
-    .stat-number {
-      color: var(--text-success-dark);
-      font-weight: 800;
-    }
-
-    .stat-title {
-      color: var(--success-color);
-      font-weight: 600;
-    }
-  }
-
-  // 订单卡片 - 蓝色主题
-  &.stat-orders {
-    background: linear-gradient(
-      135deg,
-      var(--bg-info-strong-start) 0%,
-      var(--bg-info-strong-end) 100%
-    );
-    border: 1px solid var(--info-color);
-
-    .stat-decoration {
-      background: linear-gradient(135deg, var(--info-color) 0%, var(--info-dark-end) 100%);
-    }
-
-    .stat-icon-wrapper {
-      background: linear-gradient(135deg, var(--info-color) 0%, var(--info-dark-end) 100%);
-      box-shadow: var(--shadow-info);
-    }
-
-    .stat-number {
-      color: var(--text-info-dark);
-      font-weight: 800;
-    }
-
-    .stat-title {
-      color: var(--info-color);
-      font-weight: 600;
-    }
-  }
-
-  // 会员卡片 - 黄色主题
-  &.stat-members {
-    background: linear-gradient(
-      135deg,
-      var(--bg-warning-strong-start) 0%,
-      var(--bg-warning-strong-end) 100%
-    );
-    border: 1px solid var(--warning-color);
-
-    .stat-decoration {
-      background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-dark-end) 100%);
-    }
-
-    .stat-icon-wrapper {
-      background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-dark-end) 100%);
-      box-shadow: var(--shadow-warning);
-    }
-
-    .stat-number {
-      color: var(--text-warning-dark);
-      font-weight: 800;
-    }
-
-    .stat-title {
-      color: var(--warning-color);
-      font-weight: 600;
-    }
-  }
-
-  // 客单价卡片 - 主题色
-  &.stat-price {
-    background: linear-gradient(
-      135deg,
-      var(--bg-primary-strong-start) 0%,
-      var(--bg-primary-strong-end) 100%
-    );
-    border: 1px solid var(--primary-color);
-
-    .stat-decoration {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark-end) 100%);
-    }
-
-    .stat-icon-wrapper {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark-end) 100%);
-      box-shadow: var(--shadow-primary);
-    }
-
-    .stat-number {
-      color: var(--text-primary-dark);
-      font-weight: 800;
-    }
-
-    .stat-title {
-      color: var(--primary-color);
-      font-weight: 600;
-    }
-  }
-}
-
-// 图标容器
-.stat-icon-wrapper {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-  transition: all 0.4s;
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    background: var(--bg-white);
-    opacity: 0.9;
-    z-index: 0;
-  }
-
-  .stat-icon {
-    font-size: 24px;
-    filter: var(--shadow-drop);
-    position: relative;
-    z-index: 1;
-  }
-}
-
-// 内容区域
-.stat-content {
-  position: relative;
-  z-index: 1;
-
-  .stat-title {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 12px;
-  }
-
-  .stat-number {
-    font-size: 36px;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 16px;
-    transition: all 0.3s;
-  }
-
-  .stat-trend {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    .trend-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-
-      &.trend-up {
-        background: linear-gradient(135deg, var(--trend-up-start) 0%, var(--trend-up-end) 100%);
-        color: var(--trend-up-text);
-        border: 1px solid var(--trend-up-end);
-
-        &::before {
-          content: '↑';
-          margin-right: 4px;
-          font-weight: bold;
-        }
-      }
-
-      &.trend-down {
-        background: linear-gradient(135deg, var(--trend-down-start) 0%, var(--trend-down-end) 100%);
-        color: var(--trend-down-text);
-        border: 1px solid var(--trend-down-end);
-
-        &::before {
-          content: '↓';
-          margin-right: 4px;
-          font-weight: bold;
-        }
-      }
-    }
-
-    .trend-text {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-  }
 }
 
 /* 内容卡片 */

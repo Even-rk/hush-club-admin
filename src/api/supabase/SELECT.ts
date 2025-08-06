@@ -11,7 +11,8 @@ import {
   User,
   RolePermission,
   Coupon,
-  DatabaseMemoryUsage
+  DatabaseMemoryUsage,
+  DataOverview
 } from '@/types/supabase'
 import { getPublicUrl } from '@/utils/storage'
 import { formatDate } from '@/utils/format'
@@ -539,4 +540,92 @@ export const reqGetCouponList = async (params?: {
 export const reqGetDatabaseMemoryUsage = async (): Promise<DatabaseMemoryUsage[]> => {
   const { data } = await supabase.rpc('get_database_size')
   return data
+}
+
+// 数据概览
+export const reqGetDataOverview = async (): Promise<DataOverview> => {
+  // 查今日订单数量
+  const { count: today_order_count, error: order_error } = await supabase
+    .from('orders')
+    .select('*', { count: 'exact', head: true })
+    .gte('created_at', formatDate(new Date(), 'YYYY-MM-DD'))
+  if (order_error) {
+    return {}
+  }
+  // 查今日会员数量
+  const { count: today_member_count, error: member_error } = await supabase
+    .from('members')
+    .select('*', { count: 'exact', head: true })
+    .gte('created_at', formatDate(new Date(), 'YYYY-MM-DD'))
+  if (member_error) {
+    return {}
+  }
+  // 查今日订单金额
+  const { data: today_order_data, error: order_amount_error } = await supabase
+    .from('orders')
+    .select('final_amount')
+    .gte('created_at', formatDate(new Date(), 'YYYY-MM-DD'))
+  if (order_amount_error) {
+    return {}
+  }
+
+  // 查昨日订单数量
+  const { count: yesterday_order_count, error: yesterday_order_error } = await supabase
+    .from('orders')
+    .select('*', { count: 'exact', head: true })
+    .gte(
+      'created_at',
+      formatDate(new Date(new Date().setDate(new Date().getDate() - 1)), 'YYYY-MM-DD')
+    )
+  if (yesterday_order_error) {
+    return {}
+  }
+  // 查昨日会员数量
+  const { count: yesterday_member_count, error: yesterday_member_error } = await supabase
+    .from('members')
+    .select('*', { count: 'exact', head: true })
+    .gte(
+      'created_at',
+      formatDate(new Date(new Date().setDate(new Date().getDate() - 1)), 'YYYY-MM-DD')
+    )
+  if (yesterday_member_error) {
+    return {}
+  }
+  // 查今日订单金额
+  const { data: yesterday_order_data, error: yesterday_order_amount_error } = await supabase
+    .from('orders')
+    .select('final_amount')
+    .gte('created_at', formatDate(new Date(), 'YYYY-MM-DD'))
+  if (yesterday_order_amount_error) {
+    return {}
+  }
+
+  // 今日销售额
+  const today_order_amount = today_order_data?.reduce((acc, item) => {
+    return acc + item.final_amount
+  }, 0)
+
+  // 昨日销售额
+  const yesterday_order_amount = yesterday_order_data?.reduce((acc, item) => {
+    return acc + item.final_amount
+  }, 0)
+
+  return {
+    // 今日订单数量
+    today_order_count: today_order_count || 0,
+    // 今日会员数量
+    today_member_count: today_member_count || 0,
+    // 今日订单金额
+    today_order_amount: today_order_amount || 0,
+    // 今日客单价格
+    today_order_price: today_order_amount / (today_order_count || 1) || 0,
+    // 昨日订单金额
+    yesterday_order_amount: yesterday_order_amount || 0,
+    // 昨日订单数量
+    yesterday_order_count: yesterday_order_count || 0,
+    // 昨日会员数量
+    yesterday_member_count: yesterday_member_count || 0,
+    // 昨日客单价格
+    yesterday_order_price: yesterday_order_amount / (yesterday_order_count || 1) || 0
+  }
 }
