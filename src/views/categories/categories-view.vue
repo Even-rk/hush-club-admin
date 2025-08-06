@@ -181,7 +181,7 @@ const resetCategories = () => {
       search: ''
     })
   } else {
-    ElMessage.warning('没有需要重置的筛选条件')
+    ElMessage.warning('没有筛选条件')
   }
   selectedStatus.value = ''
   searchQuery.value = ''

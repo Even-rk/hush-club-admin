@@ -156,6 +156,8 @@ export const reqGetAllOrder = async (params?: {
   query?: string
   // 日期
   date?: string
+  // 支付方式
+  payment?: string
 }): Promise<OrderDetail[]> => {
   const supabaseOrder = supabase.from('orders').select('*')
   // 查日期
@@ -171,6 +173,10 @@ export const reqGetAllOrder = async (params?: {
   // 查日期
   if (params?.date) {
     supabaseOrder.gte('created_at', params.date)
+  }
+  // 查支付方式
+  if (params?.payment) {
+    supabaseOrder.eq('payment_method', params.payment)
   }
   const { data: orders, error: orders_error } = await supabaseOrder
   if (orders_error) {

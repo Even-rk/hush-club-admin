@@ -160,7 +160,7 @@ const resetProducts = () => {
       search: ''
     })
   } else {
-    ElMessage.warning('没有需要重置的筛选条件')
+    ElMessage.warning('没有筛选条件')
   }
   selectedCategory.value = 0
   selectedStatus.value = ''

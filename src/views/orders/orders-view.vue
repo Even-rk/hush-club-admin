@@ -41,8 +41,9 @@
               type="text"
               class="search-input-enhanced"
               placeholder="搜索订单号、客户姓名或手机号..."
+              @change="queryChange()"
             />
-            <button class="search-btn">搜索</button>
+            <button class="search-btn" @click="searchOrders()">搜索</button>
           </div>
 
           <div class="filter-group">
@@ -50,22 +51,22 @@
               <cool-select
                 v-model="selectedStatus"
                 :options="statusOptions"
-                class="filter-select-enhanced"
                 placeholder="全部状态"
+                @change="searchOrders()"
               />
             </div>
             <div class="filter-item-enhanced">
               <cool-select
                 v-model="selectedPayment"
                 :options="paymentOptions"
-                class="filter-select-enhanced"
                 placeholder="全部方式"
+                @change="searchOrders()"
               />
             </div>
             <div class="filter-item-enhanced">
               <date-picker v-model="selectedDate" placeholder="选择日期" />
             </div>
-            <button class="btn btn-primary">应用筛选</button>
+            <button class="btn btn-secondary" @click="resetFilter">重置筛选</button>
           </div>
         </div>
 
@@ -116,6 +117,7 @@ import { supabase } from '@/utils/supabase'
 import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
 import DatePicker from '@/components/date-picker.vue'
+import { ElMessage } from 'element-plus'
 
 // 数据状态
 const orderList = ref<OrderDetail[]>([])
@@ -193,10 +195,16 @@ const orderActions: TableAction<OrderDetail>[] = [
 ]
 
 // 搜索订单
-const searchOrders = async (params?: { status?: string; search?: string; date?: string }) => {
+const searchOrders = async (params?: {
+  status?: string
+  search?: string
+  date?: string
+  payment?: string
+}) => {
   loading.value = true
   try {
     const orders = await reqGetAllOrder({
+      payment: params?.payment || selectedPayment.value,
       status: params?.status || selectedStatus.value,
       query: params?.search || searchQuery.value,
       date: params?.date || selectedDate.value
@@ -210,6 +218,30 @@ const searchOrders = async (params?: { status?: string; search?: string; date?: 
   } finally {
     loading.value = false
   }
+}
+// 查询变化
+const queryChange = () => {
+  if (!searchQuery.value) {
+    searchOrders()
+  }
+}
+
+// 重置筛选
+const resetFilter = () => {
+  if (selectedStatus.value || selectedPayment.value || selectedDate.value || searchQuery.value) {
+    searchOrders({
+      status: '',
+      search: '',
+      date: '',
+      payment: ''
+    })
+  } else {
+    ElMessage.warning('没有筛选条件')
+  }
+  selectedStatus.value = ''
+  selectedPayment.value = ''
+  selectedDate.value = ''
+  searchQuery.value = ''
 }
 
 // 加载数据
