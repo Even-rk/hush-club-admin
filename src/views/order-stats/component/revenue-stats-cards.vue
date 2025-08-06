@@ -6,8 +6,8 @@
       <div class="stat-content">
         <div class="stat-header">
           <div class="stat-info">
-            <div class="stat-title">本月订单总数</div>
-            <div class="stat-subtitle">Monthly Orders</div>
+            <div class="stat-title">订单总数</div>
+            <div class="stat-subtitle">Orders</div>
           </div>
           <div class="stat-icon-wrapper">
             <div class="stat-icon">
@@ -16,7 +16,9 @@
           </div>
         </div>
         <div class="stat-value">
-          <span class="stat-number" data-value="3420">3,420</span>
+          <span class="stat-number">
+            {{ props.statsData?.orders || 0 }}
+          </span>
           <span class="stat-unit">单</span>
         </div>
       </div>
@@ -28,8 +30,8 @@
       <div class="stat-content">
         <div class="stat-header">
           <div class="stat-info">
-            <div class="stat-title">本月营业额</div>
-            <div class="stat-subtitle">Monthly Revenue</div>
+            <div class="stat-title">营业额</div>
+            <div class="stat-subtitle">Revenue</div>
           </div>
           <div class="stat-icon-wrapper">
             <div class="stat-icon">
@@ -39,7 +41,9 @@
         </div>
         <div class="stat-value">
           <span class="stat-currency">¥</span>
-          <span class="stat-number" data-value="356800">356,800</span>
+          <span class="stat-number">
+            {{ props.statsData?.revenue || 0 }}
+          </span>
         </div>
       </div>
     </div>
@@ -50,7 +54,7 @@
       <div class="stat-content">
         <div class="stat-header">
           <div class="stat-info">
-            <div class="stat-title">平均客单价</div>
+            <div class="stat-title">客单价</div>
             <div class="stat-subtitle">Average Order Value</div>
           </div>
           <div class="stat-icon-wrapper">
@@ -61,7 +65,9 @@
         </div>
         <div class="stat-value">
           <span class="stat-currency">¥</span>
-          <span class="stat-number" data-value="104.33">104.33</span>
+          <span class="stat-number">
+            {{ props.statsData?.averageValue || 0 }}
+          </span>
         </div>
       </div>
     </div>
@@ -82,8 +88,8 @@
           </div>
         </div>
         <div class="stat-value">
-          <span class="stat-number" data-value="2156">
-            {{ props.statsData?.wechatOrders || 2156 }}
+          <span class="stat-number">
+            {{ props.statsData?.wechatOrders || 0 }}
           </span>
           <span class="stat-unit">单</span>
         </div>
@@ -106,9 +112,9 @@
           </div>
         </div>
         <div class="stat-value">
-          <span class="stat-number" data-value="1264">{{
-            props.statsData?.balanceOrders || 1264
-          }}</span>
+          <span class="stat-number">
+            {{ props.statsData?.balanceOrders || 0 }}
+          </span>
           <span class="stat-unit">单</span>
         </div>
       </div>
@@ -120,7 +126,7 @@
       <div class="stat-content">
         <div class="stat-header">
           <div class="stat-info">
-            <div class="stat-title">储值金额</div>
+            <div class="stat-title">总储值金额</div>
             <div class="stat-subtitle">Deposit Amount</div>
           </div>
           <div class="stat-icon-wrapper">
@@ -131,9 +137,9 @@
         </div>
         <div class="stat-value">
           <span class="stat-currency">¥</span>
-          <span class="stat-number" data-value="128500">{{
-            props.statsData?.depositAmount || 128500
-          }}</span>
+          <span class="stat-number">
+            {{ props.statsData?.depositAmount || 0 }}
+          </span>
         </div>
       </div>
     </div>
@@ -155,8 +161,8 @@
         </div>
         <div class="stat-value">
           <span class="stat-currency">¥</span>
-          <span class="stat-number" data-value="89600">
-            {{ props.statsData?.balanceSpent || 89600 }}
+          <span class="stat-number">
+            {{ props.statsData?.balanceSpent || 0 }}
           </span>
         </div>
       </div>
@@ -179,9 +185,9 @@
         </div>
         <div class="stat-value">
           <span class="stat-currency">¥</span>
-          <span class="stat-number" data-value="38900">{{
-            props.statsData?.remainingBalance || 38900
-          }}</span>
+          <span class="stat-number">
+            {{ props.statsData?.remainingBalance || 0 }}
+          </span>
         </div>
       </div>
     </div>
@@ -202,7 +208,9 @@
           </div>
         </div>
         <div class="stat-value">
-          <span class="stat-number" data-value="156">{{ props.statsData?.newMembers || 156 }}</span>
+          <span class="stat-number">
+            {{ props.statsData?.newMembers || 0 }}
+          </span>
           <span class="stat-unit">人</span>
         </div>
       </div>
