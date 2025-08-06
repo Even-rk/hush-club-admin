@@ -114,10 +114,7 @@ export const reqGetAllCategory = async (params?: {
   status?: string
   search?: string
 }): Promise<ProductCategory[]> => {
-  const supabaseCategory = supabase
-    .from('product_categories')
-    .select('*')
-    .order('sort_order', { ascending: true })
+  const supabaseCategory = supabase.from('product_categories').select('*')
   // 查状态
   if (params?.status) {
     supabaseCategory.eq('status', params.status)
