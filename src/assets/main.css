@@ -1,22 +1,75 @@
 :root {
+  /* 主题色 */
   --primary-color: #ff6b35;
   --primary-dark: #e55a2b;
+  --primary-light: #ff8c61;
   --secondary-color: #fff4f1;
+
+  /* 文字颜色 */
   --text-primary: #333333;
   --text-secondary: #666666;
   --text-light: #999999;
+  --text-heading: #1f2937;
+  --text-subtitle: #6b7280;
+  --text-muted: #9ca3af;
+  --text-dark: #374151;
+
+  /* 背景色 */
   --bg-white: #ffffff;
   --bg-gray: #f8f8f8;
+  --bg-light: #f9fafb;
+  --bg-gradient-start: #f8f9fa;
+  --bg-gradient-end: #ffffff;
+  --bg-placeholder-end: #e5e7eb;
+
+  /* 边框颜色 */
   --border-color: #e5e5e5;
-  --success-color: #4caf50;
-  --warning-color: #ffc107;
-  --error-color: #f44336;
-  --info-color: #2196f3;
+  --border-light: #f3f4f6;
+  --border-medium: #e5e7eb;
+  --border-hover: #d1d5db;
+
+  /* 状态色 - 主色 */
+  --success-color: #16a34a;
+  --warning-color: #d97706;
+  --error-color: #dc2626;
+  --info-color: #2563eb;
+
+  /* 状态色 - 旧版兼容 */
+  --success-color-old: #4caf50;
+  --warning-color-old: #ffc107;
+  --error-color-old: #f44336;
+  --info-color-old: #2196f3;
+
+  /* 状态背景色 */
+  --success-bg: #dcfce7;
+  --warning-bg: #fef3c7;
+  --error-bg: #fee2e2;
+  --info-bg: #dbeafe;
+
+  /* 会员等级颜色 */
   --gold-color: #ffd700;
+  --gold-dark: #ffb300;
+  --gold-text: #d4af37;
   --silver-color: #c0c0c0;
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --silver-dark: #a8a8a8;
+  --silver-text: #909090;
+  --diamond-color: #b388ff;
+  --diamond-dark: #9575cd;
+
+  /* 阴影 */
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 12px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-primary: 0 4px 12px rgba(255, 107, 53, 0.3);
+
+  /* 圆角 */
   --radius: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* 布局 */
   --sidebar-width: 260px;
 }
 
@@ -31,128 +84,6 @@ body {
   background-color: var(--bg-gray);
   color: var(--text-primary);
   overflow-x: hidden;
-}
-
-/* 按钮 */
-.btn {
-  flex-shrink: 0;
-  padding: 8px 16px;
-  border: none;
-  border-radius: var(--radius);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btn-primary {
-  background: var(--primary-color);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--primary-dark);
-}
-
-.btn-secondary {
-  background: var(--bg-gray);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-}
-
-.btn-secondary:hover {
-  background: #e0e0e0;
-}
-
-.btn-success {
-  background: var(--success-color);
-  color: white;
-}
-
-.btn-warning {
-  background: var(--warning-color);
-  color: white;
-}
-
-.btn-danger {
-  background: var(--error-color);
-  color: white;
-}
-
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 12px;
-  margin-right: 8px;
-}
-
-/* 表单 */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-/* 状态标签 */
-.status-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  text-align: center;
-  display: inline-block;
-}
-
-.status-success {
-  background: rgba(76, 175, 80, 0.1);
-  color: var(--success-color);
-}
-
-.status-warning {
-  background: rgba(255, 193, 7, 0.1);
-  color: var(--warning-color);
-}
-
-.status-danger {
-  background: rgba(244, 67, 54, 0.1);
-  color: var(--error-color);
-}
-
-.status-info {
-  background: rgba(33, 150, 243, 0.1);
-  color: var(--info-color);
-}
-
-/* 成功/错误消息 */
-.alert {
-  padding: 12px 16px;
-  border-radius: var(--radius);
-  margin-bottom: 16px;
-  font-size: 14px;
-}
-
-.alert-success {
-  background: rgba(76, 175, 80, 0.1);
-  color: var(--success-color);
-  border: 1px solid rgba(76, 175, 80, 0.3);
-}
-
-.alert-error {
-  background: rgba(244, 67, 54, 0.1);
-  color: var(--error-color);
-  border: 1px solid rgba(244, 67, 54, 0.3);
-}
-
-/* 加载状态 */
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-  color: var(--text-secondary);
 }
 
 .spinner {

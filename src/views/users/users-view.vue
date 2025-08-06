@@ -245,7 +245,7 @@ onMounted(async () => {
 /* 用户管理页面样式 */
 .user-management-page {
   padding: 24px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
   min-height: 100vh;
 }
 
@@ -256,9 +256,9 @@ onMounted(async () => {
   align-items: center;
   margin-bottom: 32px;
   padding: 24px 32px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
 
   .header-content {
     .page-title {
@@ -267,7 +267,7 @@ onMounted(async () => {
       gap: 12px;
       font-size: 28px;
       font-weight: 700;
-      color: #1f2937;
+      color: var(--text-heading);
       margin: 0 0 8px 0;
 
       .title-icon {
@@ -276,7 +276,7 @@ onMounted(async () => {
     }
 
     .page-subtitle {
-      color: #6b7280;
+      color: var(--text-subtitle);
       font-size: 14px;
       margin: 0;
     }
@@ -285,9 +285,9 @@ onMounted(async () => {
 
 /* 内容卡片 */
 .content-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
   margin-bottom: 24px;
 
   .card-header {
@@ -295,7 +295,7 @@ onMounted(async () => {
     justify-content: space-between;
     align-items: center;
     padding: 20px 24px;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--border-light);
 
     .card-title-section {
       .card-title {
@@ -304,7 +304,7 @@ onMounted(async () => {
         gap: 8px;
         font-size: 18px;
         font-weight: 600;
-        color: #1f2937;
+        color: var(--text-heading);
         margin: 0;
 
         .title-icon {
@@ -315,14 +315,14 @@ onMounted(async () => {
       .card-description {
         margin: 4px 0 0 0;
         font-size: 13px;
-        color: #6b7280;
+        color: var(--text-subtitle);
       }
     }
 
     .card-title {
       font-size: 18px;
       font-weight: 600;
-      color: #1f2937;
+      color: var(--text-heading);
     }
 
     .card-tools {
@@ -332,9 +332,9 @@ onMounted(async () => {
       .tool-btn {
         width: 32px;
         height: 32px;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        background: white;
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius);
+        background: var(--bg-white);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -342,8 +342,8 @@ onMounted(async () => {
         transition: all 0.2s;
 
         &:hover {
-          background: #f9fafb;
-          border-color: #d1d5db;
+          background: var(--bg-light);
+          border-color: var(--border-hover);
         }
 
         span {
@@ -384,14 +384,14 @@ onMounted(async () => {
     .search-input-enhanced {
       width: 100%;
       padding: 10px 100px 10px 36px;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
       font-size: 14px;
       transition: all 0.2s;
 
       &:focus {
         outline: none;
-        border-color: #ff6b35;
+        border-color: var(--primary-color);
         box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
       }
     }
@@ -402,17 +402,17 @@ onMounted(async () => {
       top: 50%;
       transform: translateY(-50%);
       padding: 6px 16px;
-      background: linear-gradient(135deg, #ff6b35 0%, #ff8c61 100%);
-      color: white;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+      color: var(--bg-white);
       border: none;
-      border-radius: 8px;
+      border-radius: var(--radius);
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
 
       &:hover {
-        background: linear-gradient(135deg, #ff8c61 0%, #ff6b35 100%);
+        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
       }
     }
   }
@@ -432,7 +432,7 @@ onMounted(async () => {
 .btn {
   padding: 10px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -442,13 +442,24 @@ onMounted(async () => {
   gap: 8px;
 
   &.btn-primary {
-    background: linear-gradient(135deg, #ff6b35 0%, #ff8c61 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: var(--bg-white);
 
     &:hover {
-      background: linear-gradient(135deg, #ff8c61 0%, #ff6b35 100%);
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+      box-shadow: var(--shadow-primary);
+    }
+  }
+
+  &.btn-secondary {
+    background: var(--bg-white);
+    color: var(--text-subtitle);
+    border: 1px solid var(--border-medium);
+
+    &:hover {
+      background: var(--bg-light);
+      border-color: var(--border-hover);
     }
   }
 
@@ -462,8 +473,8 @@ onMounted(async () => {
 /* 用户表格样式 */
 .user-table {
   :deep(.data-table) {
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius);
     overflow: hidden;
   }
 }

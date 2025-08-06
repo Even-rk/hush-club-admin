@@ -172,7 +172,7 @@ const onSavePermission = (roleId: number) => {
     justify-content: space-between;
     align-items: center;
     padding: 20px 24px;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--border-light);
 
     .card-title-section {
       .card-title {
@@ -181,7 +181,7 @@ const onSavePermission = (roleId: number) => {
         gap: 8px;
         font-size: 18px;
         font-weight: 600;
-        color: #1f2937;
+        color: var(--text-heading);
         margin: 0;
 
         .title-icon {
@@ -192,7 +192,7 @@ const onSavePermission = (roleId: number) => {
       .card-description {
         margin: 4px 0 0 0;
         font-size: 13px;
-        color: #6b7280;
+        color: var(--text-subtitle);
       }
     }
   }
@@ -212,7 +212,7 @@ const onSavePermission = (roleId: number) => {
 /* 增强版角色卡片 */
 .role-card-enhanced {
   background: white;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-medium);
   border-radius: 12px;
   padding: 20px;
   transition: all 0.3s ease;
@@ -223,17 +223,17 @@ const onSavePermission = (roleId: number) => {
   }
 
   &.role-superadmin {
-    border-color: #ef4444;
+    border-color: var(--error-color);
     background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, transparent 100%);
   }
 
   &.role-admin {
-    border-color: #f59e0b;
+    border-color: var(--warning-color);
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, transparent 100%);
   }
 
   &.role-staff {
-    border-color: #3b82f6;
+    border-color: var(--info-color);
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, transparent 100%);
   }
 
@@ -243,7 +243,7 @@ const onSavePermission = (roleId: number) => {
     align-items: center;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--border-light);
 
     .role-info {
       display: flex;
@@ -258,13 +258,13 @@ const onSavePermission = (roleId: number) => {
         .role-name {
           font-size: 16px;
           font-weight: 600;
-          color: #1f2937;
+          color: var(--text-heading);
           margin: 0 0 4px 0;
         }
 
         .role-code {
           font-size: 12px;
-          color: #9ca3af;
+          color: var(--text-muted);
           font-family: monospace;
         }
       }
@@ -306,20 +306,20 @@ const onSavePermission = (roleId: number) => {
           }
 
           &.cancel {
-            background: #fee2e2;
-            color: #dc2626;
+            background: var(--error-bg);
+            color: var(--error-color);
 
             &:hover {
-              background: #fecaca;
+              background: var(--error-bg);
             }
           }
 
           &.save {
-            background: #dcfce7;
-            color: #16a34a;
+            background: var(--success-bg);
+            color: var(--success-color);
 
             &:hover {
-              background: #bbf7d0;
+              background: var(--success-bg);
             }
           }
         }
@@ -337,14 +337,14 @@ const onSavePermission = (roleId: number) => {
 
       .permission-tag {
         padding: 4px 12px;
-        background: #f3f4f6;
+        background: var(--border-light);
         border-radius: 6px;
         font-size: 13px;
-        color: #4b5563;
+        color: var(--text-dark);
       }
 
       .no-permission {
-        color: #9ca3af;
+        color: var(--text-muted);
         font-style: italic;
         font-size: 13px;
       }
@@ -361,7 +361,7 @@ const onSavePermission = (roleId: number) => {
         gap: 8px;
         cursor: pointer;
         font-size: 13px;
-        color: #4b5563;
+        color: var(--text-dark);
 
         .checkbox-input {
           width: 16px;
@@ -374,7 +374,7 @@ const onSavePermission = (roleId: number) => {
         }
 
         &:hover {
-          color: #1f2937;
+          color: var(--text-heading);
         }
       }
     }
@@ -385,7 +385,7 @@ const onSavePermission = (roleId: number) => {
     gap: 24px;
     margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid var(--border-light);
 
     .stat-item {
       display: flex;
@@ -395,12 +395,12 @@ const onSavePermission = (roleId: number) => {
       .stat-value {
         font-size: 20px;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--text-heading);
       }
 
       .stat-name {
         font-size: 12px;
-        color: #9ca3af;
+        color: var(--text-muted);
         margin-top: 4px;
       }
     }

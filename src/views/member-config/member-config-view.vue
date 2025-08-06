@@ -1,6 +1,19 @@
 <template>
-  <!-- 会员等级配置 -->
-  <div class="content-card">
+  <!-- 会员配置页面 -->
+  <div class="member-config-page">
+    <!-- 页面头部 -->
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">
+          <span class="title-icon">⚙️</span>
+          会员配置管理
+        </h1>
+        <p class="page-subtitle">配置会员等级、充值规则和优惠政策</p>
+      </div>
+    </div>
+
+    <!-- 会员等级配置 -->
+    <div class="content-card">
     <div class="card-header">
       <div class="card-title">会员等级配置</div>
       <div class="card-subtitle">设置不同会员等级的升级条件和优惠力度</div>
@@ -71,10 +84,10 @@
         <button class="btn btn-primary save-button">保存会员等级配置</button>
       </div>
     </div>
-  </div>
+    </div>
 
-  <!-- 充值设置 -->
-  <div class="content-card">
+    <!-- 充值设置 -->
+    <div class="content-card">
     <div class="card-header">
       <div class="card-title">充值系统配置</div>
       <div class="card-subtitle">设置小程序充值相关参数和规则</div>
@@ -141,6 +154,7 @@
         <button class="btn btn-primary save-button">保存充值配置</button>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -158,6 +172,72 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+/* 会员配置页面 */
+.member-config-page {
+  padding: 24px;
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
+  min-height: 100vh;
+}
+
+/* 页面头部 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 24px 32px;
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+
+  .header-content {
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin: 0 0 8px 0;
+
+      .title-icon {
+        font-size: 32px;
+      }
+    }
+
+    .page-subtitle {
+      color: var(--text-subtitle);
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+}
+
+/* 按钮样式 */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: var(--bg-white);
+
+    &:hover {
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-primary);
+    }
+  }
+}
+
 /* 表单控件 */
 .form-control,
 .form-select,
@@ -209,32 +289,27 @@ onMounted(async () => {
 /* 内容卡片样式 */
 .content-card {
   background: var(--bg-white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
   margin-bottom: 24px;
   overflow: hidden;
 }
 
 .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
-  flex-direction: column;
-  align-items: flex-start;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .card-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-heading);
+  margin-bottom: 4px;
 }
 
 .card-subtitle {
-  color: var(--text-secondary);
+  color: var(--text-subtitle);
   font-size: 14px;
-  margin-top: 4px;
 }
 
 .card-actions {
@@ -243,95 +318,112 @@ onMounted(async () => {
 }
 
 .card-body {
-  padding: 20px;
+  padding: 24px;
 }
 
+/* 等级配置卡片 */
 .level-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
   margin-bottom: 24px;
 
   .level-card {
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 20px;
+    border: 2px solid var(--border-medium);
+    border-radius: var(--radius-lg);
+    padding: 24px;
     background: var(--bg-white);
+    transition: all 0.3s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
 
     &.level-silver {
       border-color: var(--silver-color);
-      background: rgba(192, 192, 192, 0.05);
+      background: linear-gradient(135deg, rgba(192, 192, 192, 0.05) 0%, rgba(192, 192, 192, 0.02) 100%);
     }
 
     &.level-gold {
       border-color: var(--gold-color);
-      background: rgba(255, 215, 0, 0.05);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 215, 0, 0.02) 100%);
     }
 
     &.level-diamond {
-      border-color: var(--primary-color);
-      background: var(--secondary-color);
+      border-color: var(--diamond-color);
+      background: linear-gradient(135deg, rgba(179, 136, 255, 0.05) 0%, rgba(179, 136, 255, 0.02) 100%);
     }
 
     .level-header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
+      gap: 16px;
+      margin-bottom: 20px;
 
       .level-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--text-secondary);
+        width: 48px;
+        height: 48px;
+        background: var(--text-subtitle);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
+        color: var(--bg-white);
         font-weight: 600;
+        font-size: 18px;
       }
 
       .level-info {
         .level-name {
           font-size: 18px;
           font-weight: 600;
+          color: var(--text-heading);
         }
 
         .level-desc {
-          font-size: 12px;
-          color: var(--text-secondary);
+          font-size: 13px;
+          color: var(--text-subtitle);
+          margin-top: 4px;
         }
       }
     }
 
     &.level-silver .level-icon {
-      background: var(--silver-color);
+      background: linear-gradient(135deg, var(--silver-color) 0%, var(--silver-dark) 100%);
     }
 
     &.level-silver .level-name {
-      color: var(--silver-color);
+      background: linear-gradient(135deg, var(--silver-color) 0%, var(--silver-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     &.level-gold .level-icon {
-      background: var(--gold-color);
+      background: linear-gradient(135deg, var(--gold-color) 0%, var(--gold-dark) 100%);
     }
 
     &.level-gold .level-name {
-      color: var(--gold-color);
+      background: linear-gradient(135deg, var(--gold-color) 0%, var(--gold-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     &.level-diamond .level-icon {
-      background: var(--primary-color);
+      background: linear-gradient(135deg, var(--diamond-color) 0%, var(--diamond-dark) 100%);
     }
 
     &.level-diamond .level-name {
-      color: var(--primary-color);
+      background: linear-gradient(135deg, var(--diamond-color) 0%, var(--diamond-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   }
 }
 
 .readonly-input {
-  background: var(--bg-gray);
+  background: var(--bg-light);
+  cursor: not-allowed;
 }
 
 .discount-input,
@@ -348,10 +440,12 @@ onMounted(async () => {
 
 .save-button-container {
   text-align: center;
+  margin-top: 32px;
 
   .save-button {
-    padding: 12px 32px;
+    padding: 12px 48px;
     font-size: 16px;
+    font-weight: 600;
   }
 }
 

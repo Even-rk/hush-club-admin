@@ -1,71 +1,100 @@
 <template>
   <!-- 会员管理页面 -->
-  <div class="content-card">
-    <div class="card-header">
-      <div class="card-title">会员管理</div>
-      <button class="btn btn-primary">+ 新增会员</button>
+  <div class="member-management-page">
+    <!-- 页面头部 -->
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">
+          <span class="title-icon">👥</span>
+          会员管理
+        </h1>
+        <p class="page-subtitle">管理店铺会员信息，查看会员消费记录和充值情况</p>
+      </div>
+      <button class="btn btn-primary btn-with-icon">
+        <span class="btn-icon">✨</span>
+        新增会员
+      </button>
     </div>
-    <div class="card-body">
-      <template v-if="!loading">
-        <!-- 统计卡片 -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-number">{{ memberTotal }}</div>
-            <div class="stat-label">会员总数</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">¥{{ totalRecharge }}</div>
-            <div class="stat-label">总充值金额</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">¥{{ maxRecharge }}</div>
-            <div class="stat-label">单次最高充值</div>
-          </div>
-        </div>
 
-        <!-- 筛选器 -->
-        <div class="filters">
-          <div class="filter-item">
-            <label class="filter-label">会员等级:</label>
-            <cool-select
-              v-model="selectedLevel"
-              :options="levelOptions"
-              class="filter-select"
-              placeholder="全部等级"
-            />
-          </div>
-          <div class="filter-item">
-            <label class="filter-label">注册时间:</label>
-            <date-picker
-              :start-value="startDate"
-              :end-value="endDate"
-              :range="true"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              class="filter-date-range"
-              @update:start-value="startDate = $event"
-              @update:end-value="endDate = $event"
-            />
-          </div>
-          <div class="filter-item">
-            <input
-              type="text"
-              class="form-control filter-search"
-              placeholder="搜索会员姓名或手机号"
-            />
-            <button class="btn btn-secondary">搜索</button>
-          </div>
+    <!-- 会员列表卡片 -->
+    <div class="content-card">
+      <div class="card-header">
+        <div class="card-title">会员列表</div>
+        <div class="card-tools">
+          <button class="tool-btn" title="刷新">
+            <span>🔄</span>
+          </button>
+          <button class="tool-btn" title="导出">
+            <span>📥</span>
+          </button>
         </div>
-      </template>
+      </div>
+      <div class="card-body">
+        <template v-if="!loading">
+          <!-- 统计卡片 -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number">{{ memberTotal }}</div>
+              <div class="stat-label">会员总数</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">¥{{ totalRecharge }}</div>
+              <div class="stat-label">总充值金额</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">¥{{ maxRecharge }}</div>
+              <div class="stat-label">单次最高充值</div>
+            </div>
+          </div>
 
-      <!-- 会员列表 -->
-      <data-table
-        :data="memberList"
-        :columns="memberColumns"
-        :actions="memberActions"
-        :loading="loading"
-        row-key="id"
-      />
+          <!-- 搜索和筛选区域 -->
+          <div class="search-filter-container">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input
+                type="text"
+                class="search-input-enhanced"
+                placeholder="搜索会员姓名、手机号或会员号..."
+              />
+              <button class="search-btn">搜索</button>
+            </div>
+
+            <div class="filter-group">
+              <div class="filter-item-enhanced">
+                <cool-select
+                  v-model="selectedLevel"
+                  :options="levelOptions"
+                  class="filter-select-enhanced"
+                  placeholder="全部等级"
+                />
+              </div>
+              <div class="filter-item-enhanced">
+                <date-picker
+                  :start-value="startDate"
+                  :end-value="endDate"
+                  :range="true"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  class="filter-date-range"
+                  @update:start-value="startDate = $event"
+                  @update:end-value="endDate = $event"
+                />
+              </div>
+              <button class="btn btn-secondary">重置筛选</button>
+            </div>
+          </div>
+        </template>
+
+        <!-- 会员列表 -->
+        <data-table
+          :data="memberList"
+          :columns="memberColumns"
+          :actions="memberActions"
+          :loading="loading"
+          row-key="id"
+          class="member-table"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -150,6 +179,89 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+/* 会员管理页面 */
+.member-management-page {
+  padding: 24px;
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
+  min-height: 100vh;
+}
+
+/* 页面头部 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 24px 32px;
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+
+  .header-content {
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin: 0 0 8px 0;
+
+      .title-icon {
+        font-size: 32px;
+      }
+    }
+
+    .page-subtitle {
+      color: var(--text-subtitle);
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+}
+
+/* 按钮样式 */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: var(--bg-white);
+
+    &:hover {
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-primary);
+    }
+  }
+
+  &.btn-secondary {
+    background: var(--bg-white);
+    color: var(--text-subtitle);
+    border: 1px solid var(--border-medium);
+
+    &:hover {
+      background: var(--bg-light);
+      border-color: var(--border-hover);
+    }
+  }
+
+  &.btn-with-icon {
+    .btn-icon {
+      font-size: 16px;
+    }
+  }
+}
+
 /* 表单控件 */
 .form-control,
 .form-select,
@@ -187,8 +299,8 @@ onMounted(async () => {
 /* 内容卡片样式 */
 .content-card {
   background: var(--bg-white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
   margin-bottom: 24px;
   overflow: hidden;
 }
@@ -197,93 +309,167 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
-}
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-light);
 
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-heading);
+  }
 
-.card-subtitle {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-top: 4px;
-}
+  .card-tools {
+    display: flex;
+    gap: 8px;
 
-.card-actions {
-  display: flex;
-  gap: 12px;
+    .tool-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius);
+      background: var(--bg-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: var(--bg-light);
+        border-color: var(--border-hover);
+      }
+
+      span {
+        font-size: 16px;
+      }
+    }
+  }
 }
 
 .card-body {
-  padding: 20px;
+  padding: 24px;
 }
 
+/* 统计卡片 */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
   margin-bottom: 24px;
 }
 
 .stat-card {
   background: var(--bg-white);
-  padding: 20px;
-  border-radius: var(--radius);
+  padding: 24px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
   text-align: center;
+  transition: all 0.3s;
+  border: 1px solid var(--border-light);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
 }
 
 .stat-number {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  color: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin-bottom: 8px;
 }
 
 .stat-label {
   font-size: 14px;
-  color: var(--text-secondary);
+  color: var(--text-subtitle);
+  font-weight: 500;
 }
 
-.filters {
+/* 搜索和筛选容器 */
+.search-filter-container {
   display: flex;
-  gap: 16px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.filter-item {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
-}
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
 
-.filter-label {
-  font-size: 14px;
-  color: var(--text-primary);
-  white-space: nowrap;
-}
+  .search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
 
-.filter-select,
-.filter-date {
-  min-width: 120px;
-}
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      opacity: 0.5;
+    }
 
-.filter-search {
-  min-width: 200px;
-}
+    .search-input-enhanced {
+      width: 100%;
+      padding: 10px 100px 10px 36px;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      transition: all 0.2s;
 
-.filter-separator {
-  font-size: 14px;
-  color: var(--text-secondary);
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+      }
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 6px 16px;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+      color: var(--bg-white);
+      border: none;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+      }
+    }
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    .filter-item-enhanced {
+      min-width: 120px;
+    }
+  }
 }
 
 .filter-date-range {
   display: flex;
   align-items: center;
+}
+
+/* 会员表格样式 */
+.member-table {
+  :deep(.data-table) {
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
 }
 </style>

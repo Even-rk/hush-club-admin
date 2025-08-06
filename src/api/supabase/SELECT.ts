@@ -150,8 +150,18 @@ export const reqGetAllCategory = async (params?: {
 }
 
 // 查全部订单（包含会员信息和商品明细）
-export const reqGetAllOrder = async (): Promise<OrderDetail[]> => {
-  const { data: orders, error: orders_error } = await supabase.from('orders').select('*')
+export const reqGetAllOrder = async (params?: {
+  // 最近订单
+  is_recent?: boolean
+}): Promise<OrderDetail[]> => {
+  const supabaseOrder = supabase.from('orders').select('*')
+  // 查日期
+  if (params?.is_recent) {
+    // 查日期 7天前 到现在
+    const date = new Date(new Date().setDate(new Date().getDate() - 7))
+    supabaseOrder.gte('created_at', date.toISOString())
+  }
+  const { data: orders, error: orders_error } = await supabaseOrder
   if (orders_error) {
     return []
   }

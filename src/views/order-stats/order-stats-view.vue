@@ -1,10 +1,28 @@
 <template>
   <!-- 订单统计页面 -->
-  <!-- 筛选器 -->
-  <div class="content-card filter-card">
+  <div class="order-stats-page">
+    <!-- 页面头部 -->
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">
+          <span class="title-icon">📈</span>
+          订单统计分析
+        </h1>
+        <p class="page-subtitle">分析订单数据趋势，了解营业状况和高峰时段</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary btn-with-icon">
+          <span class="btn-icon">📥</span>
+          导出报表
+        </button>
+      </div>
+    </div>
+
+    <!-- 筛选器 -->
+    <div class="content-card filter-card">
     <div class="card-header">
       <div class="card-title">数据筛选</div>
-      <button class="btn btn-primary" onclick="applyDateFilter()">应用筛选</button>
+      <button class="btn btn-primary">应用筛选</button>
     </div>
     <div class="card-body">
       <div class="filters">
@@ -48,12 +66,12 @@
     </div>
   </div>
 
-  <!-- 统计卡片 -->
-  <div class="stats-grid">
+    <!-- 统计卡片 -->
+    <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-header">
         <div class="stat-title">本月订单总数</div>
-        <div class="stat-icon stat-info">📋</div>
+        <div class="stat-icon">📋</div>
       </div>
       <div class="stat-number">3,420</div>
       <div class="stat-trend trend-up">↗️ +15.2% 较上月</div>
@@ -62,7 +80,7 @@
     <div class="stat-card">
       <div class="stat-header">
         <div class="stat-title">本月营业额</div>
-        <div class="stat-icon stat-success">💰</div>
+        <div class="stat-icon">💰</div>
       </div>
       <div class="stat-number">¥356,800</div>
       <div class="stat-trend trend-up">↗️ +22.5% 较上月</div>
@@ -71,15 +89,15 @@
     <div class="stat-card">
       <div class="stat-header">
         <div class="stat-title">平均客单价</div>
-        <div class="stat-icon stat-warning">💳</div>
+        <div class="stat-icon">💳</div>
       </div>
       <div class="stat-number">¥104.33</div>
       <div class="stat-trend trend-up">↗️ +6.8% 较上月</div>
     </div>
-  </div>
+    </div>
 
-  <!-- 订单状态统计 -->
-  <div class="content-card">
+    <!-- 订单状态统计 -->
+    <div class="content-card">
     <div class="card-header">
       <div class="card-title">订单状态分布</div>
       <div class="card-actions">
@@ -103,10 +121,10 @@
       </div>
       <div class="chart-placeholder">📈 订单状态趋势图</div>
     </div>
-  </div>
+    </div>
 
-  <!-- 高峰时段分析 -->
-  <div class="content-card">
+    <!-- 高峰时段分析 -->
+    <div class="content-card">
     <div class="card-header">
       <div class="card-title">高峰时段分析</div>
     </div>
@@ -141,6 +159,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </template>
@@ -206,11 +225,88 @@ const onCompareChange = (value: string | number) => {
 </script>
 
 <style scoped lang="scss">
+/* 订单统计页面 */
+.order-stats-page {
+  padding: 24px;
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
+  min-height: 100vh;
+}
+
+/* 页面头部 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 24px 32px;
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+
+  .header-content {
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin: 0 0 8px 0;
+
+      .title-icon {
+        font-size: 32px;
+      }
+    }
+
+    .page-subtitle {
+      color: var(--text-subtitle);
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+  }
+}
+
+/* 按钮样式 */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: var(--bg-white);
+
+    &:hover {
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-primary);
+    }
+  }
+
+  &.btn-with-icon {
+    .btn-icon {
+      font-size: 16px;
+    }
+  }
+}
+
 /* 内容卡片样式 */
 .content-card {
   background: var(--bg-white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
   margin-bottom: 24px;
   overflow: hidden;
 }
@@ -219,14 +315,14 @@ const onCompareChange = (value: string | number) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .card-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-heading);
 }
 
 .card-subtitle {
@@ -241,7 +337,7 @@ const onCompareChange = (value: string | number) => {
 }
 
 .card-body {
-  padding: 20px;
+  padding: 24px;
 }
 
 .filter-card {
@@ -251,7 +347,6 @@ const onCompareChange = (value: string | number) => {
 .filters {
   display: flex;
   gap: 16px;
-  margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
@@ -263,70 +358,80 @@ const onCompareChange = (value: string | number) => {
 
 .filter-label {
   font-size: 14px;
-  color: var(--text-primary);
+  color: var(--text-dark);
   white-space: nowrap;
+  font-weight: 500;
 }
 
 .filter-select {
-  min-width: 120px;
+  min-width: 140px;
 }
 
+/* 统计卡片 */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
   margin-bottom: 24px;
 
   .stat-card {
-    background: white;
-    padding: 20px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
+    background: var(--bg-white);
+    padding: 24px;
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    }
 
     .stat-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
 
       .stat-title {
-        font-weight: 600;
-        color: var(--text-primary);
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-subtitle);
       }
 
       .stat-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
-
-        &.stat-info {
-          background: var(--info-color);
-        }
-
-        &.stat-success {
-          background: var(--success-color);
-        }
-
-        &.stat-warning {
-          background: var(--warning-color);
-        }
+        font-size: 20px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
       }
     }
 
     .stat-number {
-      font-size: 24px;
-      font-weight: 600;
-      color: var(--text-primary);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-heading);
       margin-bottom: 8px;
     }
 
     .stat-trend {
-      font-size: 12px;
+      font-size: 13px;
+      font-weight: 500;
 
       &.trend-up {
         color: var(--success-color);
@@ -340,10 +445,12 @@ const onCompareChange = (value: string | number) => {
 }
 
 .current-period {
-  font-size: 12px;
-  color: var(--text-secondary);
+  font-size: 13px;
+  color: var(--text-subtitle);
+  font-weight: 500;
 }
 
+/* 状态统计 */
 .status-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -352,24 +459,29 @@ const onCompareChange = (value: string | number) => {
 
   .status-card {
     text-align: center;
-    padding: 20px;
-    border-radius: var(--radius);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s;
+
+    &:hover {
+      transform: scale(1.02);
+    }
 
     &.status-completed {
-      background: rgba(76, 175, 80, 0.1);
+      background: var(--success-bg);
     }
 
     &.status-processing {
-      background: rgba(255, 193, 7, 0.1);
+      background: var(--warning-bg);
     }
 
     &.status-cancelled {
-      background: rgba(244, 67, 54, 0.1);
+      background: var(--error-bg);
     }
 
     .status-number {
-      font-size: 24px;
-      font-weight: 600;
+      font-size: 28px;
+      font-weight: 700;
       margin-bottom: 8px;
     }
 
@@ -386,7 +498,9 @@ const onCompareChange = (value: string | number) => {
     }
 
     .status-label {
-      color: var(--text-secondary);
+      color: var(--text-subtitle);
+      font-size: 14px;
+      font-weight: 500;
     }
   }
 }
@@ -431,10 +545,12 @@ const onCompareChange = (value: string | number) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-gray);
-  border-radius: var(--radius);
-  color: var(--text-secondary);
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--border-medium) 100%);
+  border-radius: var(--radius-lg);
+  color: var(--text-subtitle);
   font-size: 18px;
+  font-weight: 500;
   margin-top: 20px;
+  border: 2px dashed var(--border-medium);
 }
 </style>

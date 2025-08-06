@@ -127,7 +127,7 @@ defineProps<Props>()
 
     .stat-label-enhanced {
       font-size: 14px;
-      color: #6b7280;
+      color: var(--text-subtitle);
       font-weight: 500;
     }
 
@@ -146,39 +146,39 @@ defineProps<Props>()
         font-weight: 600;
 
         &.trend-up {
-          background: #10b981;
+          background: var(--success-color);
           color: white;
         }
 
         &.trend-down {
-          background: #ef4444;
+          background: var(--error-color);
           color: white;
         }
       }
 
       .trend-text {
         font-size: 12px;
-        color: #9ca3af;
+        color: var(--text-muted);
       }
     }
 
     .stat-percentage {
       margin-top: 8px;
       font-size: 13px;
-      color: #6b7280;
+      color: var(--text-subtitle);
     }
 
     .stat-subtitle {
       margin-top: 4px;
       font-size: 12px;
-      color: #9ca3af;
+      color: var(--text-muted);
     }
 
     .stat-warning {
       margin-top: 8px;
       padding: 4px 8px;
-      background: #fef3c7;
-      color: #92400e;
+      background: var(--warning-bg);
+      color: var(--warning-color);
       border-radius: 6px;
       font-size: 12px;
       font-weight: 500;
@@ -197,7 +197,7 @@ defineProps<Props>()
   }
 
   &.stat-total {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--info-color) 0%, var(--diamond-dark) 100%);
     color: white;
 
     .stat-icon-wrapper {
@@ -215,7 +215,7 @@ defineProps<Props>()
   }
 
   &.stat-active {
-    background: linear-gradient(135deg, #10b981 0%, #065f46 100%);
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-color) 100%);
     color: white;
 
     .stat-icon-wrapper {
@@ -233,7 +233,7 @@ defineProps<Props>()
   }
 
   &.stat-admin {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-color) 100%);
     color: white;
 
     .stat-icon-wrapper {
@@ -251,7 +251,7 @@ defineProps<Props>()
   }
 
   &.stat-disabled {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    background: linear-gradient(135deg, var(--error-color) 0%, var(--error-color) 100%);
     color: white;
 
     .stat-icon-wrapper {

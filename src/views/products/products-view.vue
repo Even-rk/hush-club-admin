@@ -1,67 +1,95 @@
 <template>
   <!-- 商品管理页面 -->
-  <div class="content-card">
-    <div class="card-header">
-      <div class="card-title">商品管理</div>
-      <button class="btn btn-primary" @click="openProductModal">+ 新增商品</button>
+  <div class="product-management-page">
+    <!-- 页面头部 -->
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">
+          <span class="title-icon">☕</span>
+          商品管理
+        </h1>
+        <p class="page-subtitle">管理店铺所有商品信息，包括价格、库存和上下架状态</p>
+      </div>
+      <button class="btn btn-primary btn-with-icon" @click="openProductModal">
+        <span class="btn-icon">✨</span>
+        新增商品
+      </button>
     </div>
-    <div class="card-body">
-      <!-- 筛选器 -->
-      <div class="filters">
-        <div class="filter-item">
-          <label class="filter-label">商品分类:</label>
-          <cool-select
-            v-model="selectedCategory"
-            :options="categoryOptions"
-            class="filter-select"
-            placeholder="全部分类"
-          />
-        </div>
-        <div class="filter-item">
-          <label class="filter-label">商品状态:</label>
-          <cool-select
-            v-model="selectedStatus"
-            :options="statusOptions"
-            class="filter-select"
-            placeholder="全部状态"
-          />
-        </div>
-        <div class="filter-item">
-          <input
-            v-model="searchQuery"
-            type="text"
-            class="form-control filter-search"
-            placeholder="搜索商品名称"
-          />
-          <button class="btn btn-secondary" @click="resetProducts">重置</button>
-          <button class="btn btn-primary" @click="searchProducts">搜索</button>
+
+    <!-- 商品列表卡片 -->
+    <div class="content-card">
+      <div class="card-header">
+        <div class="card-title">商品列表</div>
+        <div class="card-tools">
+          <button class="tool-btn" title="刷新">
+            <span>🔄</span>
+          </button>
+          <button class="tool-btn" title="导出">
+            <span>📥</span>
+          </button>
         </div>
       </div>
-
-      <!-- 商品列表 -->
-      <data-table
-        :data="productList"
-        :columns="productColumns"
-        :actions="productActions"
-        :loading="loading"
-        row-key="id"
-      >
-        <!-- 商品图片插槽 -->
-        <template #image="{ value, row }">
-          <div class="product-image">
-            <img v-if="value" :src="String(value)" :alt="row.product_name" />
-            <div v-else class="no-image">无图片</div>
+      <div class="card-body">
+        <!-- 搜索和筛选区域 -->
+        <div class="search-filter-container">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+              v-model="searchQuery"
+              type="text"
+              class="search-input-enhanced"
+              placeholder="搜索商品名称、编号或分类..."
+            />
+            <button class="search-btn" @click="searchProducts">搜索</button>
           </div>
-        </template>
 
-        <!-- 商品名称插槽 -->
-        <template #name="{ row }">
-          <div class="product-info">
-            <div class="product-name">{{ row.product_name }}</div>
-            <div class="product-category">{{ row.category_name }}</div>
+          <div class="filter-group">
+            <div class="filter-item-enhanced">
+              <cool-select
+                v-model="selectedCategory"
+                :options="categoryOptions"
+                class="filter-select-enhanced"
+                placeholder="全部分类"
+              />
+            </div>
+            <div class="filter-item-enhanced">
+              <cool-select
+                v-model="selectedStatus"
+                :options="statusOptions"
+                class="filter-select-enhanced"
+                placeholder="全部状态"
+              />
+            </div>
+            <button class="btn btn-secondary" @click="resetProducts">重置筛选</button>
           </div>
-        </template>
-      </data-table>
+        </div>
+
+        <!-- 商品列表 -->
+        <data-table
+          :data="productList"
+          :columns="productColumns"
+          :actions="productActions"
+          :loading="loading"
+          row-key="id"
+          class="product-table"
+        >
+          <!-- 商品图片插槽 -->
+          <template #image="{ value, row }">
+            <div class="product-image">
+              <img v-if="value" :src="String(value)" :alt="row.product_name" />
+              <div v-else class="no-image">无图片</div>
+            </div>
+          </template>
+
+          <!-- 商品名称插槽 -->
+          <template #name="{ row }">
+            <div class="product-info">
+              <div class="product-name">{{ row.product_name }}</div>
+              <div class="product-category">{{ row.category_name }}</div>
+            </div>
+          </template>
+        </data-table>
+      </div>
     </div>
   </div>
 
@@ -207,6 +235,89 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+/* 商品管理页面 */
+.product-management-page {
+  padding: 24px;
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
+  min-height: 100vh;
+}
+
+/* 页面头部 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 24px 32px;
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+
+  .header-content {
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin: 0 0 8px 0;
+
+      .title-icon {
+        font-size: 32px;
+      }
+    }
+
+    .page-subtitle {
+      color: var(--text-subtitle);
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+}
+
+/* 按钮样式 */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: var(--bg-white);
+
+    &:hover {
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-primary);
+    }
+  }
+
+  &.btn-secondary {
+    background: var(--bg-white);
+    color: var(--text-subtitle);
+    border: 1px solid var(--border-medium);
+
+    &:hover {
+      background: var(--bg-light);
+      border-color: var(--border-hover);
+    }
+  }
+
+  &.btn-with-icon {
+    .btn-icon {
+      font-size: 16px;
+    }
+  }
+}
+
 /* 表单控件 */
 .form-control,
 .form-select,
@@ -244,8 +355,8 @@ onMounted(async () => {
 /* 内容卡片样式 */
 .content-card {
   background: var(--bg-white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
   margin-bottom: 24px;
   overflow: hidden;
 }
@@ -254,89 +365,161 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
-}
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-light);
 
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-heading);
+  }
 
-.card-subtitle {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-top: 4px;
-}
+  .card-tools {
+    display: flex;
+    gap: 8px;
 
-.card-actions {
-  display: flex;
-  gap: 12px;
+    .tool-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius);
+      background: var(--bg-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: var(--bg-light);
+        border-color: var(--border-hover);
+      }
+
+      span {
+        font-size: 16px;
+      }
+    }
+  }
 }
 
 .card-body {
-  padding: 20px;
+  padding: 24px;
 }
 
-.filters {
+/* 搜索和筛选容器 */
+.search-filter-container {
   display: flex;
-  gap: 16px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.filter-item {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  .search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      opacity: 0.5;
+    }
+
+    .search-input-enhanced {
+      width: 100%;
+      padding: 10px 100px 10px 36px;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      transition: all 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+      }
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 6px 16px;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+      color: var(--bg-white);
+      border: none;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+      }
+    }
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    .filter-item-enhanced {
+      min-width: 120px;
+    }
+  }
 }
 
-.filter-label {
-  font-size: 14px;
-  color: var(--text-primary);
-  white-space: nowrap;
-}
-
-.filter-select {
-  min-width: 120px;
-}
-
-.filter-search {
-  min-width: 200px;
-}
-
+/* 商品图片和信息 */
 .product-image {
   img {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-    border-radius: 6px;
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-medium);
   }
 
   .no-image {
-    width: 50px;
-    height: 50px;
-    background: var(--bg-secondary);
-    border-radius: 6px;
+    width: 60px;
+    height: 60px;
+    background: var(--bg-light);
+    border-radius: var(--radius);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
-    color: var(--text-secondary);
+    color: var(--text-muted);
+    border: 1px dashed var(--border-medium);
   }
 }
 
 .product-info {
   .product-name {
-    font-weight: 500;
-    color: var(--text-primary);
+    font-weight: 600;
+    color: var(--text-heading);
+    font-size: 14px;
   }
 
   .product-category {
     font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 2px;
+    color: var(--text-subtitle);
+    margin-top: 4px;
+  }
+}
+
+/* 商品表格样式 */
+.product-table {
+  :deep(.data-table) {
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius);
+    overflow: hidden;
   }
 }
 </style>

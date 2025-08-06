@@ -1,65 +1,79 @@
 <template>
   <!-- 等级管理页面 -->
-  <div class="content-card">
-    <div class="card-header">
-      <div class="card-title">会员等级管理</div>
+  <div class="member-level-page">
+    <!-- 页面头部 -->
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">
+          <span class="title-icon">🏆</span>
+          会员等级管理
+        </h1>
+        <p class="page-subtitle">查看和管理不同会员等级的权益和升级记录</p>
+      </div>
     </div>
-    <div class="card-body">
-      <div class="levels-grid">
-        <!-- 普通会员 -->
-        <div
-          v-for="level in memberLevelList"
-          :key="level.id"
-          class="level-card"
-          :class="`level-card--${level.level_code}`"
-        >
-          <div class="level-title" :class="`level-title--${level.level_code}`">
-            {{ level.level_name }}
-          </div>
-          <div class="level-description">{{ level.description }}</div>
-          <div class="level-stats">
-            <div class="level-count" :class="`level-count--${level.level_code}`">
-              {{ level.member_count }}
+
+    <!-- 等级卡片 -->
+    <div class="content-card">
+      <div class="card-header">
+        <div class="card-title">会员等级概览</div>
+      </div>
+      <div class="card-body">
+        <div class="levels-grid">
+          <!-- 普通会员 -->
+          <div
+            v-for="level in memberLevelList"
+            :key="level.id"
+            class="level-card"
+            :class="`level-card--${level.level_code}`"
+          >
+            <div class="level-title" :class="`level-title--${level.level_code}`">
+              {{ level.level_name }}
             </div>
-            <div class="level-count-label">当前人数</div>
-          </div>
-          <div class="level-perks" :class="`level-perks--${level.level_code}`">
-            <div class="perks-title">会员权益</div>
-            <div v-if="level.discount_rate === 1" class="perks-list">• 原价购买商品<br /></div>
-            <div v-else class="perks-list">• {{ level.discount_rate * 10 }}折优惠价格<br /></div>
+            <div class="level-description">{{ level.description }}</div>
+            <div class="level-stats">
+              <div class="level-count" :class="`level-count--${level.level_code}`">
+                {{ level.member_count }}
+              </div>
+              <div class="level-count-label">当前人数</div>
+            </div>
+            <div class="level-perks" :class="`level-perks--${level.level_code}`">
+              <div class="perks-title">会员权益</div>
+              <div v-if="level.discount_rate === 1" class="perks-list">• 原价购买商品<br /></div>
+              <div v-else class="perks-list">• {{ level.discount_rate * 10 }}折优惠价格<br /></div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- 等级升级日志 -->
-      <div class="content-card upgrade-log-card">
-        <div v-if="!upgradeLoading" class="card-header">
-          <div class="card-title">最近等级升级记录</div>
-        </div>
-        <div class="card-body">
-          <data-table
-            :data="upgradeRecords"
-            :columns="upgradeColumns"
-            :show-actions="false"
-            :loading="upgradeLoading"
-            row-key="id"
-            empty-text="暂无升级记录"
-          >
-            <!-- 原等级插槽 -->
-            <template #oldLevel="{ value }">
-              <span class="status-badge" :class="getLevelClass(value as string)">
-                {{ value }}
-              </span>
-            </template>
+    <!-- 等级升级日志 -->
+    <div class="content-card upgrade-log-card">
+      <div v-if="!upgradeLoading" class="card-header">
+        <div class="card-title">最近等级升级记录</div>
+      </div>
+      <div class="card-body">
+        <data-table
+          :data="upgradeRecords"
+          :columns="upgradeColumns"
+          :show-actions="false"
+          :loading="upgradeLoading"
+          row-key="id"
+          empty-text="暂无升级记录"
+        >
+          <!-- 原等级插槽 -->
+          <template #oldLevel="{ value }">
+            <span class="status-badge" :class="getLevelClass(value as string)">
+              {{ value }}
+            </span>
+          </template>
 
-            <!-- 新等级插槽 -->
-            <template #newLevel="{ value }">
-              <span class="status-badge" :class="getLevelClass(value as string)">
-                {{ value }}
-              </span>
-            </template>
-          </data-table>
-        </div>
+          <!-- 新等级插槽 -->
+          <template #newLevel="{ value }">
+            <span class="status-badge" :class="getLevelClass(value as string)">
+              {{ value }}
+            </span>
+          </template>
+        </data-table>
       </div>
     </div>
   </div>
@@ -122,11 +136,52 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+/* 会员等级页面 */
+.member-level-page {
+  padding: 24px;
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
+  min-height: 100vh;
+}
+
+/* 页面头部 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 24px 32px;
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+
+  .header-content {
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin: 0 0 8px 0;
+
+      .title-icon {
+        font-size: 32px;
+      }
+    }
+
+    .page-subtitle {
+      color: var(--text-subtitle);
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+}
+
 /* 内容卡片样式 */
 .content-card {
   background: var(--bg-white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
   margin-bottom: 24px;
   overflow: hidden;
 }
@@ -135,14 +190,14 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .card-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-heading);
 }
 
 .card-subtitle {
@@ -157,9 +212,10 @@ onMounted(async () => {
 }
 
 .card-body {
-  padding: 20px;
+  padding: 24px;
 }
 
+/* 等级卡片 */
 .levels-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -168,39 +224,57 @@ onMounted(async () => {
 }
 
 .level-card {
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 20px;
+  border: 2px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  padding: 24px;
   text-align: center;
+  transition: all 0.3s;
+  background: var(--bg-white);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
 
   &--silver {
     border-color: var(--silver-color);
-    background: rgba(192, 192, 192, 0.05);
+    background: linear-gradient(
+      135deg,
+      rgba(192, 192, 192, 0.05) 0%,
+      rgba(192, 192, 192, 0.02) 100%
+    );
   }
 
   &--gold {
     border-color: var(--gold-color);
-    background: rgba(255, 215, 0, 0.05);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 215, 0, 0.02) 100%);
   }
 }
 
 .level-title {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   margin-bottom: 12px;
+  color: var(--text-heading);
 
   &--silver {
-    color: var(--silver-color);
+    background: linear-gradient(135deg, var(--silver-color) 0%, var(--silver-dark) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   &--gold {
-    color: var(--gold-color);
+    background: linear-gradient(135deg, var(--gold-color) 0%, var(--gold-dark) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }
 
 .level-description {
   font-size: 14px;
-  color: var(--text-secondary);
-  margin-bottom: 16px;
+  color: var(--text-subtitle);
+  margin-bottom: 20px;
 }
 
 .level-stats {
@@ -208,9 +282,9 @@ onMounted(async () => {
 }
 
 .level-count {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--text-dark);
 
   &--silver {
     color: var(--silver-color);
@@ -221,47 +295,56 @@ onMounted(async () => {
 }
 
 .level-count-label {
-  font-size: 12px;
-  color: var(--text-secondary);
+  font-size: 13px;
+  color: var(--text-subtitle);
+  font-weight: 500;
 }
 
 .level-perks {
-  background: var(--bg-secondary);
-  padding: 12px;
-  border-radius: var(--radius);
+  background: var(--bg-light);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  margin-top: 16px;
 
   &--silver {
-    background: rgba(192, 192, 192, 0.1);
+    background: rgba(192, 192, 192, 0.08);
   }
   &--gold {
-    background: rgba(255, 215, 0, 0.1);
+    background: rgba(255, 215, 0, 0.08);
   }
 }
 
 .perks-title {
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+  color: var(--text-dark);
 }
 
 .perks-list {
-  font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.4;
+  font-size: 13px;
+  color: var(--text-subtitle);
+  line-height: 1.6;
 }
 
 .upgrade-log-card {
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
+/* 状态标签 */
 .status-badge {
-  &--silver {
-    background: rgba(192, 192, 192, 0.1);
-    color: var(--silver-color);
+  padding: 4px 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+
+  &.status-silver {
+    background: rgba(192, 192, 192, 0.15);
+    color: var(--silver-text);
   }
-  &--gold {
-    background: rgba(255, 215, 0, 0.1);
-    color: var(--gold-color);
+  &.status-gold {
+    background: rgba(255, 215, 0, 0.15);
+    color: var(--gold-text);
   }
 }
 </style>
