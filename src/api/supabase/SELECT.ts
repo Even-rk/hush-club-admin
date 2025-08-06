@@ -460,14 +460,28 @@ export const reqGetRolePermissionList = async (): Promise<RolePermission[]> => {
 }
 
 // 优惠券列表
-export const reqGetCouponList = async (): Promise<{
+export const reqGetCouponList = async (params?: {
+  // 状态
+  status?: string
+  // 类型
+  type?: string
+}): Promise<{
   couponList?: Coupon[]
   coupon_count?: number
   active_count?: number
   inactive_count?: number
   send_count?: number
 }> => {
-  const { data, error } = await supabase.from('coupon_templates').select('*')
+  const supabaseCoupon = supabase.from('coupon_templates').select('*')
+  // 查状态
+  if (params?.status) {
+    supabaseCoupon.eq('status', params.status)
+  }
+  // 查类型
+  if (params?.type) {
+    supabaseCoupon.eq('coupon_type', params.type)
+  }
+  const { data, error } = await supabaseCoupon
   if (error) {
     return {}
   }

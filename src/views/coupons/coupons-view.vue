@@ -21,7 +21,7 @@
       <div class="card-header">
         <div class="card-title">优惠券列表</div>
         <div class="card-tools">
-          <button class="tool-btn" title="刷新">
+          <button class="tool-btn" title="刷新" @click="searchCoupons()">
             <span>🔄</span>
           </button>
           <button class="tool-btn" title="导出">
@@ -66,8 +66,14 @@
         <div class="search-filter-container">
           <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" class="search-input-enhanced" placeholder="搜索优惠券名称..." />
-            <button class="search-btn">搜索</button>
+            <input
+              v-model="searchQuery"
+              type="text"
+              class="search-input-enhanced"
+              placeholder="搜索优惠券名称..."
+              @change="queryChange()"
+            />
+            <button class="search-btn" @click="searchCoupons()">搜索</button>
           </div>
 
           <div class="filter-group">
@@ -76,12 +82,18 @@
                 v-model="selectedStatus"
                 :options="statusOptions"
                 placeholder="全部状态"
+                @change="searchCoupons()"
               />
             </div>
             <div class="filter-item-enhanced">
-              <cool-select v-model="selectedType" :options="typeOptions" placeholder="全部类型" />
+              <cool-select
+                v-model="selectedType"
+                :options="typeOptions"
+                placeholder="全部类型"
+                @change="searchCoupons()"
+              />
             </div>
-            <button class="btn btn-secondary">重置筛选</button>
+            <button class="btn btn-secondary" @click="resetFilter">重置筛选</button>
           </div>
         </div>
 
@@ -120,28 +132,28 @@ import { onMounted, ref } from 'vue'
 import DataTable from '@/components/data-table.vue'
 import { formatDate } from '@/utils/format'
 import CoolSelect from '@/components/cool-select.vue'
+import { ElMessage } from 'element-plus'
 
 // 优惠券列表
 const couponList = ref<Coupon[]>([])
 // 优惠券模版数量
 const coupon_count = ref(0)
 
-// 筛选器状态
+// 优惠券状态
 const selectedStatus = ref('')
+// 优惠券类型
 const selectedType = ref('')
+// 搜索内容
+const searchQuery = ref('')
 
 // 状态选项
 const statusOptions = [
-  { label: '全部状态', value: '' },
-  { label: '正常', value: 'normal' },
-  { label: '已使用', value: 'used' },
-  { label: '已过期', value: 'expired' },
-  { label: '已禁用', value: 'disabled' }
+  { label: '正常', value: 'active' },
+  { label: '已禁用', value: 'inactive' }
 ]
 
 // 类型选项
 const typeOptions = [
-  { label: '全部类型', value: '' },
   { label: '满减券', value: 'discount' },
   { label: '折扣券', value: 'percentage' },
   { label: '免费券', value: 'free' }
@@ -197,7 +209,7 @@ const columns: TableColumn<Coupon>[] = [
       if (row.valid_day == '长期有效') {
         return row.valid_day
       } else {
-        return formatDate(row.valid_day, 'YYYY/MM/DD')
+        return formatDate(row.valid_day, 'YYYY-MM-DD')
       }
     }
   },
@@ -269,6 +281,45 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+// 搜索优惠券
+const searchCoupons = async (params?: { status?: string; type?: string }) => {
+  loading.value = true
+  try {
+    const data = await reqGetCouponList({
+      status: params?.status || selectedStatus.value,
+      type: params?.type || selectedType.value
+    })
+    couponList.value = data.couponList || []
+    coupon_count.value = data.coupon_count || 0
+    active_count.value = data.active_count || 0
+    inactive_count.value = data.inactive_count || 0
+    send_count.value = data.send_count || 0
+  } finally {
+    loading.value = false
+  }
+}
+// 重置筛选
+const resetFilter = () => {
+  if (selectedStatus.value || selectedType.value) {
+    searchCoupons({
+      status: '',
+      type: ''
+    })
+  } else {
+    ElMessage.warning('没有筛选条件')
+  }
+  selectedStatus.value = ''
+  selectedType.value = ''
+  searchQuery.value = ''
+}
+
+// 查询变化
+const queryChange = () => {
+  if (!searchQuery.value) {
+    searchCoupons()
+  }
+}
 </script>
 
 <style scoped lang="scss">
