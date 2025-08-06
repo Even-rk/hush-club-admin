@@ -179,8 +179,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 /* 会员配置页面 */
 .member-config-page {
-  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
-  min-height: 100vh;
+  height: fit-content;
 }
 
 /* 页面头部 */

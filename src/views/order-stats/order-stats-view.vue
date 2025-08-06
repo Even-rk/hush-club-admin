@@ -204,8 +204,7 @@ const onCompareChange = (value: string | number) => {
 <style scoped lang="scss">
 /* 订单统计页面 */
 .order-stats-page {
-  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
-  min-height: 100vh;
+  height: fit-content;
 }
 
 /* 页面头部 */

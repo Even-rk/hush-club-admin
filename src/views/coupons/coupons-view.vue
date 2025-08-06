@@ -317,9 +317,7 @@ const queryChange = () => {
 <style scoped lang="scss">
 /* 优惠券管理页面 */
 .coupon-management-page {
-  padding: 24px;
-  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
-  min-height: 100vh;
+  height: fit-content;
 }
 
 /* 页面头部 */

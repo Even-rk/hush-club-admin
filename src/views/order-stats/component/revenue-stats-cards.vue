@@ -23,11 +23,7 @@
             <span class="trend-icon">
               <img src="/src/assets/icons/trend-up.svg" alt="趋势图标" />
             </span>
-            <span>15.2%</span>
           </div>
-          <span v-if="props.compare" class="stat-compare">
-            {{ compareData[props.compare as keyof typeof compareData] || '较上月' }}
-          </span>
         </div>
       </div>
     </div>
@@ -55,11 +51,7 @@
             <span class="trend-icon">
               <img src="/src/assets/icons/trend-up.svg" alt="趋势图标" />
             </span>
-            <span>22.5%</span>
           </div>
-          <span v-if="props.compare" class="stat-compare">
-            {{ compareData[props.compare as keyof typeof compareData] || '较上月' }}
-          </span>
         </div>
       </div>
     </div>
@@ -87,11 +79,7 @@
             <span class="trend-icon">
               <img src="/src/assets/icons/trend-up.svg" alt="趋势图标" />
             </span>
-            <span>6.8%</span>
           </div>
-          <span v-if="props.compare" class="stat-compare">
-            {{ compareData[props.compare as keyof typeof compareData] || '较上月' }}
-          </span>
         </div>
       </div>
     </div>
@@ -117,21 +105,9 @@ interface StatsData {
   }
 }
 
-// 比较的文本枚举
-const compareData = {
-  lastDay: '较昨日',
-  lastWeek: '较上周',
-  lastMonth: '较上月',
-  lastQuarter: '较上季度',
-  lastYearSameMonth: '去年同期',
-  lastYearSameQuarter: '去年同期',
-  '': '' // 不显示对比
-}
-
 // 定义 props
-const props = defineProps<{
+defineProps<{
   statsData?: StatsData
-  compare?: string
 }>()
 </script>
 

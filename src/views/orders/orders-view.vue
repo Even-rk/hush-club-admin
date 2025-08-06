@@ -275,9 +275,7 @@ onMounted(() => {
 <style scoped lang="scss">
 /* 订单管理页面 */
 .order-management-page {
-  padding: 24px;
-  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
-  min-height: 100vh;
+  height: fit-content;
 }
 
 /* 页面头部 */

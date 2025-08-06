@@ -215,8 +215,7 @@ const queryChange = () => {
 <style lang="scss" scoped>
 /* 会员管理页面 */
 .member-management-page {
-  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
-  min-height: 100vh;
+  height: fit-content;
 }
 
 /* 页面头部 */

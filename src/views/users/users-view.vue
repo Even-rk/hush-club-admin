@@ -262,8 +262,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 /* 用户管理页面样式 */
 .user-management-page {
-  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-white) 100%);
-  min-height: 100vh;
+  height: fit-content;
 }
 
 /* 页面头部 */
