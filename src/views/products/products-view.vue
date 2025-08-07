@@ -244,21 +244,21 @@ const productActions: TableAction<Product>[] = [
 
 // 成功回调
 const success = async (product: Product, mode: 'add' | 'edit') => {
+  // 会员等级列表
+  const memberLevelList = await reqGetMemberLevels()
+  // 银卡会员折扣率
+  const silverMember = memberLevelList.find(item => {
+    return item.level_code === 'silver'
+  }) as MemberLevel
+  // 银卡会员价格
+  const silverMemberPrice = (product.normal_member_price * silverMember?.discount_rate).toFixed(2)
+  // 金卡会员折扣率
+  const goldMember = memberLevelList.find(item => {
+    return item.level_code === 'gold'
+  }) as MemberLevel
+  // 金卡会员价格
+  const goldMemberPrice = (product.normal_member_price * goldMember?.discount_rate).toFixed(2)
   if (mode === 'add') {
-    // 会员等级列表
-    const memberLevelList = await reqGetMemberLevels()
-    // 银卡会员折扣率
-    const silverMember = memberLevelList.find(item => {
-      return item.level_code === 'silver'
-    }) as MemberLevel
-    // 银卡会员价格
-    const silverMemberPrice = (product.normal_member_price * silverMember?.discount_rate).toFixed(2)
-    // 金卡会员折扣率
-    const goldMember = memberLevelList.find(item => {
-      return item.level_code === 'gold'
-    }) as MemberLevel
-    // 金卡会员价格
-    const goldMemberPrice = (product.normal_member_price * goldMember?.discount_rate).toFixed(2)
     productList.value.push({
       ...product,
       // 保留两位小数
@@ -266,7 +266,16 @@ const success = async (product: Product, mode: 'add' | 'edit') => {
       gold_member_price: Number(goldMemberPrice)
     })
   } else {
-    productList.value = productList.value.map(item => (item.id === product.id ? product : item))
+    productList.value = productList.value.map(item => {
+      if (item.id === product.id) {
+        return {
+          ...product,
+          silver_member_price: Number(silverMemberPrice),
+          gold_member_price: Number(goldMemberPrice)
+        }
+      }
+      return item
+    })
   }
   // 关闭弹窗
   productModalVisible.value = false
