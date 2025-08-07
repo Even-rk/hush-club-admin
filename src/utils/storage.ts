@@ -44,7 +44,7 @@ export const downloadFile = async (bucketName: string, filePath: string) => {
  * @returns 文件列表
  */
 export const listFiles = async (bucketName: string, path?: string) => {
-  const { data, error } = await supabase.storage.from(bucketName).list(path || '')
+  const { data, error } = await supabase.storage.from(bucketName).list(path)
   return { data, error }
 }
 
@@ -56,19 +56,5 @@ export const listFiles = async (bucketName: string, path?: string) => {
  */
 export const deleteFiles = async (bucketName: string, filePaths: string[]) => {
   const { data, error } = await supabase.storage.from(bucketName).remove(filePaths)
-  return { data, error }
-}
-
-/**
- * 创建签名URL（临时访问链接）
- * @param bucketName 存储桶名称
- * @param filePath 文件路径
- * @param expiresIn 过期时间（秒）
- * @returns 签名URL
- */
-export const createSignedUrl = async (bucketName: string, filePath: string, expiresIn: number) => {
-  const { data, error } = await supabase.storage
-    .from(bucketName)
-    .createSignedUrl(filePath, expiresIn)
   return { data, error }
 }

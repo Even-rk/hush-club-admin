@@ -66,12 +66,16 @@
                 <div class="image-upload">
                   <div v-if="form.image_url" class="image-preview">
                     <img alt="商品图片" :src="form.image_url" />
-                    <button type="button" class="remove-image" @click="form.image_url = ''">
-                      ×
-                    </button>
+                    <button type="button" class="remove-image" @click="deleteProductImg">×</button>
                   </div>
                   <div v-else class="upload-placeholder">
-                    <input ref="fileInputRef" type="file" accept="image/*" class="file-input" />
+                    <input
+                      ref="fileInputRef"
+                      type="file"
+                      accept="image/*"
+                      class="file-input"
+                      @change="fileChange"
+                    />
                     <div class="upload-content" @click="fileInputRef?.click()">
                       <div class="upload-icon">📷</div>
                       <div class="upload-text">点击上传图片</div>
@@ -137,20 +141,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { reqGetAllCategory } from '@/api/supabase'
+import { reqGetProductCategory } from '@/api/supabase'
 import type { Product, ProductCategory } from '@/types/supabase'
 import CoolSelect from '@/components/cool-select.vue'
-
-interface ProductForm {
-  id?: number
-  product_name: string
-  category_id: number | string
-  image_url: string
-  normal_member_price: number
-  silver_member_price: number
-  gold_member_price: number
-  status: 'active' | 'inactive'
-}
+import { delProductImg, uploadProductImg } from '@/api/upload-img/upload-img'
 
 const props = defineProps<{
   visible: boolean
@@ -160,11 +154,11 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: []
-  success: [data: ProductForm & { id?: number }, mode: string]
+  success: [data: Product & { id?: number }, mode: string]
 }>()
 
 // 表单数据
-const form = ref({} as ProductForm)
+const form = ref({} as Product)
 // 文件输入引用
 const fileInputRef = ref<HTMLInputElement>()
 
@@ -188,7 +182,7 @@ const currentMode = ref(props.mode)
 // 获取商品分类列表
 const loadCategories = async () => {
   try {
-    categories.value = await reqGetAllCategory()
+    categories.value = await reqGetProductCategory()
   } catch (error) {
     console.error('获取商品分类失败:', error)
   }
@@ -214,6 +208,25 @@ const handleSubmit = async () => {
     loading.value = false
     close()
   }, 1000)
+}
+
+// 文件变化
+const fileChange = async (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    const imgData = await uploadProductImg(file)
+    form.value.image_url = imgData.image_url
+    form.value.image_id = imgData.id
+    form.value.image_path = imgData.file_path as string
+  }
+}
+
+// 删除商品图
+const deleteProductImg = async () => {
+  await delProductImg({ id: form.value.image_id, file_path: form.value.image_path })
+  form.value.image_url = ''
+  form.value.image_id = 0
 }
 
 // 组件挂载时加载分类数据

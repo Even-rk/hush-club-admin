@@ -96,6 +96,7 @@ export const reqGetProductList = async (params?: {
         return {
           ...item,
           image_url: image_url,
+          image_path: image_data.file_path,
           category_name: category_data.category_name,
           silver_member_price: silver_member_price.toFixed(2), // 保留两位小数点
           gold_member_price: gold_member_price.toFixed(2)
@@ -111,6 +112,18 @@ export const reqGetProductList = async (params?: {
     })
   )
   return productList as Product[]
+}
+
+// 查商品分类
+export const reqGetProductCategory = async (): Promise<ProductCategory[]> => {
+  const { data, error } = await supabase
+    .from('product_categories')
+    .select('*')
+    .eq('status', 'active')
+  if (error) {
+    return []
+  }
+  return data as ProductCategory[]
 }
 
 // 查全部分类

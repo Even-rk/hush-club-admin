@@ -16,6 +16,8 @@ export type Product = {
   image_id: number
   // 图片地址
   image_url: string
+  // 图片路径
+  image_path: string
   // 商品名称
   product_name: string
   // 销售数量
