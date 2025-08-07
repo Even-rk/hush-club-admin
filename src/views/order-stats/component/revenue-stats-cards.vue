@@ -17,7 +17,7 @@
         </div>
         <div class="stat-value">
           <span class="stat-number">
-            {{ props.statsData?.orders || 0 }}
+            {{ props.orderStats?.total_count || 0 }}
           </span>
           <span class="stat-unit">单</span>
         </div>
@@ -42,14 +42,14 @@
         <div class="stat-value">
           <span class="stat-currency">¥</span>
           <span class="stat-number">
-            {{ props.statsData?.revenue || 0 }}
+            {{ props.orderStats?.total_amount || 0 }}
           </span>
         </div>
       </div>
     </div>
 
     <!-- 平均客单价 -->
-    <div class="stat-card stat-card-avg">
+    <!-- <div class="stat-card stat-card-avg">
       <div class="stat-decoration"></div>
       <div class="stat-content">
         <div class="stat-header">
@@ -66,11 +66,11 @@
         <div class="stat-value">
           <span class="stat-currency">¥</span>
           <span class="stat-number">
-            {{ props.statsData?.averageValue || 0 }}
+            {{ props.orderStats?.order_price || 0 }}
           </span>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- 微信支付订单数量 -->
     <div class="stat-card stat-card-wechat">
@@ -89,7 +89,7 @@
         </div>
         <div class="stat-value">
           <span class="stat-number">
-            {{ props.statsData?.wechatOrders || 0 }}
+            {{ props.orderStats?.wechat_count || 0 }}
           </span>
           <span class="stat-unit">单</span>
         </div>
@@ -113,33 +113,9 @@
         </div>
         <div class="stat-value">
           <span class="stat-number">
-            {{ props.statsData?.balanceOrders || 0 }}
+            {{ props.orderStats?.balance_count || 0 }}
           </span>
           <span class="stat-unit">单</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 储值金额 -->
-    <div class="stat-card stat-card-deposit">
-      <div class="stat-decoration"></div>
-      <div class="stat-content">
-        <div class="stat-header">
-          <div class="stat-info">
-            <div class="stat-title">总储值金额</div>
-            <div class="stat-subtitle">Deposit Amount</div>
-          </div>
-          <div class="stat-icon-wrapper">
-            <div class="stat-icon">
-              <img src="@/assets/icons/wallet.svg" alt="储值图标" />
-            </div>
-          </div>
-        </div>
-        <div class="stat-value">
-          <span class="stat-currency">¥</span>
-          <span class="stat-number">
-            {{ props.statsData?.depositAmount || 0 }}
-          </span>
         </div>
       </div>
     </div>
@@ -162,31 +138,7 @@
         <div class="stat-value">
           <span class="stat-currency">¥</span>
           <span class="stat-number">
-            {{ props.statsData?.balanceSpent || 0 }}
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 剩余储值金额 -->
-    <div class="stat-card stat-card-remaining">
-      <div class="stat-decoration"></div>
-      <div class="stat-content">
-        <div class="stat-header">
-          <div class="stat-info">
-            <div class="stat-title">剩余储值金额</div>
-            <div class="stat-subtitle">Remaining Balance</div>
-          </div>
-          <div class="stat-icon-wrapper">
-            <div class="stat-icon">
-              <img src="@/assets/icons/wallet.svg" alt="余额图标" />
-            </div>
-          </div>
-        </div>
-        <div class="stat-value">
-          <span class="stat-currency">¥</span>
-          <span class="stat-number">
-            {{ props.statsData?.remainingBalance || 0 }}
+            {{ props.orderStats?.balance_amount || 0 }}
           </span>
         </div>
       </div>
@@ -209,7 +161,7 @@
         </div>
         <div class="stat-value">
           <span class="stat-number">
-            {{ props.statsData?.newMembers || 0 }}
+            {{ props.orderStats?.new_member_count || 0 }}
           </span>
           <span class="stat-unit">人</span>
         </div>
@@ -219,30 +171,11 @@
 </template>
 
 <script setup lang="ts">
-interface StatsData {
-  // 订单总数
-  orders?: number
-  // 营业额
-  revenue?: number
-  // 平均客单价
-  averageValue?: number
-  // 微信支付订单数量
-  wechatOrders?: number
-  // 余额支付订单数量
-  balanceOrders?: number
-  // 储值金额
-  depositAmount?: number
-  // 余额总花费
-  balanceSpent?: number
-  // 剩余储值金额
-  remainingBalance?: number
-  // 新增会员数量
-  newMembers?: number
-}
+import { OrderStatistics } from '@/types/supabase'
 
 // 定义 props
 const props = defineProps<{
-  statsData?: StatsData
+  orderStats?: OrderStatistics
 }>()
 </script>
 

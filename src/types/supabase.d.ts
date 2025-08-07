@@ -69,3 +69,29 @@ export interface DatabaseMemoryUsage {
   // 使用率
   usage_percentage: number
 }
+
+// 订单统计
+export interface OrderStatistics {
+  // 订单总数
+  total_count?: number
+  // 营业额
+  total_amount?: number
+  // 客单价
+  // order_price?: number
+  // 微信支付订单数量
+  wechat_count?: number
+  // 余额支付订单数量
+  balance_count?: number
+  // 余额总花费
+  balance_amount?: number
+  // 新增会员数量
+  new_member_count?: number
+}
+
+// 储值
+export interface Recharge {
+  // 总储值金额
+  total_recharge?: number
+  // 剩余储值金额
+  remaining_balance?: number
+}

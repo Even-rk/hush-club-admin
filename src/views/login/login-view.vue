@@ -101,14 +101,6 @@
           </button>
         </div>
 
-        <div class="form-extra">
-          <label class="remember-me">
-            <input v-model="rememberMe" type="checkbox" />
-            <span>记住我</span>
-          </label>
-          <a href="#" class="forgot-link" @click.prevent>忘记密码？</a>
-        </div>
-
         <button type="submit" class="login-btn" :disabled="isLoading">
           <span v-show="!isLoading">立即登录</span>
           <span v-show="isLoading" class="loading">
@@ -127,7 +119,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { SupabaseLogin } from '@/utils/auto'
 import useUserStore from '@/stores/modules/user-info'
 import { useRouter } from 'vue-router'
@@ -142,37 +134,17 @@ const loginForm = ref({
 
 const showPassword = ref(false)
 const isLoading = ref(false)
-const rememberMe = ref(false)
 
 const login = async () => {
   isLoading.value = true
 
-  // 添加延迟以显示加载动画
-  setTimeout(async () => {
-    const data = await SupabaseLogin(loginForm.value)
-    if (data) {
-      // 记住我功能
-      if (rememberMe.value) {
-        localStorage.setItem('rememberedEmail', loginForm.value.email)
-      } else {
-        localStorage.removeItem('rememberedEmail')
-      }
-
-      setUserInfo(data)
-      router.push('/dashboard')
-    }
-    isLoading.value = false
-  }, 500)
-}
-
-// 页面加载时检查是否有记住的邮箱
-onMounted(() => {
-  const savedEmail = localStorage.getItem('rememberedEmail')
-  if (savedEmail) {
-    loginForm.value.email = savedEmail
-    rememberMe.value = true
+  const data = await SupabaseLogin(loginForm.value)
+  if (data) {
+    setUserInfo(data)
+    router.push('/dashboard')
   }
-})
+  isLoading.value = false
+}
 </script>
 
 <style lang="scss" scoped>
@@ -674,44 +646,6 @@ onMounted(() => {
     cursor: pointer;
     font-size: 14px;
     padding: 0 4px;
-    transition: opacity 0.3s;
-
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-}
-
-// 额外选项
-.form-extra {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 28px;
-  font-size: 14px;
-
-  .remember-me {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    color: var(--text-secondary);
-
-    input[type='checkbox'] {
-      margin-right: 8px;
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-      accent-color: var(--primary-color);
-    }
-
-    &:hover {
-      color: var(--text-primary);
-    }
-  }
-
-  .forgot-link {
-    color: var(--primary-color);
-    text-decoration: none;
     transition: opacity 0.3s;
 
     &:hover {

@@ -11,11 +11,61 @@
         </h1>
         <p class="page-subtitle">分析订单数据趋势，了解营业状况和高峰时段</p>
       </div>
-      <div class="header-actions">
+      <!-- <div class="header-actions">
         <button class="btn btn-primary btn-with-icon">
           <span class="btn-icon">📥</span>
           导出报表
         </button>
+      </div> -->
+    </div>
+
+    <div v-if="showRecharge" class="stats-grid">
+      <!-- 储值金额 -->
+      <div class="stat-card stat-card-deposit">
+        <div class="stat-decoration"></div>
+        <div class="stat-content">
+          <div class="stat-header">
+            <div class="stat-info">
+              <div class="stat-title">总储值金额</div>
+              <div class="stat-subtitle">Deposit Amount</div>
+            </div>
+            <div class="stat-icon-wrapper">
+              <div class="stat-icon">
+                <img src="@/assets/icons/wallet.svg" alt="储值图标" />
+              </div>
+            </div>
+          </div>
+          <div class="stat-value">
+            <span class="stat-currency">¥</span>
+            <span class="stat-number">
+              {{ recharge.total_recharge || 0 }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 剩余储值金额 -->
+      <div class="stat-card stat-card-remaining">
+        <div class="stat-decoration"></div>
+        <div class="stat-content">
+          <div class="stat-header">
+            <div class="stat-info">
+              <div class="stat-title">剩余储值金额</div>
+              <div class="stat-subtitle">Remaining Balance</div>
+            </div>
+            <div class="stat-icon-wrapper">
+              <div class="stat-icon">
+                <img src="@/assets/icons/wallet.svg" alt="余额图标" />
+              </div>
+            </div>
+          </div>
+          <div class="stat-value">
+            <span class="stat-currency">¥</span>
+            <span class="stat-number">
+              {{ recharge.remaining_balance || 0 }}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -49,21 +99,43 @@
           </div>
 
           <!-- 应用筛选 -->
-          <button class="btn btn-primary">应用筛选</button>
+          <button class="btn btn-primary" @click="updateData">应用筛选</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 全局 Loading -->
+    <div v-if="loading" class="page-loading">
+      <div class="loading-container">
+        <div class="loading-wrapper">
+          <div class="loading-spinner">
+            <div class="spinner-circle"></div>
+            <div class="spinner-circle"></div>
+            <div class="spinner-circle"></div>
+          </div>
+          <div class="loading-icon">📈</div>
+        </div>
+        <div class="loading-text">正在加载数据...</div>
+        <div class="loading-progress">
+          <div class="progress-bar"></div>
         </div>
       </div>
     </div>
 
     <!-- 统计卡片数据对比 -->
-    <RevenueStatsCards />
+    <template v-else>
+      <RevenueStatsCards :order-stats="orderStats" />
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import DatePicker from '@/components/date-picker.vue'
 import RevenueStatsCards from './component/revenue-stats-cards.vue'
 import { formatDate } from '@/utils/format'
+import { reqGetOrderStatistics, reqGetRecharge } from '@/api/supabase'
+import { OrderStatistics, Recharge } from '@/types/supabase'
 
 // Tab选项定义
 const quickTabs = [
@@ -73,6 +145,15 @@ const quickTabs = [
   { label: '近30天', value: 'last30days' }
 ]
 
+// 订单统计数据
+const orderStats = ref<OrderStatistics>({})
+// 储值数据
+const recharge = ref<Recharge>({})
+// 是否加载中
+const loading = ref<boolean>(false)
+//
+// 是否显示储值数据
+const showRecharge = ref<boolean>(false)
 // 当前激活的tab
 const activeTab = ref<string>('today')
 
@@ -81,15 +162,14 @@ const startDate = ref<string>('')
 const endDate = ref<string>('')
 
 // 更新数据（TODO: 实现实际的数据获取逻辑）
-const updateData = (start: string, end: string) => {
-  console.log(`更新数据，时间范围：${start} 至 ${end}`)
-  // TODO: 调用API获取数据
-}
-
-// 应用筛选函数 - 打印日期区间并更新数据
-const applyFilter = (start: string, end: string) => {
-  // 更新数据
-  updateData(start, end)
+const updateData = async () => {
+  loading.value = true
+  const data = await reqGetOrderStatistics({
+    startTime: startDate.value,
+    endTime: endDate.value
+  })
+  orderStats.value = data
+  loading.value = false
 }
 
 // 选择tab
@@ -124,11 +204,7 @@ const selectTab = (tabValue: string) => {
       endDate.value = formatDate(new Date(new Date()))
       break
     default:
-      return
   }
-
-  // 调用应用筛选函数
-  applyFilter(startDate.value, endDate.value)
 }
 
 // 时间区间变化
@@ -136,16 +212,163 @@ const onDateRangeChange = (value: string | { start: string; end: string }) => {
   if (typeof value === 'object' && value.start && value.end) {
     // 清空tab选择
     activeTab.value = ''
-    // 调用应用筛选函数
-    applyFilter(value.start, value.end)
   }
 }
 
-// 初始化时选择今天
-selectTab('today')
+onMounted(async () => {
+  // 初始化时选择今天
+  selectTab('today')
+  // 获取储值数据
+  recharge.value = await reqGetRecharge()
+  showRecharge.value = true
+})
 </script>
 
 <style scoped lang="scss">
+/* 全局 Loading */
+.page-loading {
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 40px;
+}
+
+.loading-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: spin 2s linear infinite;
+}
+
+.spinner-circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+
+  &:nth-child(1) {
+    animation-delay: 0s;
+    border-top-color: var(--primary-color);
+  }
+
+  &:nth-child(2) {
+    animation-delay: 0.15s;
+    width: 80%;
+    height: 80%;
+    top: 10%;
+    left: 10%;
+    border-top-color: var(--primary-light);
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.3s;
+    width: 60%;
+    height: 60%;
+    top: 20%;
+    left: 20%;
+    border-top-color: var(--primary-dark);
+  }
+}
+
+.loading-icon {
+  font-size: 36px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.loading-text {
+  font-size: 18px;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.loading-progress {
+  width: 200px;
+  height: 4px;
+  background: var(--border-light);
+  border-radius: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color) 0%,
+    var(--primary-light) 50%,
+    var(--primary-color) 100%
+  );
+  border-radius: 100px;
+  animation: progress 1.5s ease-in-out infinite;
+  width: 40%;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* 订单统计页面 */
 .order-stats-page {
   height: fit-content;
@@ -184,9 +407,216 @@ selectTab('today')
     }
   }
 
-  .header-actions {
-    display: flex;
-    gap: 12px;
+  // .header-actions {
+  //   display: flex;
+  //   gap: 12px;
+  // }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+
+  .stat-card {
+    background: white;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      .stat-decoration {
+        transform: scale(1.1) rotate(10deg);
+      }
+      .stat-icon-wrapper {
+        transform: rotate(-5deg) scale(1.05);
+      }
+      .stat-number {
+        transform: scale(1.02);
+      }
+    }
+
+    &.stat-card-orders {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-revenue {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-avg {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-wechat {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-balance {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-deposit {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-spent {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-remaining {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #5f72bd 0%, #9b23ea 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    &.stat-card-members {
+      .stat-decoration,
+      .stat-icon {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      }
+      .stat-icon {
+        color: white;
+      }
+    }
+
+    .stat-decoration {
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      opacity: 0.1;
+      transition: transform 0.5s ease;
+    }
+
+    .stat-content {
+      padding: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+
+      .stat-info {
+        .stat-title {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--text-heading);
+          margin-bottom: 4px;
+        }
+        .stat-subtitle {
+          font-size: 11px;
+          color: var(--text-subtitle);
+          opacity: 0.7;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+
+      .stat-icon-wrapper {
+        transition: transform 0.3s ease;
+
+        .stat-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+          img {
+            width: 24px;
+            height: 24px;
+            filter: brightness(0) invert(1);
+          }
+        }
+      }
+    }
+
+    .stat-value {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+
+      .stat-currency {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-subtitle);
+        opacity: 0.5;
+      }
+
+      .stat-number {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-heading);
+        letter-spacing: -0.5px;
+        transition: transform 0.3s ease;
+      }
+
+      .stat-unit {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-subtitle);
+        margin-left: 4px;
+      }
+    }
   }
 }
 

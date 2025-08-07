@@ -12,7 +12,9 @@ import {
   RolePermission,
   Coupon,
   DatabaseMemoryUsage,
-  DataOverview
+  DataOverview,
+  OrderStatistics,
+  Recharge
 } from '@/types/supabase'
 import { getPublicUrl } from '@/utils/storage'
 import { formatDate } from '@/utils/format'
@@ -643,4 +645,66 @@ export const reqGetHotProduct = async (): Promise<Product[]> => {
     return []
   }
   return data as Product[]
+}
+
+// 订单统计
+export const reqGetOrderStatistics = async (params?: {
+  // 开始时间
+  startTime?: string
+  // 结束时间
+  endTime?: string
+}): Promise<OrderStatistics> => {
+  // 查订单
+  const { data: orders, error: ordersError } = await supabase
+    .from('orders')
+    .select('final_amount, payment_method')
+    .gte('created_at', params?.startTime)
+    .lte('created_at', params?.endTime)
+  if (ordersError) {
+    return {}
+  }
+  // 查会员
+  const { data: members, error: membersError } = await supabase
+    .from('members')
+    .select('total_recharge, balance')
+    .gte('created_at', params?.startTime)
+    .lte('created_at', params?.endTime)
+  if (membersError) {
+    return {}
+  }
+
+  // 余额支付订单
+  const balance_orders = orders.filter(item => item.payment_method == 'balance')
+
+  return {
+    // 订单总数
+    total_count: orders.length,
+    // 营业额
+    total_amount: orders.reduce((acc, item) => acc + item.final_amount, 0),
+    // 客单价
+    // order_price: orders.reduce((acc, item) => acc + item.final_amount, 0) / orders.length,
+    // 微信支付订单数量
+    wechat_count: orders.filter(item => item.payment_method == 'wechat').length,
+    // 余额支付订单数量
+    balance_count: balance_orders.length,
+    // 余额总花费
+    balance_amount: balance_orders.reduce((acc, item) => acc + item.final_amount, 0),
+    // 新增会员数量
+    new_member_count: members.length || 0
+  }
+}
+
+// 查询储值
+export const reqGetRecharge = async (): Promise<Recharge> => {
+  const { data, error } = await supabase.from('members').select('total_recharge, balance')
+  if (error) {
+    return {}
+  }
+
+  return {
+    // 总储值金额
+    total_recharge: data.reduce((acc, item) => acc + item.total_recharge, 0),
+    // 剩余储值金额
+    remaining_balance: data.reduce((acc, item) => acc + item.balance, 0)
+  }
 }
