@@ -47,6 +47,9 @@
               {{ tab.label }}
             </button>
           </div>
+
+          <!-- 应用筛选 -->
+          <button class="btn btn-primary">应用筛选</button>
         </div>
       </div>
     </div>
@@ -96,32 +99,29 @@ const selectTab = (tabValue: string) => {
   startDate.value = ''
   endDate.value = ''
 
-  // 根据tab计算时间范围
-  const today = new Date()
-
   switch (tabValue) {
     case 'today':
       // 今天到今天
-      startDate.value = formatDate(today)
-      endDate.value = formatDate(today)
+      startDate.value = formatDate(new Date())
+      endDate.value = formatDate(new Date())
       break
     case 'yesterday': {
       // 昨天到昨天
-      const yesterday = new Date(today)
-      yesterday.setDate(today.getDate() - 1)
+      const yesterday = new Date(new Date())
+      yesterday.setDate(new Date().getDate() - 1)
       startDate.value = formatDate(yesterday)
       endDate.value = formatDate(yesterday)
       break
     }
     case 'last7days':
       // 近7天 - 6天前到今天（包含今天共7天）
-      startDate.value = formatDate(new Date(today))
-      endDate.value = formatDate(today)
+      startDate.value = formatDate(new Date(new Date().setDate(new Date().getDate() - 6)))
+      endDate.value = formatDate(new Date())
       break
     case 'last30days':
       // 近30天 - 29天前到今天（包含今天共30天）
-      startDate.value = formatDate(new Date(today))
-      endDate.value = formatDate(today)
+      startDate.value = formatDate(new Date(new Date().setDate(new Date().getDate() - 29)))
+      endDate.value = formatDate(new Date(new Date()))
       break
     default:
       return

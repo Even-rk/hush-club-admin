@@ -7,12 +7,7 @@
       <div class="stat-content">
         <div class="stat-number-large">{{ userList.length }}</div>
         <div class="stat-label-enhanced">系统用户总数</div>
-        <div class="stat-trend">
-          <span class="trend-badge trend-up">↑ 12%</span>
-          <span class="trend-text">较上月</span>
-        </div>
       </div>
-      <div class="stat-decoration"></div>
     </div>
 
     <div class="stat-card-enhanced stat-active">
@@ -24,14 +19,7 @@
           {{ userList.filter(i => i.status == 'active').length }}
         </div>
         <div class="stat-label-enhanced">活跃用户</div>
-        <div class="stat-percentage">
-          占比
-          {{
-            Math.round((userList.filter(i => i.status == 'active').length / userList.length) * 100)
-          }}%
-        </div>
       </div>
-      <div class="stat-decoration"></div>
     </div>
 
     <div class="stat-card-enhanced stat-admin">
@@ -43,9 +31,7 @@
           {{ userList.filter(i => [1, 2].includes(i.role_id)).length }}
         </div>
         <div class="stat-label-enhanced">管理员</div>
-        <div class="stat-subtitle">包含超管和普通管理员</div>
       </div>
-      <div class="stat-decoration"></div>
     </div>
 
     <div class="stat-card-enhanced stat-disabled">
@@ -61,7 +47,6 @@
           需要清理
         </div>
       </div>
-      <div class="stat-decoration"></div>
     </div>
   </div>
 </template>
@@ -131,49 +116,6 @@ defineProps<Props>()
       font-weight: 500;
     }
 
-    .stat-trend {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 12px;
-
-      .trend-badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 600;
-
-        &.trend-up {
-          background: var(--success-color);
-          color: white;
-        }
-
-        &.trend-down {
-          background: var(--error-color);
-          color: white;
-        }
-      }
-
-      .trend-text {
-        font-size: 12px;
-        color: var(--text-muted);
-      }
-    }
-
-    .stat-percentage {
-      margin-top: 8px;
-      font-size: 13px;
-      color: var(--text-subtitle);
-    }
-
-    .stat-subtitle {
-      margin-top: 4px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
     .stat-warning {
       margin-top: 8px;
       padding: 4px 8px;
@@ -186,16 +128,6 @@ defineProps<Props>()
     }
   }
 
-  .stat-decoration {
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    opacity: 0.1;
-  }
-
   &.stat-total {
     background: linear-gradient(135deg, var(--info-color) 0%, var(--diamond-dark) 100%);
     color: white;
@@ -204,13 +136,8 @@ defineProps<Props>()
       background: rgba(255, 255, 255, 0.2);
     }
 
-    .stat-label-enhanced,
-    .stat-trend .trend-text {
+    .stat-label-enhanced {
       color: rgba(255, 255, 255, 0.9);
-    }
-
-    .stat-decoration {
-      background: white;
     }
   }
 
@@ -222,13 +149,8 @@ defineProps<Props>()
       background: rgba(255, 255, 255, 0.2);
     }
 
-    .stat-label-enhanced,
-    .stat-percentage {
+    .stat-label-enhanced {
       color: rgba(255, 255, 255, 0.9);
-    }
-
-    .stat-decoration {
-      background: white;
     }
   }
 
@@ -240,13 +162,8 @@ defineProps<Props>()
       background: rgba(255, 255, 255, 0.2);
     }
 
-    .stat-label-enhanced,
-    .stat-subtitle {
+    .stat-label-enhanced {
       color: rgba(255, 255, 255, 0.9);
-    }
-
-    .stat-decoration {
-      background: white;
     }
   }
 
@@ -260,10 +177,6 @@ defineProps<Props>()
 
     .stat-label-enhanced {
       color: rgba(255, 255, 255, 0.9);
-    }
-
-    .stat-decoration {
-      background: white;
     }
 
     .stat-warning {
