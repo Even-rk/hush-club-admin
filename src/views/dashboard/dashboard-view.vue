@@ -262,7 +262,8 @@ onMounted(async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 248, 243, 0.98) 100%);
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
   backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
