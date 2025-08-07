@@ -1,6 +1,6 @@
 <template>
   <transition name="modal-fade">
-    <div v-if="visible" class="product-modal-overlay" @click="onOverlayClick">
+    <div v-if="visible" class="product-modal-overlay" @click="emit('close')">
       <transition name="modal-scale">
         <div v-if="visible" class="product-modal" @click.stop>
           <!-- 装饰性背景 -->
@@ -19,7 +19,7 @@
                 {{ mode === 'add' ? '添加商品' : '编辑商品' }}
               </h3>
             </div>
-            <button class="modal-close" @click="close">
+            <button class="modal-close" @click="emit('close')">
               <svg
                 width="24"
                 height="24"
@@ -139,11 +139,11 @@
 
           <!-- 弹窗底部 -->
           <div class="product-modal-footer">
-            <button class="btn btn-secondary" @click="close">
+            <button class="btn btn-secondary" @click="emit('close')">
               <span class="btn-icon">❌</span>
               取消
             </button>
-            <button class="btn btn-primary" :disabled="loading" @click="handleSubmit">
+            <button class="btn btn-primary" :disabled="loading" @click="submit">
               <span v-if="!loading" class="btn-icon">✅</span>
               <span v-if="loading" class="loading-spinner"></span>
               {{ loading ? '提交中...' : '确定' }}
@@ -161,6 +161,14 @@ import { reqGetProductCategory } from '@/api/supabase'
 import type { Product, ProductCategory } from '@/types/supabase'
 import CoolSelect from '@/components/cool-select.vue'
 import { delProductImg, uploadProductImg } from '@/api/upload-img/upload-img'
+import { updateProduct } from '@/api/supabase/UPDATE'
+import { reqAddProduct } from '@/api/supabase/INSERT'
+
+interface UploadImg {
+  id: number
+  image_url: string
+  file_path: string
+}
 
 const props = defineProps<{
   visible: boolean
@@ -170,11 +178,13 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: []
-  success: [data: Product & { id?: number }, mode: string]
+  success: [data: Product & { id?: number }, mode: 'add' | 'edit']
 }>()
 
 // 表单数据
 const form = ref({} as Product)
+// 上传的图片
+const uploadImgData = ref({} as UploadImg)
 // 文件输入引用
 const fileInputRef = ref<HTMLInputElement>()
 
@@ -195,9 +205,6 @@ const categoryOptions = computed(() => {
   }))
 })
 
-// 当前模式
-const currentMode = ref(props.mode)
-
 // 获取商品分类列表
 const loadCategories = async () => {
   try {
@@ -205,28 +212,6 @@ const loadCategories = async () => {
   } catch (error) {
     console.error('获取商品分类失败:', error)
   }
-}
-
-// 关闭弹窗
-const close = () => {
-  currentMode.value = props.mode
-  emit('close')
-}
-
-// 点击遮罩层关闭
-const onOverlayClick = () => {
-  close()
-}
-
-// 提交表单
-const handleSubmit = async () => {
-  loading.value = true
-  // 模拟提交延迟
-  setTimeout(() => {
-    emit('success', form.value, props.mode || 'add')
-    loading.value = false
-    close()
-  }, 1000)
 }
 
 // 文件变化
@@ -237,9 +222,7 @@ const fileChange = async (e: Event) => {
     try {
       uploadLoading.value = true
       const imgData = await uploadProductImg(file)
-      form.value.image_url = imgData.image_url
-      form.value.image_id = imgData.id
-      form.value.image_path = imgData.file_path as string
+      uploadImgData.value = imgData as UploadImg
     } finally {
       uploadLoading.value = false
       // 清空文件输入，允许重复上传同一文件
@@ -252,20 +235,48 @@ const fileChange = async (e: Event) => {
 
 // 删除商品图
 const deleteProductImg = async () => {
-  try {
-    deleteLoading.value = true
-    await delProductImg({ id: form.value.image_id, file_path: form.value.image_path })
+  if (props.mode === 'add' && uploadImgData.value.id) {
+    try {
+      deleteLoading.value = true
+      await delProductImg({ id: uploadImgData.value.id, file_path: uploadImgData.value.file_path })
+      // 清除上传的图片数据
+      uploadImgData.value = {} as UploadImg
+    } finally {
+      deleteLoading.value = false
+    }
+  } else {
+    // 清除表单中的图片数据
     form.value.image_url = ''
     form.value.image_id = 0
     form.value.image_path = ''
-  } finally {
-    deleteLoading.value = false
   }
+}
+
+// 提交表单
+const submit = async () => {
+  loading.value = true
+  if (uploadImgData.value.id) {
+    form.value.image_url = uploadImgData.value.image_url
+    form.value.image_id = uploadImgData.value.id
+    form.value.image_path = uploadImgData.value.file_path
+  }
+  if (props.mode === 'add') {
+    await reqAddProduct(form.value)
+    emit('success', form.value, 'add')
+  } else {
+    await updateProduct({ id: props.productData.id, data: form.value })
+    emit('success', form.value, 'edit')
+  }
+  loading.value = false
 }
 
 // 组件挂载时加载分类数据
 onMounted(() => {
-  form.value = props.productData
+  if (props.mode === 'add') {
+    form.value = {} as Product
+  } else {
+    form.value = JSON.parse(JSON.stringify(props.productData))
+  }
   loadCategories()
 })
 </script>

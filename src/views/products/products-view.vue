@@ -91,6 +91,7 @@
       :visible="productModalVisible"
       :mode="productModalMode"
       :product-data="productModalData"
+      @success="success"
       @close="closeProductModal"
     />
   </template>
@@ -240,6 +241,17 @@ const productActions: TableAction<Product>[] = [
     onClick: product => toggleProductStatus(product)
   }
 ]
+
+// 成功回调
+const success: (product: Product, mode: 'add' | 'edit') => void = (product, mode) => {
+  if (mode === 'add') {
+    productList.value.push(product)
+  } else {
+    productList.value = productList.value.map(item => (item.id === product.id ? product : item))
+  }
+  // 关闭弹窗
+  productModalVisible.value = false
+}
 
 // 加载数据
 onMounted(async () => {
