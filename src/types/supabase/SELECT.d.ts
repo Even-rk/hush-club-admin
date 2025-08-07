@@ -9,9 +9,9 @@ export type Product = {
   // 普通会员价格
   normal_member_price: number
   // 白银会员价格
-  silver_member_price: number
+  silver_member_price?: number
   // 黄金会员价格
-  gold_member_price: number
+  gold_member_price?: number
   // 图片id
   image_id: number
   // 图片地址
@@ -25,7 +25,7 @@ export type Product = {
   // 状态
   status: 'active' | 'inactive'
   // 分类名称
-  category_name: string
+  category_name?: string
 }
 
 // 商品分类

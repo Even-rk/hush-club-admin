@@ -100,8 +100,8 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue'
-import { reqGetAllCategory, reqGetProductList } from '@/api/supabase'
-import { Product, TableColumn, TableAction } from '@/types/supabase'
+import { reqGetAllCategory, reqGetMemberLevels, reqGetProductList } from '@/api/supabase'
+import { Product, TableColumn, TableAction, MemberLevel } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
 import ProductModal from './components/product-modal.vue'
 import CoolSelect from '@/components/cool-select.vue'
@@ -243,9 +243,28 @@ const productActions: TableAction<Product>[] = [
 ]
 
 // 成功回调
-const success: (product: Product, mode: 'add' | 'edit') => void = (product, mode) => {
+const success = async (product: Product, mode: 'add' | 'edit') => {
   if (mode === 'add') {
-    productList.value.push(product)
+    // 会员等级列表
+    const memberLevelList = await reqGetMemberLevels()
+    // 银卡会员折扣率
+    const silverMember = memberLevelList.find(item => {
+      return item.level_code === 'silver'
+    }) as MemberLevel
+    // 银卡会员价格
+    const silverMemberPrice = (product.normal_member_price * silverMember?.discount_rate).toFixed(2)
+    // 金卡会员折扣率
+    const goldMember = memberLevelList.find(item => {
+      return item.level_code === 'gold'
+    }) as MemberLevel
+    // 金卡会员价格
+    const goldMemberPrice = (product.normal_member_price * goldMember?.discount_rate).toFixed(2)
+    productList.value.push({
+      ...product,
+      // 保留两位小数
+      silver_member_price: Number(silverMemberPrice),
+      gold_member_price: Number(goldMemberPrice)
+    })
   } else {
     productList.value = productList.value.map(item => (item.id === product.id ? product : item))
   }

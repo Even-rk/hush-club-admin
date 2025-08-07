@@ -52,7 +52,7 @@ export const reqGetProductList = async (params?: {
   if (params?.search) {
     supabaseProduct.ilike('product_name', `%${params.search}%`)
   }
-  const { data, error } = await supabaseProduct
+  const { data, error } = await supabaseProduct.order('created_at', { ascending: false })
   if (error) {
     return []
   }
@@ -131,7 +131,10 @@ export const reqGetAllCategory = async (params?: {
   status?: string
   search?: string
 }): Promise<ProductCategory[]> => {
-  const supabaseCategory = supabase.from('product_categories').select('*')
+  const supabaseCategory = supabase
+    .from('product_categories')
+    .select('*')
+    .order('created_at', { ascending: false })
   // 查状态
   if (params?.status) {
     supabaseCategory.eq('status', params.status)
@@ -437,7 +440,7 @@ export const reqGetUserList = async (params?: {
   if (params?.query) {
     supabaseUser.or(`username.ilike.%${params.query}%,email.ilike.%${params.query}%`)
   }
-  const { data, error } = await supabaseUser
+  const { data, error } = await supabaseUser.order('created_at', { ascending: false })
   if (error) {
     return []
   }
@@ -511,7 +514,7 @@ export const reqGetCouponList = async (params?: {
   if (params?.type) {
     supabaseCoupon.eq('coupon_type', params.type)
   }
-  const { data, error } = await supabaseCoupon
+  const { data, error } = await supabaseCoupon.order('created_at', { ascending: false })
   if (error) {
     return {}
   }

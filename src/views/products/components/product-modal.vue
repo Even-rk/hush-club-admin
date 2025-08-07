@@ -163,6 +163,7 @@ import CoolSelect from '@/components/cool-select.vue'
 import { delProductImg, uploadProductImg } from '@/api/upload-img/upload-img'
 import { updateProduct } from '@/api/supabase/UPDATE'
 import { reqAddProduct } from '@/api/supabase/INSERT'
+import _ from 'lodash'
 
 interface UploadImg {
   id: number
@@ -260,6 +261,7 @@ const submit = async () => {
     form.value.image_id = uploadImgData.value.id
     form.value.image_path = uploadImgData.value.file_path
   }
+
   if (props.mode === 'add') {
     await reqAddProduct(form.value)
     emit('success', form.value, 'add')
@@ -275,7 +277,12 @@ onMounted(() => {
   if (props.mode === 'add') {
     form.value = {} as Product
   } else {
-    form.value = JSON.parse(JSON.stringify(props.productData))
+    // 删除字段 并 克隆
+    form.value = _.omit(_.cloneDeep(props.productData), [
+      'category_name',
+      'silver_member_price',
+      'gold_member_price'
+    ])
   }
   loadCategories()
 })
