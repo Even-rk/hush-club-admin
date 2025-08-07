@@ -66,7 +66,15 @@
                 <div class="image-upload">
                   <div v-if="form.image_url" class="image-preview">
                     <img alt="商品图片" :src="form.image_url" />
-                    <button type="button" class="remove-image" @click="deleteProductImg">×</button>
+                    <button
+                      type="button"
+                      class="remove-image"
+                      :disabled="deleteLoading"
+                      @click="deleteProductImg"
+                    >
+                      <span v-if="!deleteLoading">×</span>
+                      <div v-if="deleteLoading" class="delete-loading-spinner"></div>
+                    </button>
                   </div>
                   <div v-else class="upload-placeholder">
                     <input
@@ -74,11 +82,19 @@
                       type="file"
                       accept="image/*"
                       class="file-input"
+                      :disabled="uploadLoading"
                       @change="fileChange"
                     />
-                    <div class="upload-content" @click="fileInputRef?.click()">
-                      <div class="upload-icon">📷</div>
-                      <div class="upload-text">点击上传图片</div>
+                    <div
+                      class="upload-content"
+                      :class="{ uploading: uploadLoading }"
+                      @click="!uploadLoading && fileInputRef?.click()"
+                    >
+                      <div v-if="!uploadLoading" class="upload-icon">📷</div>
+                      <div v-if="uploadLoading" class="upload-loading-spinner"></div>
+                      <div class="upload-text">
+                        {{ uploadLoading ? '上传中...' : '点击上传图片' }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -162,6 +178,9 @@ const form = ref({} as Product)
 // 文件输入引用
 const fileInputRef = ref<HTMLInputElement>()
 
+const deleteLoading = ref(false)
+const uploadLoading = ref(false)
+
 // 加载状态
 const loading = ref(false)
 
@@ -215,18 +234,33 @@ const fileChange = async (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
   if (file) {
-    const imgData = await uploadProductImg(file)
-    form.value.image_url = imgData.image_url
-    form.value.image_id = imgData.id
-    form.value.image_path = imgData.file_path as string
+    try {
+      uploadLoading.value = true
+      const imgData = await uploadProductImg(file)
+      form.value.image_url = imgData.image_url
+      form.value.image_id = imgData.id
+      form.value.image_path = imgData.file_path as string
+    } finally {
+      uploadLoading.value = false
+      // 清空文件输入，允许重复上传同一文件
+      if (target) {
+        target.value = ''
+      }
+    }
   }
 }
 
 // 删除商品图
 const deleteProductImg = async () => {
-  await delProductImg({ id: form.value.image_id, file_path: form.value.image_path })
-  form.value.image_url = ''
-  form.value.image_id = 0
+  try {
+    deleteLoading.value = true
+    await delProductImg({ id: form.value.image_id, file_path: form.value.image_path })
+    form.value.image_url = ''
+    form.value.image_id = 0
+    form.value.image_path = ''
+  } finally {
+    deleteLoading.value = false
+  }
 }
 
 // 组件挂载时加载分类数据
@@ -626,8 +660,8 @@ onMounted(() => {
     transition: all 0.3s ease;
 
     &:hover {
-      border-color: var(--primary-color);
-      background: linear-gradient(135deg, #fff8f5 0%, #fff4f0 100%);
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
     }
 
     .image-preview {
@@ -660,10 +694,25 @@ onMounted(() => {
         transition: all 0.3s ease;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-        &:hover {
+        &:hover:not(:disabled) {
           background: var(--error-color);
           color: white;
           transform: rotate(90deg);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .delete-loading-spinner {
+          width: 16px;
+          height: 16px;
+          border: 2px solid rgba(239, 68, 68, 0.3);
+          border-top: 2px solid var(--error-color);
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
         }
       }
     }
@@ -684,21 +733,41 @@ onMounted(() => {
           content: '';
           position: absolute;
           inset: 20px;
-          border: 2px dashed var(--primary-light);
+          border: 2px dashed #3b82f6;
           border-radius: 8px;
           opacity: 0;
           transition: opacity 0.3s ease;
         }
 
-        &:hover {
-          background-color: rgba(255, 107, 53, 0.05);
+        &:hover:not(.uploading) {
+          background-color: rgba(59, 130, 246, 0.05);
 
           &::before {
             opacity: 1;
+            border-color: #3b82f6;
           }
 
           .upload-icon {
             transform: scale(1.1);
+          }
+        }
+
+        &.uploading {
+          cursor: not-allowed;
+          background: linear-gradient(
+            135deg,
+            rgba(59, 130, 246, 0.1) 0%,
+            rgba(147, 197, 253, 0.05) 100%
+          );
+
+          &::before {
+            opacity: 1;
+            border-color: #3b82f6;
+          }
+
+          .upload-text {
+            color: #3b82f6;
+            font-weight: 600;
           }
         }
 
@@ -708,10 +777,21 @@ onMounted(() => {
           transition: transform 0.3s ease;
         }
 
+        .upload-loading-spinner {
+          width: 40px;
+          height: 40px;
+          margin: 0 auto 12px;
+          border: 3px solid rgba(59, 130, 246, 0.3);
+          border-top: 3px solid #3b82f6;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
         .upload-text {
           font-size: 14px;
           color: var(--text-secondary);
           font-weight: 500;
+          transition: all 0.3s ease;
         }
       }
     }
