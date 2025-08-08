@@ -105,8 +105,6 @@ export type OrderItem = {
   id: number
   // 商品订单编号
   order_id: number
-  // 商品ID
-  product_id: number
   // 商品名称
   product_name: string
   // 商品单价

@@ -246,9 +246,14 @@ const delProduct = async (product: Product) => {
         delLoading.close()
         ElMessage.success('删除成功')
       }, 1000)
-    } catch (error) {
+    } catch (error: unknown) {
+      const { details } = error as { details: string }
       delLoading.close()
-      ElMessage.error('删除失败')
+      if (details == 'Key is still referenced from table "coupon_templates".') {
+        ElMessage.error('商品已被优惠券绑定，请先删除优惠券！！')
+      } else {
+        ElMessage.error('删除失败, 请联系系统管理员！！')
+      }
     }
   }
 }

@@ -697,8 +697,6 @@ export const reqGetOrderStatistics = async (params?: {
     total_count: orders.length,
     // 营业额
     total_amount: orders.reduce((acc, item) => acc + item.final_amount, 0),
-    // 客单价
-    // order_price: orders.reduce((acc, item) => acc + item.final_amount, 0) / orders.length,
     // 微信支付订单数量
     wechat_count: orders.filter(item => item.payment_method == 'wechat').length,
     // 余额支付订单数量
