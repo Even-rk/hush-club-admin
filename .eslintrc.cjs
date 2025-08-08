@@ -304,8 +304,6 @@ module.exports = {
     'key-spacing': 'error',
     // 禁止在调用构造函数时省略小括号
     'new-parens': 'error',
-    // 混合使用多种操作符时，用小括号包裹分组
-    'no-mixed-operators': 'error',
     // 不要混用空格和tab
     'no-mixed-spaces-and-tabs': 'error',
     // 禁止连续赋值

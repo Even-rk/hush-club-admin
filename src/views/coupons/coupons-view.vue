@@ -10,7 +10,7 @@
         </h1>
         <p class="page-subtitle">创建和管理优惠券模板，查看优惠券使用情况</p>
       </div>
-      <button class="btn btn-primary btn-with-icon">
+      <button class="btn btn-primary btn-with-icon" @click="openAddCouponModal">
         <span class="btn-icon">✨</span>
         创建优惠券
       </button>
@@ -115,6 +115,15 @@
       </div>
     </div>
   </div>
+
+  <!-- 优惠券弹窗 -->
+  <CouponsModal
+    :visible="showCouponsModal"
+    :mode="modalMode"
+    :coupon-data="currentCoupon"
+    @close="showCouponsModal = false"
+    @success="refreshCouponList"
+  />
 </template>
 
 <script setup lang="ts">
@@ -125,11 +134,17 @@ import DataTable from '@/components/data-table.vue'
 import { formatDate } from '@/utils/format'
 import CoolSelect from '@/components/cool-select.vue'
 import { ElMessage } from 'element-plus'
+import CouponsModal from './components/coupons-modal.vue'
 
 // 优惠券列表
 const couponList = ref<Coupon[]>([])
 // 优惠券模版数量
 const coupon_count = ref(0)
+
+// modal相关状态
+const showCouponsModal = ref(false)
+const modalMode = ref<'add' | 'edit'>('add')
+const currentCoupon = ref({} as Coupon)
 
 // 优惠券状态
 const selectedStatus = ref('')
@@ -216,13 +231,20 @@ const columns: TableColumn<Coupon>[] = [
   }
 ]
 
+// 打开编辑优惠券弹窗
+const openEditCouponModal = (coupon: Coupon) => {
+  modalMode.value = 'edit'
+  currentCoupon.value = coupon
+  showCouponsModal.value = true
+}
+
 // 表格操作配置
 const actions: TableAction<Coupon>[] = [
   {
     text: '编辑',
     type: 'secondary',
     onClick: (row: Coupon) => {
-      console.log('编辑优惠券', row)
+      openEditCouponModal(row)
     },
     visible: (row: Coupon) => row.status === 'active'
   },
@@ -311,6 +333,18 @@ const queryChange = () => {
   if (!searchQuery.value) {
     searchCoupons()
   }
+}
+
+// 打开添加优惠券弹窗
+const openAddCouponModal = () => {
+  modalMode.value = 'add'
+  currentCoupon.value = {} as Coupon
+  showCouponsModal.value = true
+}
+
+// 刷新优惠券列表
+const refreshCouponList = async () => {
+  await searchCoupons()
 }
 </script>
 

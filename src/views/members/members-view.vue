@@ -10,7 +10,7 @@
         </h1>
         <p class="page-subtitle">管理店铺会员信息，查看会员消费记录和充值情况</p>
       </div>
-      <button class="btn btn-primary btn-with-icon">
+      <button class="btn btn-primary btn-with-icon" @click="openAddMemberModal">
         <span class="btn-icon">✨</span>
         新增会员
       </button>
@@ -87,6 +87,15 @@
       </div>
     </div>
   </div>
+
+  <!-- 会员弹窗 -->
+  <MembersModal
+    :visible="showMembersModal"
+    :mode="modalMode"
+    :member-data="currentMember || ({} as Member)"
+    @close="showMembersModal = false"
+    @success="refreshMemberList"
+  />
 </template>
 
 <script setup lang="ts">
@@ -97,6 +106,7 @@ import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
 import DatePicker from '@/components/date-picker.vue'
 import { ElMessage } from 'element-plus'
+import MembersModal from './components/members-modal.vue'
 
 // 数据状态
 const memberList = ref<Member[]>([])
@@ -113,6 +123,11 @@ const searchQuery = ref('')
 // 会员等级选项
 const levelOptions = ref<{ label: string; value: number }[]>([])
 
+// modal相关状态
+const showMembersModal = ref(false)
+const modalMode = ref<'add' | 'edit'>('add')
+const currentMember = ref<Member | null>(null)
+
 // 表格列配置
 const memberColumns: TableColumn<Member>[] = [
   { key: 'real_name', title: '姓名' },
@@ -125,6 +140,13 @@ const memberColumns: TableColumn<Member>[] = [
   { key: 'register_time', title: '注册时间', type: 'date' }
 ]
 
+// 打开编辑会员弹窗
+const openEditMemberModal = (member: Member) => {
+  modalMode.value = 'edit'
+  currentMember.value = member
+  showMembersModal.value = true
+}
+
 // 表格操作配置
 const memberActions: TableAction<Member>[] = [
   {
@@ -135,7 +157,7 @@ const memberActions: TableAction<Member>[] = [
   {
     text: '编辑',
     type: 'secondary',
-    onClick: member => console.log(member)
+    onClick: member => openEditMemberModal(member)
   },
   {
     text: '充值',
@@ -202,6 +224,18 @@ const resetFilter = () => {
   selectedLevel.value = ''
   selectedDate.value = ''
   searchQuery.value = ''
+}
+
+// 打开添加会员弹窗
+const openAddMemberModal = () => {
+  modalMode.value = 'add'
+  currentMember.value = null
+  showMembersModal.value = true
+}
+
+// 刷新会员列表
+const refreshMemberList = async () => {
+  await searchMembers()
 }
 
 // 查询变化

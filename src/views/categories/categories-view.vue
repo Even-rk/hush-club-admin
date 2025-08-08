@@ -157,7 +157,7 @@ const searchQuery = ref('')
 // 模态框状态
 const categoryModalVisible = ref(false)
 const categoryModalMode = ref<'add' | 'edit'>('add')
-const currentCategory = ref<ProductCategory | undefined>()
+const currentCategory = ref({} as ProductCategory)
 
 // 状态选项
 const statusOptions = [
@@ -208,7 +208,7 @@ const queryChange = () => {
 // 操作函数
 const openCategoryModal = () => {
   categoryModalMode.value = 'add'
-  currentCategory.value = undefined
+  currentCategory.value = {} as ProductCategory
   categoryModalVisible.value = true
 }
 
@@ -239,6 +239,7 @@ const handleDisable = async (category: ProductCategory) => {
 }
 
 const handleModalSuccess = async (data: ProductCategory, mode: 'add' | 'edit') => {
+  console.log(data)
   try {
     if (mode === 'add') {
       // 这里应该调用添加分类的API

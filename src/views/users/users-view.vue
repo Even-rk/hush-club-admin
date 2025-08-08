@@ -10,7 +10,7 @@
         </h1>
         <p class="page-subtitle">管理系统用户账号、角色权限和访问控制</p>
       </div>
-      <button class="btn btn-primary btn-with-icon">
+      <button class="btn btn-primary btn-with-icon" @click="openAddUserModal">
         <span class="btn-icon">✨</span>
         添加用户
       </button>
@@ -72,17 +72,26 @@
         />
       </div>
     </div>
-
-    <!-- 权限管理卡片 -->
-    <RolePermissionsPanel
-      v-if="!loading"
-      :role-permission-list="rolePermissionList"
-      :user-list="userList"
-      :route-list="routeList"
-      @edit-permission="editPermissionFn"
-      @save-permission="savePermission"
-    />
   </div>
+
+  <!-- 用户弹窗 -->
+  <UsersModal
+    :visible="showUsersModal"
+    :mode="modalMode"
+    :user-data="currentUser || ({} as User)"
+    @close="showUsersModal = false"
+    @success="refreshUserList"
+  />
+
+  <!-- 权限管理卡片 -->
+  <RolePermissionsPanel
+    v-if="!loading"
+    :role-permission-list="rolePermissionList"
+    :user-list="userList"
+    :route-list="routeList"
+    @edit-permission="editPermissionFn"
+    @save-permission="savePermission"
+  />
 </template>
 
 <script setup lang="ts">
@@ -97,11 +106,17 @@ import CoolSelect from '@/components/cool-select.vue'
 import UserStatsCards from './components/user-stats-cards.vue'
 import RolePermissionsPanel from './components/role-permissions-panel.vue'
 import { ElMessage } from 'element-plus'
+import UsersModal from './components/users-modal.vue'
 
 // 用户列表
 const userList = ref<User[]>([])
 // 加载中
 const loading = ref(false)
+
+// modal相关状态
+const showUsersModal = ref(false)
+const modalMode = ref<'add' | 'edit'>('add')
+const currentUser = ref<User | null>(null)
 
 // 筛选器状态
 const selectedRole = ref()
@@ -153,9 +168,16 @@ const userColumns: TableColumn<User>[] = [
   }
 ]
 
+// 打开编辑用户弹窗
+const openEditUserModal = (user: User) => {
+  modalMode.value = 'edit'
+  currentUser.value = user
+  showUsersModal.value = true
+}
+
 // 操作函数
 const editUser = (user: User) => {
-  console.log('编辑用户:', user)
+  openEditUserModal(user)
 }
 
 const resetPassword = (user: User) => {
@@ -208,6 +230,18 @@ const searchUser = async (params?: { role?: number; status?: string; query?: str
   } finally {
     loading.value = false
   }
+}
+
+// 打开添加用户弹窗
+const openAddUserModal = () => {
+  modalMode.value = 'add'
+  currentUser.value = null
+  showUsersModal.value = true
+}
+
+// 刷新用户列表
+const refreshUserList = async () => {
+  await searchUser()
 }
 
 // 重置筛选

@@ -1,8 +1,8 @@
 <template>
   <transition name="modal-fade">
-    <div v-if="visible" class="category-modal-overlay" @click="emit('close')">
+    <div v-if="visible" class="user-modal-overlay" @click="emit('close')">
       <transition name="modal-scale">
-        <div v-if="visible" class="category-modal" @click.stop>
+        <div v-if="visible" class="user-modal" @click.stop>
           <!-- 装饰性背景 -->
           <div class="modal-decoration">
             <div class="decoration-circle decoration-circle-1"></div>
@@ -10,13 +10,13 @@
           </div>
 
           <!-- 弹窗头部 -->
-          <div class="category-modal-header">
+          <div class="user-modal-header">
             <div class="header-content">
               <div class="header-icon">
-                {{ mode === 'add' ? '🎯' : '✏️' }}
+                {{ mode === 'add' ? '👤' : '✏️' }}
               </div>
               <h3 class="modal-title">
-                {{ mode === 'add' ? '添加分类' : '编辑分类' }}
+                {{ mode === 'add' ? '添加用户' : '编辑用户' }}
               </h3>
             </div>
             <button class="modal-close" @click="emit('close')">
@@ -35,49 +35,45 @@
           </div>
 
           <!-- 弹窗内容 -->
-          <div class="category-modal-body">
-            <form class="category-form">
-              <!-- 分类名称 -->
+          <div class="user-modal-body">
+            <form class="user-form">
+              <!-- 用户名 -->
               <div class="form-group">
-                <label class="form-label required">分类名称</label>
+                <label class="form-label required">用户名</label>
                 <input
-                  v-model="form.category_name"
+                  v-model="form.username"
                   type="text"
                   class="form-control"
-                  placeholder="请输入分类名称"
+                  placeholder="请输入用户名"
                   maxlength="50"
                 />
               </div>
 
-              <!-- 分类描述 -->
+              <!-- 邮箱 -->
               <div class="form-group">
-                <label class="form-label">分类描述</label>
-                <textarea
-                  v-model="form.description"
-                  class="form-textarea"
-                  placeholder="请输入分类描述（可选）"
-                  maxlength="200"
-                  rows="3"
-                ></textarea>
-              </div>
-
-              <!-- 排序权重 -->
-              <div class="form-group">
-                <label class="form-label">排序权重</label>
+                <label class="form-label required">邮箱</label>
                 <input
-                  v-model="form.sort_order"
-                  type="number"
+                  v-model="form.email"
+                  type="email"
                   class="form-control"
-                  placeholder="请输入排序权重"
-                  min="0"
-                  max="999"
+                  placeholder="请输入邮箱地址"
                 />
-                <small class="form-help">数值越小，排序越靠前</small>
               </div>
 
-              <!-- 状态 -->
+              <!-- 手机号 -->
               <div class="form-group">
-                <label class="form-label">分类状态</label>
+                <label class="form-label">手机号</label>
+                <input
+                  v-model="form.phone"
+                  type="tel"
+                  class="form-control"
+                  placeholder="请输入手机号"
+                />
+              </div>
+
+              <!-- 用户状态 -->
+              <div class="form-group">
+                <label class="form-label">用户状态</label>
                 <div class="radio-group">
                   <label class="radio-item">
                     <input v-model="form.status" type="radio" value="active" />
@@ -93,7 +89,7 @@
           </div>
 
           <!-- 弹窗底部 -->
-          <div class="category-modal-footer">
+          <div class="user-modal-footer">
             <button class="btn btn-secondary" @click="emit('close')">
               <span class="btn-icon">❌</span>
               取消
@@ -112,17 +108,17 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { ProductCategory } from '@/types/supabase'
+import type { User } from '@/types/supabase'
 
 interface Props {
   visible: boolean
   mode?: 'add' | 'edit'
-  categoryData: ProductCategory
+  userData: User
 }
 
 interface Emits {
   (e: 'close'): void
-  (e: 'success', data: ProductCategory, mode: 'add' | 'edit'): void
+  (e: 'success', data: User, mode: 'add' | 'edit'): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -132,19 +128,14 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 // 表单数据
-const form = ref<Partial<ProductCategory>>({
-  category_name: '',
-  description: '',
-  sort_order: 0,
-  status: 'active'
-})
+const form = ref({} as User)
 
 // 加载状态
 const loading = ref(false)
 
 // 提交表单
 const submit = async () => {
-  if (!form.value.category_name?.trim()) {
+  if (!form.value.username?.trim() || !form.value.email?.trim()) {
     return
   }
 
@@ -152,12 +143,12 @@ const submit = async () => {
   try {
     const submitData = {
       ...form.value,
-      category_name: form.value.category_name.trim(),
-      description: form.value.description?.trim() || '',
-      sort_order: Number(form.value.sort_order) || 0
+      username: form.value.username.trim(),
+      email: form.value.email.trim(),
+      phone: form.value.phone?.trim() || ''
     }
 
-    emit('success', submitData as ProductCategory, props.mode)
+    emit('success', submitData as User, props.mode)
   } finally {
     loading.value = false
   }
@@ -166,18 +157,14 @@ const submit = async () => {
 // 初始化表单数据
 onMounted(() => {
   if (props.mode === 'add') {
+    form.value = {} as User
+  } else if (props.userData) {
     form.value = {
-      category_name: '',
-      description: '',
-      sort_order: 0,
-      status: 'active'
-    }
-  } else if (props.categoryData) {
-    form.value = {
-      category_name: props.categoryData.category_name,
-      description: props.categoryData.description || '',
-      sort_order: props.categoryData.sort_order || 0,
-      status: props.categoryData.status || 'active'
+      ...form.value,
+      username: props.userData.username,
+      email: props.userData.email,
+      phone: props.userData.phone || '',
+      status: props.userData.status || 'active'
     }
   }
 })
@@ -243,7 +230,7 @@ onMounted(() => {
   opacity: 0;
 }
 
-.category-modal-overlay {
+.user-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -259,7 +246,7 @@ onMounted(() => {
   animation: modalFadeIn 0.2s ease;
 }
 
-.category-modal {
+.user-modal {
   background: linear-gradient(135deg, var(--bg-white) 0%, #fafafa 100%);
   border-radius: 20px;
   box-shadow:
@@ -318,7 +305,7 @@ onMounted(() => {
   }
 }
 
-.category-modal-header {
+.user-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -389,7 +376,7 @@ onMounted(() => {
   }
 }
 
-.category-modal-body {
+.user-modal-body {
   padding: 28px;
   overflow-y: auto;
   flex: 1;
@@ -412,7 +399,7 @@ onMounted(() => {
   }
 }
 
-.category-modal-footer {
+.user-modal-footer {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -514,7 +501,7 @@ onMounted(() => {
 }
 
 // 表单样式
-.category-form {
+.user-form {
   .form-group {
     margin-bottom: 24px;
     animation: slideInUp 0.4s ease-out;
@@ -571,19 +558,6 @@ onMounted(() => {
     &:hover:not(:focus) {
       border-color: var(--border-hover);
     }
-  }
-
-  .form-textarea {
-    resize: vertical;
-    min-height: 80px;
-    font-family: inherit;
-  }
-
-  .form-help {
-    display: block;
-    margin-top: 4px;
-    font-size: 12px;
-    color: var(--text-light);
   }
 
   .radio-group {

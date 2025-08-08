@@ -1,8 +1,8 @@
 <template>
   <transition name="modal-fade">
-    <div v-if="visible" class="category-modal-overlay" @click="emit('close')">
+    <div v-if="visible" class="member-modal-overlay" @click="emit('close')">
       <transition name="modal-scale">
-        <div v-if="visible" class="category-modal" @click.stop>
+        <div v-if="visible" class="member-modal" @click.stop>
           <!-- 装饰性背景 -->
           <div class="modal-decoration">
             <div class="decoration-circle decoration-circle-1"></div>
@@ -10,13 +10,13 @@
           </div>
 
           <!-- 弹窗头部 -->
-          <div class="category-modal-header">
+          <div class="member-modal-header">
             <div class="header-content">
               <div class="header-icon">
-                {{ mode === 'add' ? '🎯' : '✏️' }}
+                {{ mode === 'add' ? '⭐' : '✏️' }}
               </div>
               <h3 class="modal-title">
-                {{ mode === 'add' ? '添加分类' : '编辑分类' }}
+                {{ mode === 'add' ? '添加会员' : '编辑会员' }}
               </h3>
             </div>
             <button class="modal-close" @click="emit('close')">
@@ -35,65 +35,58 @@
           </div>
 
           <!-- 弹窗内容 -->
-          <div class="category-modal-body">
-            <form class="category-form">
-              <!-- 分类名称 -->
+          <div class="member-modal-body">
+            <form class="member-form">
+              <!-- 会员姓名 -->
               <div class="form-group">
-                <label class="form-label required">分类名称</label>
+                <label class="form-label required">会员姓名</label>
                 <input
-                  v-model="form.category_name"
+                  v-model="form.real_name"
                   type="text"
                   class="form-control"
-                  placeholder="请输入分类名称"
+                  placeholder="请输入会员姓名"
                   maxlength="50"
                 />
               </div>
 
-              <!-- 分类描述 -->
+              <!-- 会员等级 -->
               <div class="form-group">
-                <label class="form-label">分类描述</label>
-                <textarea
-                  v-model="form.description"
-                  class="form-textarea"
-                  placeholder="请输入分类描述（可选）"
-                  maxlength="200"
-                  rows="3"
-                ></textarea>
+                <label class="form-label required">会员等级</label>
+                <CoolSelect
+                  v-model="form.level_id"
+                  :options="memberLevelOptions"
+                  placeholder="请选择会员等级"
+                />
               </div>
 
-              <!-- 排序权重 -->
+              <!-- 会员手机号 -->
               <div class="form-group">
-                <label class="form-label">排序权重</label>
+                <label class="form-label required">会员手机号</label>
                 <input
-                  v-model="form.sort_order"
+                  v-model="form.phone"
+                  type="tel"
+                  class="form-control"
+                  placeholder="请输入会员手机号"
+                  maxlength="11"
+                />
+              </div>
+
+              <!-- 会员余额 -->
+              <div class="form-group">
+                <label class="form-label required">会员余额</label>
+                <input
+                  v-model="form.balance"
                   type="number"
                   class="form-control"
-                  placeholder="请输入排序权重"
+                  placeholder="请输入会员余额"
                   min="0"
-                  max="999"
                 />
-                <small class="form-help">数值越小，排序越靠前</small>
-              </div>
-
-              <!-- 状态 -->
-              <div class="form-group">
-                <label class="form-label">分类状态</label>
-                <div class="radio-group">
-                  <label class="radio-item">
-                    <input v-model="form.status" type="radio" value="active" />
-                    <span class="radio-label">启用</span>
-                  </label>
-                  <label class="radio-item">
-                    <input v-model="form.status" type="radio" value="inactive" />
-                    <span class="radio-label">禁用</span>
-                  </label>
-                </div>
               </div>
             </form>
           </div>
 
           <!-- 弹窗底部 -->
-          <div class="category-modal-footer">
+          <div class="member-modal-footer">
             <button class="btn btn-secondary" @click="emit('close')">
               <span class="btn-icon">❌</span>
               取消
@@ -112,17 +105,18 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { ProductCategory } from '@/types/supabase'
+import CoolSelect from '@/components/cool-select.vue'
+import type { Member } from '@/types/supabase'
 
 interface Props {
   visible: boolean
   mode?: 'add' | 'edit'
-  categoryData: ProductCategory
+  memberData: Member
 }
 
 interface Emits {
   (e: 'close'): void
-  (e: 'success', data: ProductCategory, mode: 'add' | 'edit'): void
+  (e: 'success', data: Member, mode: 'add' | 'edit'): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -131,20 +125,22 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
+// 会员等级选项
+const memberLevelOptions = [
+  { label: '普通会员', value: '1' },
+  { label: '银卡会员', value: '2' },
+  { label: '金卡会员', value: '3' }
+]
+
 // 表单数据
-const form = ref<Partial<ProductCategory>>({
-  category_name: '',
-  description: '',
-  sort_order: 0,
-  status: 'active'
-})
+const form = ref({} as Member)
 
 // 加载状态
 const loading = ref(false)
 
 // 提交表单
 const submit = async () => {
-  if (!form.value.category_name?.trim()) {
+  if (!form.value.real_name?.trim() || !form.value.phone?.trim()) {
     return
   }
 
@@ -152,12 +148,12 @@ const submit = async () => {
   try {
     const submitData = {
       ...form.value,
-      category_name: form.value.category_name.trim(),
-      description: form.value.description?.trim() || '',
-      sort_order: Number(form.value.sort_order) || 0
+      real_name: form.value.real_name.trim(),
+      phone: form.value.phone.trim(),
+      balance: Number(form.value.balance) || 0
     }
 
-    emit('success', submitData as ProductCategory, props.mode)
+    emit('success', submitData as Member, props.mode)
   } finally {
     loading.value = false
   }
@@ -166,18 +162,14 @@ const submit = async () => {
 // 初始化表单数据
 onMounted(() => {
   if (props.mode === 'add') {
+    form.value = {} as Member
+  } else if (props.memberData) {
     form.value = {
-      category_name: '',
-      description: '',
-      sort_order: 0,
-      status: 'active'
-    }
-  } else if (props.categoryData) {
-    form.value = {
-      category_name: props.categoryData.category_name,
-      description: props.categoryData.description || '',
-      sort_order: props.categoryData.sort_order || 0,
-      status: props.categoryData.status || 'active'
+      ...form.value,
+      real_name: props.memberData.real_name,
+      level_id: props.memberData.level_id,
+      phone: props.memberData.phone,
+      balance: props.memberData.balance || 0
     }
   }
 })
@@ -243,7 +235,7 @@ onMounted(() => {
   opacity: 0;
 }
 
-.category-modal-overlay {
+.member-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -259,7 +251,7 @@ onMounted(() => {
   animation: modalFadeIn 0.2s ease;
 }
 
-.category-modal {
+.member-modal {
   background: linear-gradient(135deg, var(--bg-white) 0%, #fafafa 100%);
   border-radius: 20px;
   box-shadow:
@@ -318,7 +310,7 @@ onMounted(() => {
   }
 }
 
-.category-modal-header {
+.member-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -389,7 +381,7 @@ onMounted(() => {
   }
 }
 
-.category-modal-body {
+.member-modal-body {
   padding: 28px;
   overflow-y: auto;
   flex: 1;
@@ -412,7 +404,7 @@ onMounted(() => {
   }
 }
 
-.category-modal-footer {
+.member-modal-footer {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -514,7 +506,7 @@ onMounted(() => {
 }
 
 // 表单样式
-.category-form {
+.member-form {
   .form-group {
     margin-bottom: 24px;
     animation: slideInUp 0.4s ease-out;
@@ -573,17 +565,8 @@ onMounted(() => {
     }
   }
 
-  .form-textarea {
-    resize: vertical;
-    min-height: 80px;
-    font-family: inherit;
-  }
-
-  .form-help {
-    display: block;
-    margin-top: 4px;
-    font-size: 12px;
-    color: var(--text-light);
+  .cool-select {
+    width: 100%;
   }
 
   .radio-group {
@@ -595,30 +578,17 @@ onMounted(() => {
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      padding: 8px 16px;
-      border: 2px solid var(--border-light);
-      border-radius: 10px;
-      transition: all 0.3s ease;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
 
       &:hover {
-        border-color: var(--primary-light);
-        background: rgba(255, 107, 53, 0.05);
-      }
-
-      &:has(input:checked) {
-        border-color: var(--primary-color);
-        background: linear-gradient(
-          135deg,
-          rgba(255, 107, 53, 0.1) 0%,
-          rgba(255, 107, 53, 0.05) 100%
-        );
+        background-color: rgba(0, 0, 0, 0.02);
       }
 
       input[type='radio'] {
         margin: 0;
         accent-color: var(--primary-color);
-        width: 16px;
-        height: 16px;
       }
 
       .radio-label {

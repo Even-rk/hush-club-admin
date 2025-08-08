@@ -1,8 +1,8 @@
 <template>
   <transition name="modal-fade">
-    <div v-if="visible" class="category-modal-overlay" @click="emit('close')">
+    <div v-if="visible" class="coupon-modal-overlay" @click="emit('close')">
       <transition name="modal-scale">
-        <div v-if="visible" class="category-modal" @click.stop>
+        <div v-if="visible" class="coupon-modal" @click.stop>
           <!-- 装饰性背景 -->
           <div class="modal-decoration">
             <div class="decoration-circle decoration-circle-1"></div>
@@ -10,13 +10,13 @@
           </div>
 
           <!-- 弹窗头部 -->
-          <div class="category-modal-header">
+          <div class="coupon-modal-header">
             <div class="header-content">
               <div class="header-icon">
-                {{ mode === 'add' ? '🎯' : '✏️' }}
+                {{ mode === 'add' ? '🎫' : '✏️' }}
               </div>
               <h3 class="modal-title">
-                {{ mode === 'add' ? '添加分类' : '编辑分类' }}
+                {{ mode === 'add' ? '添加优惠券' : '编辑优惠券' }}
               </h3>
             </div>
             <button class="modal-close" @click="emit('close')">
@@ -35,49 +35,103 @@
           </div>
 
           <!-- 弹窗内容 -->
-          <div class="category-modal-body">
-            <form class="category-form">
-              <!-- 分类名称 -->
+          <div class="coupon-modal-body">
+            <form class="coupon-form">
+              <!-- 优惠券名称 -->
               <div class="form-group">
-                <label class="form-label required">分类名称</label>
+                <label class="form-label required">优惠券名称</label>
                 <input
-                  v-model="form.category_name"
+                  v-model="form.template_name"
                   type="text"
                   class="form-control"
-                  placeholder="请输入分类名称"
-                  maxlength="50"
+                  placeholder="请输入优惠券名称"
+                  maxlength="100"
                 />
               </div>
 
-              <!-- 分类描述 -->
+              <!-- 优惠类型 -->
               <div class="form-group">
-                <label class="form-label">分类描述</label>
+                <label class="form-label required">优惠类型</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input v-model="form.coupon_type" type="radio" value="discount" />
+                    <span class="radio-label">折扣券</span>
+                  </label>
+                  <label class="radio-item">
+                    <input v-model="form.coupon_type" type="radio" value="reduce" />
+                    <span class="radio-label">满减券</span>
+                  </label>
+                  <label class="radio-item">
+                    <input v-model="form.coupon_type" type="radio" value="free" />
+                    <span class="radio-label">免费券</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 优惠金额/百分比 -->
+              <div class="form-group">
+                <label class="form-label required">
+                  {{
+                    form.coupon_type === 'discount'
+                      ? '折扣率'
+                      : form.coupon_type === 'reduce'
+                        ? '减免金额'
+                        : '优惠内容'
+                  }}
+                </label>
+                <div class="input-group">
+                  <input
+                    v-model="form.discount_value"
+                    type="number"
+                    class="form-control"
+                    :placeholder="
+                      form.coupon_type === 'discount'
+                        ? '请输入折扣率(如0.8表示8折)'
+                        : form.coupon_type === 'reduce'
+                          ? '请输入减免金额'
+                          : '请输入优惠金额'
+                    "
+                    :min="form.coupon_type === 'discount' ? 0.01 : 0"
+                    :max="form.coupon_type === 'discount' ? 1 : 99999"
+                    step="0.01"
+                  />
+                  <span class="input-suffix">
+                    {{ form.coupon_type === 'discount' ? '' : '元' }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- 最低消费金额 -->
+              <div class="form-group">
+                <label class="form-label">最低消费金额</label>
+                <div class="input-group">
+                  <input
+                    v-model="form.threshold_amount"
+                    type="number"
+                    class="form-control"
+                    placeholder="请输入最低消费金额(0表示无门槛)"
+                    min="0"
+                    step="0.01"
+                  />
+                  <span class="input-suffix">元</span>
+                </div>
+              </div>
+
+              <!-- 优惠券描述 -->
+              <div class="form-group">
+                <label class="form-label">优惠券描述</label>
                 <textarea
                   v-model="form.description"
-                  class="form-textarea"
-                  placeholder="请输入分类描述（可选）"
-                  maxlength="200"
+                  class="form-control"
+                  placeholder="请输入优惠券描述信息"
                   rows="3"
+                  maxlength="200"
                 ></textarea>
               </div>
 
-              <!-- 排序权重 -->
+              <!-- 优惠券状态 -->
               <div class="form-group">
-                <label class="form-label">排序权重</label>
-                <input
-                  v-model="form.sort_order"
-                  type="number"
-                  class="form-control"
-                  placeholder="请输入排序权重"
-                  min="0"
-                  max="999"
-                />
-                <small class="form-help">数值越小，排序越靠前</small>
-              </div>
-
-              <!-- 状态 -->
-              <div class="form-group">
-                <label class="form-label">分类状态</label>
+                <label class="form-label">优惠券状态</label>
                 <div class="radio-group">
                   <label class="radio-item">
                     <input v-model="form.status" type="radio" value="active" />
@@ -93,7 +147,7 @@
           </div>
 
           <!-- 弹窗底部 -->
-          <div class="category-modal-footer">
+          <div class="coupon-modal-footer">
             <button class="btn btn-secondary" @click="emit('close')">
               <span class="btn-icon">❌</span>
               取消
@@ -112,17 +166,17 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { ProductCategory } from '@/types/supabase'
+import type { Coupon } from '@/types/supabase'
 
 interface Props {
   visible: boolean
   mode?: 'add' | 'edit'
-  categoryData: ProductCategory
+  couponData: Coupon
 }
 
 interface Emits {
   (e: 'close'): void
-  (e: 'success', data: ProductCategory, mode: 'add' | 'edit'): void
+  (e: 'success', data: Coupon, mode: 'add' | 'edit'): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -132,32 +186,36 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 // 表单数据
-const form = ref<Partial<ProductCategory>>({
-  category_name: '',
-  description: '',
-  sort_order: 0,
-  status: 'active'
-})
+const form = ref({} as Coupon)
 
 // 加载状态
 const loading = ref(false)
 
 // 提交表单
 const submit = async () => {
-  if (!form.value.category_name?.trim()) {
+  if (!form.value.template_name?.trim()) {
     return
   }
 
   loading.value = true
   try {
-    const submitData = {
-      ...form.value,
-      category_name: form.value.category_name.trim(),
-      description: form.value.description?.trim() || '',
-      sort_order: Number(form.value.sort_order) || 0
+    // 根据优惠券类型处理折扣值
+    let processedDiscountValue = Number(form.value.discount_value) || 0
+    if (form.value.coupon_type === 'discount') {
+      // 确保折扣率在合理范围内
+      processedDiscountValue = Math.max(0.01, Math.min(1, processedDiscountValue))
     }
 
-    emit('success', submitData as ProductCategory, props.mode)
+    const submitData: Coupon = {
+      ...form.value,
+      template_name: form.value.template_name.trim(),
+      discount_value: processedDiscountValue,
+      threshold_amount: Number(form.value.threshold_amount) || 0,
+      description: form.value.description || '',
+      status: form.value.status || 'active'
+    }
+
+    emit('success', submitData, props.mode)
   } finally {
     loading.value = false
   }
@@ -167,17 +225,27 @@ const submit = async () => {
 onMounted(() => {
   if (props.mode === 'add') {
     form.value = {
-      category_name: '',
+      id: 0,
+      template_name: '',
+      coupon_type: 'discount',
+      discount_value: 0.8,
+      threshold_amount: 0,
       description: '',
-      sort_order: 0,
-      status: 'active'
+      vallid_days: 30,
+      valid_day: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'active',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     }
-  } else if (props.categoryData) {
+  } else if (props.couponData) {
     form.value = {
-      category_name: props.categoryData.category_name,
-      description: props.categoryData.description || '',
-      sort_order: props.categoryData.sort_order || 0,
-      status: props.categoryData.status || 'active'
+      ...props.couponData,
+      template_name: props.couponData.template_name || '',
+      coupon_type: props.couponData.coupon_type || 'discount',
+      discount_value: props.couponData.discount_value || 0,
+      threshold_amount: props.couponData.threshold_amount || 0,
+      description: props.couponData.description || '',
+      status: props.couponData.status || 'active'
     }
   }
 })
@@ -243,7 +311,7 @@ onMounted(() => {
   opacity: 0;
 }
 
-.category-modal-overlay {
+.coupon-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -259,7 +327,7 @@ onMounted(() => {
   animation: modalFadeIn 0.2s ease;
 }
 
-.category-modal {
+.coupon-modal {
   background: linear-gradient(135deg, var(--bg-white) 0%, #fafafa 100%);
   border-radius: 20px;
   box-shadow:
@@ -318,7 +386,7 @@ onMounted(() => {
   }
 }
 
-.category-modal-header {
+.coupon-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -389,7 +457,7 @@ onMounted(() => {
   }
 }
 
-.category-modal-body {
+.coupon-modal-body {
   padding: 28px;
   overflow-y: auto;
   flex: 1;
@@ -412,7 +480,7 @@ onMounted(() => {
   }
 }
 
-.category-modal-footer {
+.coupon-modal-footer {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -514,7 +582,7 @@ onMounted(() => {
 }
 
 // 表单样式
-.category-form {
+.coupon-form {
   .form-group {
     margin-bottom: 24px;
     animation: slideInUp 0.4s ease-out;
@@ -555,6 +623,7 @@ onMounted(() => {
     font-size: 14px;
     background: var(--bg-white);
     transition: all 0.3s ease;
+    font-family: inherit;
 
     &:focus {
       outline: none;
@@ -571,19 +640,29 @@ onMounted(() => {
     &:hover:not(:focus) {
       border-color: var(--border-hover);
     }
+
+    &.textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
   }
 
-  .form-textarea {
-    resize: vertical;
-    min-height: 80px;
-    font-family: inherit;
-  }
+  .input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
 
-  .form-help {
-    display: block;
-    margin-top: 4px;
-    font-size: 12px;
-    color: var(--text-light);
+    .input-suffix {
+      position: absolute;
+      right: 14px;
+      color: var(--text-light);
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    .form-control {
+      padding-right: 40px;
+    }
   }
 
   .radio-group {
