@@ -107,6 +107,8 @@ import ProductModal from './components/product-modal.vue'
 import CoolSelect from '@/components/cool-select.vue'
 import { updateProductStatus } from '@/api/supabase/UPDATE'
 import { confirmWarning } from '@/utils/confirm'
+import { showLoading } from '@/utils/loading'
+import { reqDeleteProduct } from '@/api/supabase/DELETE'
 
 // 数据状态
 const productList = ref<Product[]>([])
@@ -215,25 +217,39 @@ const editProduct = (product: Product) => {
 
 // 切换商品状态 上架/下架
 const toggleProductStatus = async (product: Product) => {
+  const toggleLoading = showLoading('正在切换商品状态...')
   // 更新商品状态
   await updateProductStatus(product.id, product.status)
-  // 更新商品状态
-  productList.value = productList.value.map(item => {
-    if (item.id === product.id) {
-      return { ...item, status: product.status === 'active' ? 'inactive' : 'active' }
-    }
-    return item
-  })
+  // 刷新列表
+  setTimeout(() => {
+    // 更新商品状态
+    productList.value = productList.value.map(item => {
+      if (item.id === product.id) {
+        return { ...item, status: product.status === 'active' ? 'inactive' : 'active' }
+      }
+      return item
+    })
+    toggleLoading.close()
+  }, 1000)
 }
 
 // 删除商品
 const delProduct = async (product: Product) => {
-  console.log('删除商品:', product)
-
   const confirmed = await confirmWarning('确定删除该商品吗？')
   if (confirmed) {
-    // 执行删除操作
-    alert('删除商品')
+    const delLoading = showLoading('正在删除商品...')
+    try {
+      // 执行删除操作
+      await reqDeleteProduct(product.id)
+      setTimeout(() => {
+        productList.value = productList.value.filter(item => item.id !== product.id)
+        delLoading.close()
+        ElMessage.success('删除成功')
+      }, 1000)
+    } catch (error) {
+      delLoading.close()
+      ElMessage.error('删除失败')
+    }
   }
 }
 
