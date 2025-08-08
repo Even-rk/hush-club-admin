@@ -2,7 +2,7 @@ import { Product } from '@/types/supabase'
 import supabase from '@/utils/supabase'
 
 // 添加商品
-export const reqAddProduct = async (product: Product) => {
+export const reqAddProduct = async (product: Omit<Product, 'image_path' | 'image_url'>) => {
   const { data, error } = await supabase.from('products').insert(product)
   if (error) {
     throw error

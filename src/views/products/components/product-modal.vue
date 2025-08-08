@@ -139,7 +139,7 @@
 
           <!-- 弹窗底部 -->
           <div class="product-modal-footer">
-            <button class="btn btn-secondary" @click="emit('close')">
+            <button class="btn btn-secondary" @click="cancel">
               <span class="btn-icon">❌</span>
               取消
             </button>
@@ -224,6 +224,7 @@ const fileChange = async (e: Event) => {
       uploadLoading.value = true
       const imgData = await uploadProductImg(file)
       uploadImgData.value = imgData as UploadImg
+      form.value.image_url = imgData.image_url
     } finally {
       uploadLoading.value = false
       // 清空文件输入，允许重复上传同一文件
@@ -236,12 +237,13 @@ const fileChange = async (e: Event) => {
 
 // 删除商品图
 const deleteProductImg = async () => {
-  if (props.mode === 'add' && uploadImgData.value.id) {
+  if (uploadImgData.value.id) {
     try {
       deleteLoading.value = true
       await delProductImg({ id: uploadImgData.value.id, file_path: uploadImgData.value.file_path })
       // 清除上传的图片数据
       uploadImgData.value = {} as UploadImg
+      form.value.image_url = ''
     } finally {
       deleteLoading.value = false
     }
@@ -251,6 +253,12 @@ const deleteProductImg = async () => {
     form.value.image_id = 0
     form.value.image_path = ''
   }
+}
+
+// 取消
+const cancel = async () => {
+  await deleteProductImg()
+  emit('close')
 }
 
 // 提交表单
@@ -263,10 +271,13 @@ const submit = async () => {
   }
 
   if (props.mode === 'add') {
-    await reqAddProduct(form.value)
+    await reqAddProduct(_.omit(form.value, ['image_path', 'image_url']))
     emit('success', form.value, 'add')
   } else {
-    await updateProduct({ id: props.productData.id, data: form.value })
+    await updateProduct({
+      id: props.productData.id,
+      data: _.omit(form.value, ['image_path', 'image_url'])
+    })
     emit('success', form.value, 'edit')
   }
   loading.value = false

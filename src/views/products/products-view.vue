@@ -240,7 +240,7 @@ const delProduct = async (product: Product) => {
     const delLoading = showLoading('正在删除商品...')
     try {
       // 执行删除操作
-      await reqDeleteProduct(product.id)
+      await reqDeleteProduct(product)
       setTimeout(() => {
         productList.value = productList.value.filter(item => item.id !== product.id)
         delLoading.close()
