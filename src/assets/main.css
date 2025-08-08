@@ -180,3 +180,198 @@ body {
   font-size: 16px;
   margin-bottom: 16px;
 }
+
+/* 确认弹窗样式 */
+.confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.confirm-dialog {
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2xl);
+  width: 420px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+  transform: scale(0.8);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.confirm-header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.confirm-content {
+  padding: 20px 24px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.confirm-footer {
+  padding: 16px 24px 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border-light);
+}
+
+/* 删除确认弹窗 */
+.confirm-delete .confirm-header span {
+  color: var(--error-color);
+}
+
+.confirm-delete .confirm-footer button:last-child {
+  background-color: var(--error-color);
+  border-color: var(--error-color);
+}
+
+.confirm-delete .confirm-footer button:last-child:hover {
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+}
+
+/* 警告确认弹窗 */
+.confirm-warning .confirm-header span {
+  color: var(--warning-color);
+}
+
+.confirm-warning .confirm-footer button:last-child {
+  background-color: var(--warning-color);
+  border-color: var(--warning-color);
+}
+
+.confirm-warning .confirm-footer button:last-child:hover {
+  background-color: #b45309;
+  border-color: #b45309;
+}
+
+/* 信息确认弹窗 */
+.confirm-info .confirm-header span {
+  color: var(--info-color);
+}
+
+.confirm-info .confirm-footer button:last-child {
+  background-color: var(--info-color);
+  border-color: var(--info-color);
+}
+
+.confirm-info .confirm-footer button:last-child:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* 成功确认弹窗 */
+.confirm-success .confirm-header span {
+  color: var(--success-color);
+}
+
+.confirm-success .confirm-footer button:last-child {
+  background-color: var(--success-color);
+  border-color: var(--success-color);
+}
+
+.confirm-success .confirm-footer button:last-child:hover {
+  background-color: #15803d;
+  border-color: #15803d;
+}
+
+/* 自定义确认弹窗内容 */
+.custom-confirm-content {
+  min-width: 300px;
+}
+
+/* 表单确认弹窗 */
+.confirm-form-dialog .confirm-content {
+  padding: 20px 24px;
+}
+
+.confirm-form {
+  width: 100%;
+}
+
+.form-field {
+  margin-bottom: 16px;
+}
+
+.form-field:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--text-primary);
+  background-color: var(--bg-white);
+  transition: all 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-checkbox {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-color);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .confirm-dialog {
+    margin: 20px;
+    max-width: calc(100vw - 40px);
+  }
+  
+  .confirm-header,
+  .confirm-content,
+  .confirm-footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .custom-confirm-content {
+    min-width: 250px;
+  }
+}

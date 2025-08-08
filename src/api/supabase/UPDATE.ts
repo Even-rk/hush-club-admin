@@ -9,3 +9,15 @@ export const updateProduct = async (params: { id: number; data: Product }) => {
   }
   return data
 }
+
+// 更新商品状态
+export const updateProductStatus = async (id: number, status: string) => {
+  const { data, error } = await supabase
+    .from('products')
+    .update({ status: status === 'active' ? 'inactive' : 'active' })
+    .eq('id', id)
+  if (error) {
+    throw error
+  }
+  return data
+}

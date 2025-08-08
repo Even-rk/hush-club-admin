@@ -105,6 +105,8 @@ import { Product, TableColumn, TableAction, MemberLevel } from '@/types/supabase
 import DataTable from '@/components/data-table.vue'
 import ProductModal from './components/product-modal.vue'
 import CoolSelect from '@/components/cool-select.vue'
+import { updateProductStatus } from '@/api/supabase/UPDATE'
+import { confirmWarning } from '@/utils/confirm'
 
 // 数据状态
 const productList = ref<Product[]>([])
@@ -211,9 +213,28 @@ const editProduct = (product: Product) => {
   productModalVisible.value = true
 }
 
-const toggleProductStatus = (product: Product) => {
-  console.log('切换商品状态:', product)
-  // 这里实际应该调用API来切换状态
+// 切换商品状态 上架/下架
+const toggleProductStatus = async (product: Product) => {
+  // 更新商品状态
+  await updateProductStatus(product.id, product.status)
+  // 更新商品状态
+  productList.value = productList.value.map(item => {
+    if (item.id === product.id) {
+      return { ...item, status: product.status === 'active' ? 'inactive' : 'active' }
+    }
+    return item
+  })
+}
+
+// 删除商品
+const delProduct = async (product: Product) => {
+  console.log('删除商品:', product)
+
+  const confirmed = await confirmWarning('确定删除该商品吗？')
+  if (confirmed) {
+    // 执行删除操作
+    alert('删除商品')
+  }
 }
 
 // 表格操作配置
@@ -238,7 +259,7 @@ const productActions: TableAction<Product>[] = [
   {
     text: '删除',
     type: 'error',
-    onClick: product => toggleProductStatus(product)
+    onClick: product => delProduct(product)
   }
 ]
 
