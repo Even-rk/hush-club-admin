@@ -124,6 +124,15 @@
       </div>
     </div>
   </div>
+
+  <!-- 分类弹窗 -->
+  <categories-modal
+    v-model:visible="categoryModalVisible"
+    :mode="categoryModalMode"
+    :category-data="currentCategory"
+    @close="categoryModalVisible = false"
+    @success="handleModalSuccess"
+  />
 </template>
 
 <script setup lang="ts">
@@ -132,6 +141,7 @@ import { reqGetAllCategory } from '@/api/supabase'
 import { ProductCategory, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
+import CategoriesModal from './components/categories-modal.vue'
 import { ElMessage } from 'element-plus'
 
 // 数据状态
@@ -143,6 +153,11 @@ const dragOverIndex = ref<number | null>(null)
 // 筛选器状态
 const selectedStatus = ref('')
 const searchQuery = ref('')
+
+// 模态框状态
+const categoryModalVisible = ref(false)
+const categoryModalMode = ref<'add' | 'edit'>('add')
+const currentCategory = ref<ProductCategory | undefined>()
 
 // 状态选项
 const statusOptions = [
@@ -190,6 +205,57 @@ const queryChange = () => {
   }
 }
 
+// 操作函数
+const openCategoryModal = () => {
+  categoryModalMode.value = 'add'
+  currentCategory.value = undefined
+  categoryModalVisible.value = true
+}
+
+const handleEdit = (category: ProductCategory) => {
+  categoryModalMode.value = 'edit'
+  currentCategory.value = category
+  categoryModalVisible.value = true
+}
+
+const handleEnable = async (category: ProductCategory) => {
+  try {
+    // 这里应该调用启用分类的API
+    ElMessage.success(`分类 "${category.category_name}" 已启用`)
+    await searchCategories()
+  } catch (error) {
+    ElMessage.error('启用失败')
+  }
+}
+
+const handleDisable = async (category: ProductCategory) => {
+  try {
+    // 这里应该调用禁用分类的API
+    ElMessage.success(`分类 "${category.category_name}" 已禁用`)
+    await searchCategories()
+  } catch (error) {
+    ElMessage.error('禁用失败')
+  }
+}
+
+const handleModalSuccess = async (data: ProductCategory, mode: 'add' | 'edit') => {
+  try {
+    if (mode === 'add') {
+      // 这里应该调用添加分类的API
+      ElMessage.success('分类添加成功')
+    } else {
+      // 这里应该调用更新分类的API
+      ElMessage.success('分类更新成功')
+    }
+
+    // 重新加载分类列表
+    await searchCategories()
+    categoryModalVisible.value = false
+  } catch (error) {
+    ElMessage.error(mode === 'add' ? '添加失败' : '更新失败')
+  }
+}
+
 // 表格列配置
 const categoryColumns: TableColumn<ProductCategory>[] = [
   { key: 'category_name', title: '分类名称' },
@@ -210,24 +276,22 @@ const categoryColumns: TableColumn<ProductCategory>[] = [
 const categoryActions: TableAction<ProductCategory>[] = [
   {
     text: '编辑',
-    type: 'secondary'
+    type: 'secondary',
+    onClick: handleEdit
   },
   {
     text: '启用',
     type: 'success',
-    visible: category => category.status === 'inactive'
+    visible: category => category.status === 'inactive',
+    onClick: handleEnable
   },
   {
     text: '禁用',
     type: 'warning',
-    visible: category => category.status === 'active'
+    visible: category => category.status === 'active',
+    onClick: handleDisable
   }
 ]
-
-// 操作函数
-const openCategoryModal = () => {
-  console.log('打开分类弹窗')
-}
 
 // 获取分类渐变色
 const getCategoryGradient = (index: number) => {
