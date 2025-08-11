@@ -2,21 +2,41 @@
   <div
     ref="selectRef"
     class="cool-select"
-    :class="{ 'cool-select--open': isOpen, 'cool-select--disabled': disabled }"
+    :class="{
+      'cool-select--open': isOpen,
+      'cool-select--disabled': disabled,
+      'cool-select--multiple': multiple
+    }"
     tabindex="0"
     @blur="handleBlur"
     @keydown="handleKeydown"
   >
     <div
       class="cool-select__trigger"
-      :class="{ 'cool-select__trigger--focus': isOpen }"
+      :class="{
+        'cool-select__trigger--focus': isOpen,
+        'cool-select--multiple': multiple
+      }"
       @click="toggleDropdown"
     >
-      <span v-if="selectedOption?.label" class="cool-select__value">
-        {{ selectedOption?.label }}
-      </span>
-      <span v-else class="cool-select__value-placeholder">
-        {{ placeholder }}
+      <div v-if="multiple && selectedOptions.length > 0" class="cool-select__tags">
+        <span v-for="tag in selectedOptions.slice(0, 3)" :key="tag.value" class="cool-select__tag">
+          {{ tag.label }}
+          <span class="cool-select__tag-remove" @click.stop="removeTag(tag)">×</span>
+        </span>
+        <span v-if="selectedOptions.length > 3" class="cool-select__tag">
+          +{{ selectedOptions.length - 3 }}
+        </span>
+      </div>
+      <span
+        v-else
+        :class="
+          selectedOptions.length || selectedOption?.label
+            ? 'cool-select__value'
+            : 'cool-select__value-placeholder'
+        "
+      >
+        {{ displayText }}
       </span>
       <span class="cool-select__arrow" :class="{ 'cool-select__arrow--open': isOpen }"> ▼ </span>
     </div>
@@ -26,19 +46,29 @@
         <div v-if="isOpen" ref="dropdownRef" class="cool-select__dropdown" :style="dropdownStyle">
           <div class="cool-select__options">
             <div
+              v-if="multiple && options.length > 0"
+              class="cool-select__option"
+              @click="toggleSelectAll"
+            >
+              <span class="cool-select__option-text">
+                {{ isAllSelected ? '取消全选' : '全选' }}
+              </span>
+              <span v-if="isAllSelected" class="cool-select__check">✓</span>
+            </div>
+            <div
               v-for="(option, index) in options"
               :key="option.value"
               class="cool-select__option"
               :class="{
-                'cool-select__option--selected': option.value === modelValue,
-                'cool-select__option--disabled': option.disabled,
+                'cool-select__option--selected': isOptionSelected(option),
+                'cool-select__option--disabled': option.disabled || isOptionDisabled(option),
                 'cool-select__option--highlighted': index === selectedIndex
               }"
               @click="selectOption(option)"
               @mouseenter="selectedIndex = index"
             >
               <span class="cool-select__option-text">{{ option.label }}</span>
-              <span v-if="option.value === modelValue" class="cool-select__check">✓</span>
+              <span v-if="isOptionSelected(option)" class="cool-select__check">✓</span>
             </div>
           </div>
         </div>
@@ -57,20 +87,24 @@ interface SelectOption {
 }
 
 interface Props {
-  modelValue: string | number | undefined
+  modelValue: string | number | (string | number)[] | undefined
   options: SelectOption[]
   placeholder?: string
   disabled?: boolean
+  multiple?: boolean
+  maxSelect?: number
 }
 
 interface Emits {
-  (e: 'update:modelValue', value: string | number): void
-  (e: 'change', value: string | number): void
+  (e: 'update:modelValue', value: string | number | (string | number)[]): void
+  (e: 'change', value: string | number | (string | number)[]): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: '请选择',
-  disabled: false
+  disabled: false,
+  multiple: false,
+  maxSelect: Infinity
 })
 
 const emit = defineEmits<Emits>()
@@ -83,7 +117,34 @@ const selectedIndex = ref(-1)
 const blurTimer = ref<number | null>(null)
 
 const selectedOption = computed(() => {
+  if (props.multiple) {
+    return null
+  }
   return props.options.find(option => option.value === props.modelValue)
+})
+
+const selectedOptions = computed(() => {
+  if (!props.multiple) {
+    return []
+  }
+  const selectedValues = Array.isArray(props.modelValue) ? props.modelValue : []
+  return props.options.filter(option => selectedValues.includes(option.value))
+})
+
+const displayText = computed(() => {
+  if (props.multiple) {
+    const selected = selectedOptions.value
+    if (selected.length === 0) {
+      return props.placeholder
+    }
+    if (selected.length === 1) {
+      return selected[0].label
+    }
+    return `已选择 ${selected.length} 项`
+  }
+
+  const singleOption = selectedOption.value
+  return singleOption ? singleOption.label : props.placeholder
 })
 
 // 计算下拉框位置
@@ -128,14 +189,95 @@ const toggleDropdown = () => {
   }
 }
 
+const isOptionSelected = (option: SelectOption) => {
+  if (props.multiple) {
+    const selectedValues = Array.isArray(props.modelValue) ? props.modelValue : []
+    return selectedValues.includes(option.value)
+  }
+  return option.value === props.modelValue
+}
+
+const isOptionDisabled = (option: SelectOption) => {
+  if (!props.multiple || option.disabled) {
+    return option.disabled || false
+  }
+
+  const selectedValues = Array.isArray(props.modelValue) ? props.modelValue : []
+  return (
+    props.maxSelect !== Infinity &&
+    selectedValues.length >= props.maxSelect &&
+    !selectedValues.includes(option.value)
+  )
+}
+
+const isAllSelected = computed(() => {
+  if (!props.multiple) {
+    return false
+  }
+  const selectedValues = Array.isArray(props.modelValue) ? props.modelValue : []
+  const enabledOptions = props.options.filter(opt => !opt.disabled)
+  return (
+    enabledOptions.length > 0 && enabledOptions.every(opt => selectedValues.includes(opt.value))
+  )
+})
+
 const selectOption = (option: SelectOption) => {
-  if (option.disabled) {
+  if (option.disabled || isOptionDisabled(option)) {
     return
   }
 
-  emit('update:modelValue', option.value)
-  emit('change', option.value)
-  isOpen.value = false
+  if (props.multiple) {
+    const currentValues = Array.isArray(props.modelValue) ? [...props.modelValue] : []
+    const newValues = isOptionSelected(option)
+      ? currentValues.filter(v => v !== option.value)
+      : [...currentValues, option.value]
+
+    emit('update:modelValue', newValues)
+    emit('change', newValues)
+    // 多选模式下不自动关闭下拉框
+  } else {
+    emit('update:modelValue', option.value)
+    emit('change', option.value)
+    isOpen.value = false
+  }
+}
+
+const removeTag = (tag: SelectOption) => {
+  if (props.disabled || !props.multiple) {
+    return
+  }
+
+  const currentValues = Array.isArray(props.modelValue) ? [...props.modelValue] : []
+  const newValues = currentValues.filter(v => v !== tag.value)
+
+  emit('update:modelValue', newValues)
+  emit('change', newValues)
+}
+
+const toggleSelectAll = () => {
+  if (!props.multiple) {
+    return
+  }
+
+  const enabledOptions = props.options.filter(opt => !opt.disabled)
+  if (enabledOptions.length === 0) {
+    return
+  }
+
+  if (isAllSelected.value) {
+    // 取消全选
+    const selectedValues = Array.isArray(props.modelValue) ? props.modelValue : []
+    const newValues = selectedValues.filter(v => !enabledOptions.some(opt => opt.value === v))
+    emit('update:modelValue', newValues)
+    emit('change', newValues)
+  } else {
+    // 全选
+    const selectedValues = Array.isArray(props.modelValue) ? props.modelValue : []
+    const enabledValues = enabledOptions.map(opt => opt.value)
+    const newValues = [...new Set([...selectedValues, ...enabledValues])].slice(0, props.maxSelect)
+    emit('update:modelValue', newValues)
+    emit('change', newValues)
+  }
 }
 
 const closeDropdown = () => {
@@ -321,6 +463,21 @@ onUnmounted(() => {
     }
   }
 
+  &--multiple {
+    .cool-select__trigger {
+      min-height: 44px;
+      height: auto;
+      padding: 8px 16px;
+    }
+
+    .cool-select__value {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+  }
+
   &--disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -387,6 +544,39 @@ onUnmounted(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.cool-select__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.cool-select__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 12px;
+  font-size: 12px;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cool-select__tag-remove {
+  margin-left: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .cool-select__value-placeholder {

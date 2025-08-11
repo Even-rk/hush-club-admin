@@ -49,6 +49,18 @@
                 />
               </div>
 
+              <!-- 关联商品 -->
+              <div class="form-group">
+                <label class="form-label required">关联商品</label>
+                <CoolSelect
+                  v-model="selectedProductIds"
+                  :options="productList"
+                  :multiple="true"
+                  :searchable="true"
+                  placeholder="请选择关联商品"
+                />
+              </div>
+
               <!-- 分类别名 -->
               <div class="form-group">
                 <label class="form-label required">分类别名</label>
@@ -113,6 +125,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { ProductCategory } from '@/types/supabase'
+import { reqAddCategory } from '@/api/supabase/INSERT'
+import { updateProductCategory } from '@/api/supabase/UPDATE'
+import { reqGetProductList } from '@/api/supabase'
+// 引入 CoolSelect 组件
+import CoolSelect from '@/components/cool-select.vue'
 
 interface Emits {
   (e: 'close'): void
@@ -129,34 +146,38 @@ const emit = defineEmits<Emits>()
 
 // 表单数据
 const form = ref({} as ProductCategory)
+// 关联商品
+const selectedProductIds = ref<number[]>([])
+// 商品列表
+const productList = ref<{ label: string; value: number }[]>([])
 
 // 加载状态
 const loading = ref(false)
 
 // 提交表单
 const submit = async () => {
-  if (!form.value.category_name?.trim()) {
-    return
-  }
-
   loading.value = true
-  try {
-    const submitData = {
-      ...form.value,
-      category_name: form.value.category_name.trim(),
-      sort_order: Number(form.value.sort_order) || 0
-    }
-
-    emit('success', submitData as ProductCategory, props.mode)
-  } finally {
-    loading.value = false
+  if (props.mode == 'add') {
+    await reqAddCategory(form.value)
+    emit('success', form.value, 'add')
+  } else {
+    await updateProductCategory({
+      id: form.value.id,
+      data: form.value
+    })
+    emit('success', form.value, 'edit')
   }
 }
 
 // 初始化表单数据
-onMounted(() => {
-  console.log(props.categoryData)
+onMounted(async () => {
   form.value = props.categoryData
+  // 商品列表
+  const productListData = await reqGetProductList()
+  productList.value = productListData.map(item => ({
+    label: item.product_name,
+    value: item.id
+  }))
 })
 </script>
 
