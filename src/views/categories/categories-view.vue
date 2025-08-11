@@ -145,6 +145,9 @@ import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
 import CategoriesModal from './components/categories-modal.vue'
 import { ElMessage } from 'element-plus'
+import { confirmWarning } from '@/utils/confirm'
+import { showLoading } from '@/utils/loading'
+import { reqDeleteCategory } from '@/api/supabase/DELETE'
 
 // 数据状态
 const categoryList = ref<ProductCategory[]>([])
@@ -242,12 +245,20 @@ const handleDisable = async (category: ProductCategory) => {
 
 // 删除分类
 const handleDelete = async (category: ProductCategory) => {
-  try {
-    // 这里应该调用删除分类的API
-    ElMessage.success(`分类 "${category.category_name}" 已删除`)
-    await searchCategories()
-  } catch (error) {
-    ElMessage.error('删除失败')
+  const confirmed = await confirmWarning('确定删除该分类吗？')
+  if (confirmed) {
+    const delLoading = showLoading('正在删除分类...')
+    try {
+      // 执行删除操作
+      await reqDeleteCategory(category.id)
+      setTimeout(() => {
+        categoryList.value = categoryList.value.filter(item => item.id !== category.id)
+        delLoading.close()
+        ElMessage.success('删除成功')
+      }, 1000)
+    } catch (error) {
+      ElMessage.error('删除失败, 请联系系统管理员！！')
+    }
   }
 }
 
