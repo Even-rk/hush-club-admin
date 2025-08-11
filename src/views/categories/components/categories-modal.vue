@@ -51,7 +51,7 @@
 
               <!-- 关联商品 -->
               <div class="form-group">
-                <label class="form-label required">关联商品</label>
+                <label class="form-label">关联商品</label>
                 <CoolSelect
                   v-model="selectedProductIds"
                   :options="productList"

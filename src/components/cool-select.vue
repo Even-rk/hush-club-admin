@@ -20,12 +20,16 @@
       @click="toggleDropdown"
     >
       <div v-if="multiple && selectedOptions.length > 0" class="cool-select__tags">
-        <span v-for="tag in selectedOptions.slice(0, 3)" :key="tag.value" class="cool-select__tag">
+        <span
+          v-for="tag in selectedOptions.slice(0, maxDisplayTags)"
+          :key="tag.value"
+          class="cool-select__tag"
+        >
           {{ tag.label }}
           <span class="cool-select__tag-remove" @click.stop="removeTag(tag)">×</span>
         </span>
-        <span v-if="selectedOptions.length > 3" class="cool-select__tag">
-          +{{ selectedOptions.length - 3 }}
+        <span v-if="selectedOptions.length > maxDisplayTags" class="cool-select__tag">
+          +{{ selectedOptions.length - maxDisplayTags }}
         </span>
       </div>
       <span
@@ -44,9 +48,22 @@
     <Teleport to="body">
       <transition name="dropdown">
         <div v-if="isOpen" ref="dropdownRef" class="cool-select__dropdown" :style="dropdownStyle">
+          <div
+            v-if="searchable && (filteredOptions.length > 0 || searchQuery)"
+            class="cool-select__search"
+          >
+            <input
+              v-model="searchQuery"
+              type="text"
+              class="cool-select__search-input"
+              placeholder="搜索..."
+              @click.stop
+              @keydown.stop
+            />
+          </div>
           <div class="cool-select__options">
             <div
-              v-if="multiple && options.length > 0"
+              v-if="multiple && filteredOptions.length > 0"
               class="cool-select__option"
               @click="toggleSelectAll"
             >
@@ -56,7 +73,7 @@
               <span v-if="isAllSelected" class="cool-select__check">✓</span>
             </div>
             <div
-              v-for="(option, index) in options"
+              v-for="(option, index) in filteredOptions"
               :key="option.value"
               class="cool-select__option"
               :class="{
@@ -69,6 +86,11 @@
             >
               <span class="cool-select__option-text">{{ option.label }}</span>
               <span v-if="isOptionSelected(option)" class="cool-select__check">✓</span>
+            </div>
+            <div v-if="filteredOptions.length === 0" class="cool-select__empty">
+              <span class="cool-select__empty-text">
+                {{ searchQuery ? '没有找到匹配的结果' : '暂无数据' }}
+              </span>
             </div>
           </div>
         </div>
@@ -93,6 +115,8 @@ interface Props {
   disabled?: boolean
   multiple?: boolean
   maxSelect?: number
+  maxDisplayTags?: number
+  searchable?: boolean
 }
 
 interface Emits {
@@ -104,7 +128,9 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '请选择',
   disabled: false,
   multiple: false,
-  maxSelect: Infinity
+  maxSelect: Infinity,
+  maxDisplayTags: 3,
+  searchable: false
 })
 
 const emit = defineEmits<Emits>()
@@ -115,6 +141,7 @@ const dropdownRef = ref<HTMLElement>()
 const dropdownStyle = ref<Record<string, string>>({})
 const selectedIndex = ref(-1)
 const blurTimer = ref<number | null>(null)
+const searchQuery = ref('')
 
 const selectedOption = computed(() => {
   if (props.multiple) {
@@ -145,6 +172,19 @@ const displayText = computed(() => {
 
   const singleOption = selectedOption.value
   return singleOption ? singleOption.label : props.placeholder
+})
+
+const filteredOptions = computed(() => {
+  if (!props.searchable || !searchQuery.value.trim()) {
+    return props.options
+  }
+
+  const query = searchQuery.value.toLowerCase()
+  return props.options.filter(
+    option =>
+      option.label.toLowerCase().includes(query) ||
+      String(option.value).toLowerCase().includes(query)
+  )
 })
 
 // 计算下拉框位置
@@ -180,12 +220,13 @@ const toggleDropdown = () => {
   if (isOpen.value) {
     calculateDropdownPosition()
     // 重置键盘导航索引
-    selectedIndex.value = props.options.findIndex(opt => opt.value === props.modelValue)
+    selectedIndex.value = filteredOptions.value.findIndex(opt => opt.value === props.modelValue)
     if (selectedIndex.value === -1) {
       selectedIndex.value = 0
     }
   } else {
     selectedIndex.value = -1
+    searchQuery.value = ''
   }
 }
 
@@ -215,7 +256,7 @@ const isAllSelected = computed(() => {
     return false
   }
   const selectedValues = Array.isArray(props.modelValue) ? props.modelValue : []
-  const enabledOptions = props.options.filter(opt => !opt.disabled)
+  const enabledOptions = filteredOptions.value.filter(opt => !opt.disabled)
   return (
     enabledOptions.length > 0 && enabledOptions.every(opt => selectedValues.includes(opt.value))
   )
@@ -302,7 +343,7 @@ const handleBlur = (event: FocusEvent) => {
 
 // 键盘导航选项
 const navigateOptions = (direction: number) => {
-  const enabledOptions = props.options.filter(opt => !opt.disabled)
+  const enabledOptions = filteredOptions.value.filter(opt => !opt.disabled)
   if (enabledOptions.length === 0) {
     return
   }
@@ -311,20 +352,20 @@ const navigateOptions = (direction: number) => {
 
   if (currentIndex === -1) {
     // 如果没有选中项，从第一个或最后一个开始
-    selectedIndex.value = direction > 0 ? 0 : props.options.length - 1
+    selectedIndex.value = direction > 0 ? 0 : filteredOptions.value.length - 1
   } else {
     // 移动到下一个/上一个非禁用选项
     do {
       currentIndex = currentIndex + direction
 
       if (currentIndex < 0) {
-        currentIndex = props.options.length - 1
-      } else if (currentIndex >= props.options.length) {
+        currentIndex = filteredOptions.value.length - 1
+      } else if (currentIndex >= filteredOptions.value.length) {
         currentIndex = 0
       }
 
       selectedIndex.value = currentIndex
-    } while (props.options[currentIndex]?.disabled)
+    } while (filteredOptions.value[currentIndex]?.disabled)
   }
 
   // 滚动到可见区域
@@ -347,7 +388,7 @@ const handleKeydown = (event: KeyboardEvent) => {
     case ' ':
       event.preventDefault()
       if (isOpen.value && selectedIndex.value >= 0) {
-        const option = props.options[selectedIndex.value]
+        const option = filteredOptions.value[selectedIndex.value]
         if (option && !option.disabled) {
           selectOption(option)
         }
@@ -395,13 +436,15 @@ const handleClickOutside = (event: Event) => {
 
   const target = event.target as HTMLElement
 
-  // 检查点击是否在当前组件内
-  if (
-    selectRef.value &&
-    !selectRef.value.contains(target) &&
-    dropdownRef.value &&
-    !dropdownRef.value.contains(target)
-  ) {
+  // 检查点击是否在当前组件内或下拉框内
+  const isInsideSelect = selectRef.value && selectRef.value.contains(target)
+  const isInsideDropdown = dropdownRef.value && dropdownRef.value.contains(target)
+  const isTagRemove =
+    target.classList.contains('cool-select__tag-remove') ||
+    target.closest('.cool-select__tag-remove') !== null
+
+  // 如果点击不在组件内且不在下拉框内，且不是标签删除按钮，则关闭
+  if (!isInsideSelect && !isInsideDropdown && !isTagRemove) {
     closeDropdown()
   }
 }
@@ -428,6 +471,11 @@ watch(isOpen, newVal => {
       selectRef.value?.focus()
     })
   }
+})
+
+watch(searchQuery, () => {
+  // 搜索词改变时重置选中索引
+  selectedIndex.value = 0
 })
 
 onMounted(() => {
@@ -693,6 +741,47 @@ onUnmounted(() => {
   font-weight: bold;
   animation: checkBounce 0.3s ease;
   filter: drop-shadow(0 0 5px var(--primary-color));
+}
+
+.cool-select__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.cool-select__empty-text {
+  opacity: 0.7;
+}
+
+.cool-select__search {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cool-select__search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background: var(--bg-glass);
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: all var(--transition-fast);
+
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+
+  &::placeholder {
+    color: var(--text-secondary);
+  }
 }
 
 @keyframes checkBounce {
