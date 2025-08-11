@@ -20,3 +20,12 @@ export const reqDeleteProduct = async (params: {
 
   return true
 }
+
+// 删除分类
+export const reqDeleteCategory = async (id: number) => {
+  const { error } = await supabase.from('product_categories').delete().eq('id', id)
+  if (error) {
+    throw error
+  }
+  return true
+}
