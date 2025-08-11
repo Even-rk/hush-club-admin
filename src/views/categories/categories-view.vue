@@ -268,7 +268,12 @@ const handleModalSuccess = async (data: ProductCategory, mode: 'add' | 'edit') =
       categoryList.value.push(data)
     } else {
       // 这里应该调用更新分类的API
-      ElMessage.success('分类更新成功')
+      categoryList.value = categoryList.value.map(item => {
+        if (item.id === data.id) {
+          return data
+        }
+        return item
+      })
     }
     categoryModalVisible.value = false
   } catch (error) {

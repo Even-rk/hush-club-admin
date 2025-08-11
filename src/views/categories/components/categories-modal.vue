@@ -177,7 +177,7 @@ const submit = async () => {
 
 // 初始化表单数据
 onMounted(async () => {
-  form.value = props.categoryData
+  form.value = _.cloneDeep(props.categoryData)
   // 商品列表
   const productListData = await reqGetProductList()
   productList.value = productListData.map(item => ({
