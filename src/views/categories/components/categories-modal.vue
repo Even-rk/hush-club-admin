@@ -57,6 +57,7 @@
                   :options="productList"
                   :multiple="true"
                   :searchable="true"
+                  :max-display-tags="4"
                   placeholder="请选择关联商品"
                 />
               </div>
