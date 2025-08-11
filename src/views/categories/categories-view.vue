@@ -148,6 +148,7 @@ import { ElMessage } from 'element-plus'
 import { confirmWarning } from '@/utils/confirm'
 import { showLoading } from '@/utils/loading'
 import { reqDeleteCategory } from '@/api/supabase/DELETE'
+import { updateCategoryStatus } from '@/api/supabase/UPDATE'
 
 // 数据状态
 const categoryList = ref<ProductCategory[]>([])
@@ -223,24 +224,21 @@ const handleEdit = (category: ProductCategory) => {
   categoryModalVisible.value = true
 }
 
-const handleEnable = async (category: ProductCategory) => {
-  try {
-    // 这里应该调用启用分类的API
-    ElMessage.success(`分类 "${category.category_name}" 已启用`)
-    await searchCategories()
-  } catch (error) {
-    ElMessage.error('启用失败')
-  }
-}
-
-const handleDisable = async (category: ProductCategory) => {
-  try {
-    // 这里应该调用禁用分类的API
-    ElMessage.success(`分类 "${category.category_name}" 已禁用`)
-    await searchCategories()
-  } catch (error) {
-    ElMessage.error('禁用失败')
-  }
+const toggleCategoryStatus = async (category: ProductCategory) => {
+  const toggleLoading = showLoading('正在切换分类状态...')
+  // 更新分类状态
+  await updateCategoryStatus(category.id, category.status)
+  // 刷新列表
+  setTimeout(() => {
+    // 更新分类状态
+    categoryList.value = categoryList.value.map(item => {
+      if (item.id === category.id) {
+        return { ...item, status: category.status === 'active' ? 'inactive' : 'active' }
+      }
+      return item
+    })
+    toggleLoading.close()
+  }, 1000)
 }
 
 // 删除分类
@@ -309,13 +307,13 @@ const categoryActions: TableAction<ProductCategory>[] = [
     text: '启用',
     type: 'success',
     visible: category => category.status === 'inactive',
-    onClick: handleEnable
+    onClick: category => toggleCategoryStatus(category)
   },
   {
     text: '禁用',
     type: 'warning',
     visible: category => category.status === 'active',
-    onClick: handleDisable
+    onClick: category => toggleCategoryStatus(category)
   },
   {
     text: '删除',
