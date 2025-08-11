@@ -122,7 +122,7 @@
 
               <!-- 状态 -->
               <div class="form-group">
-                <label class="form-label">商品状态</label>
+                <label class="form-label required">商品状态</label>
                 <div class="radio-group">
                   <label class="radio-item">
                     <input v-model="form.status" type="radio" value="active" />

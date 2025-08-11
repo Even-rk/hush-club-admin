@@ -49,21 +49,21 @@
                 />
               </div>
 
-              <!-- 分类描述 -->
+              <!-- 分类别名 -->
               <div class="form-group">
-                <label class="form-label">分类描述</label>
-                <textarea
-                  v-model="form.description"
-                  class="form-textarea"
-                  placeholder="请输入分类描述（可选）"
-                  maxlength="200"
-                  rows="3"
-                ></textarea>
+                <label class="form-label required">分类别名</label>
+                <input
+                  v-model="form.category_code"
+                  type="text"
+                  class="form-control"
+                  placeholder="请输入分类名称"
+                  maxlength="50"
+                />
               </div>
 
               <!-- 排序权重 -->
               <div class="form-group">
-                <label class="form-label">排序权重</label>
+                <label class="form-label required">排序权重</label>
                 <input
                   v-model="form.sort_order"
                   type="number"
@@ -77,7 +77,7 @@
 
               <!-- 状态 -->
               <div class="form-group">
-                <label class="form-label">分类状态</label>
+                <label class="form-label required">分类状态</label>
                 <div class="radio-group">
                   <label class="radio-item">
                     <input v-model="form.status" type="radio" value="active" />
@@ -114,30 +114,21 @@
 import { ref, onMounted } from 'vue'
 import type { ProductCategory } from '@/types/supabase'
 
-interface Props {
-  visible: boolean
-  mode?: 'add' | 'edit'
-  categoryData: ProductCategory
-}
-
 interface Emits {
   (e: 'close'): void
   (e: 'success', data: ProductCategory, mode: 'add' | 'edit'): void
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  mode: 'add'
-})
+const props = defineProps<{
+  visible: boolean
+  mode: 'add' | 'edit'
+  categoryData: ProductCategory
+}>()
 
 const emit = defineEmits<Emits>()
 
 // 表单数据
-const form = ref<Partial<ProductCategory>>({
-  category_name: '',
-  description: '',
-  sort_order: 0,
-  status: 'active'
-})
+const form = ref({} as ProductCategory)
 
 // 加载状态
 const loading = ref(false)
@@ -153,7 +144,6 @@ const submit = async () => {
     const submitData = {
       ...form.value,
       category_name: form.value.category_name.trim(),
-      description: form.value.description?.trim() || '',
       sort_order: Number(form.value.sort_order) || 0
     }
 
@@ -165,21 +155,8 @@ const submit = async () => {
 
 // 初始化表单数据
 onMounted(() => {
-  if (props.mode === 'add') {
-    form.value = {
-      category_name: '',
-      description: '',
-      sort_order: 0,
-      status: 'active'
-    }
-  } else if (props.categoryData) {
-    form.value = {
-      category_name: props.categoryData.category_name,
-      description: props.categoryData.description || '',
-      sort_order: props.categoryData.sort_order || 0,
-      status: props.categoryData.status || 'active'
-    }
-  }
+  console.log(props.categoryData)
+  form.value = props.categoryData
 })
 </script>
 

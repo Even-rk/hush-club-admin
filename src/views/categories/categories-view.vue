@@ -126,13 +126,15 @@
   </div>
 
   <!-- 分类弹窗 -->
-  <categories-modal
-    v-model:visible="categoryModalVisible"
-    :mode="categoryModalMode"
-    :category-data="currentCategory"
-    @close="categoryModalVisible = false"
-    @success="handleModalSuccess"
-  />
+  <template v-if="categoryModalVisible">
+    <categories-modal
+      :visible="categoryModalVisible"
+      :mode="categoryModalMode"
+      :category-data="currentCategory"
+      @close="categoryModalVisible = false"
+      @success="handleModalSuccess"
+    />
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -238,6 +240,18 @@ const handleDisable = async (category: ProductCategory) => {
   }
 }
 
+// 删除分类
+const handleDelete = async (category: ProductCategory) => {
+  try {
+    // 这里应该调用删除分类的API
+    ElMessage.success(`分类 "${category.category_name}" 已删除`)
+    await searchCategories()
+  } catch (error) {
+    ElMessage.error('删除失败')
+  }
+}
+
+// 分类弹窗成功回调
 const handleModalSuccess = async (data: ProductCategory, mode: 'add' | 'edit') => {
   console.log(data)
   try {
@@ -291,6 +305,11 @@ const categoryActions: TableAction<ProductCategory>[] = [
     type: 'warning',
     visible: category => category.status === 'active',
     onClick: handleDisable
+  },
+  {
+    text: '删除',
+    type: 'error',
+    onClick: handleDelete
   }
 ]
 
