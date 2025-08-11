@@ -20,7 +20,7 @@ export const reqAddUser = async (email: string, password: string) => {
 }
 
 // 添加分类
-export const reqAddCategory = async (category: ProductCategory) => {
+export const reqAddCategory = async (category: Omit<ProductCategory, 'product_count'>) => {
   const { data, error } = await supabase.from('product_categories').insert(category)
   if (error) {
     throw error

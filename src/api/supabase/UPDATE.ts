@@ -26,8 +26,14 @@ export const updateProductStatus = async (id: number, status: string) => {
 }
 
 // 更新商品分类
-export const updateProductCategory = async (params: { id: number; data: ProductCategory }) => {
-  const { data, error } = await supabase.from('products').update(params.data).eq('id', params.id)
+export const updateProductCategory = async (params: {
+  id: number
+  data: Omit<ProductCategory, 'product_count'>
+}) => {
+  const { data, error } = await supabase
+    .from('product_categories')
+    .update(params.data)
+    .eq('id', params.id)
   if (error) {
     throw error
   }

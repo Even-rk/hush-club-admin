@@ -131,6 +131,7 @@ import { updateProductCategory } from '@/api/supabase/UPDATE'
 import { reqGetProductList, reqGetUpSlope } from '@/api/supabase'
 // 引入 CoolSelect 组件
 import CoolSelect from '@/components/cool-select.vue'
+import _ from 'lodash'
 
 interface Emits {
   (e: 'close'): void
@@ -158,15 +159,19 @@ const loading = ref(false)
 // 提交表单
 const submit = async () => {
   loading.value = true
+  const params = {
+    ...form.value,
+    product_count: selectedProductIds.value.length
+  }
   if (props.mode == 'add') {
-    await reqAddCategory(form.value)
-    emit('success', form.value, 'add')
+    await reqAddCategory(_.omit(params, ['product_count']))
+    emit('success', params, 'add')
   } else {
     await updateProductCategory({
-      id: form.value.id,
-      data: form.value
+      id: params.id,
+      data: _.omit(params, ['product_count'])
     })
-    emit('success', form.value, 'edit')
+    emit('success', params, 'edit')
   }
 }
 

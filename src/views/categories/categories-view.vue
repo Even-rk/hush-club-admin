@@ -265,15 +265,11 @@ const handleModalSuccess = async (data: ProductCategory, mode: 'add' | 'edit') =
   console.log(data)
   try {
     if (mode === 'add') {
-      // 这里应该调用添加分类的API
-      ElMessage.success('分类添加成功')
+      categoryList.value.push(data)
     } else {
       // 这里应该调用更新分类的API
       ElMessage.success('分类更新成功')
     }
-
-    // 重新加载分类列表
-    await searchCategories()
     categoryModalVisible.value = false
   } catch (error) {
     ElMessage.error(mode === 'add' ? '添加失败' : '更新失败')
