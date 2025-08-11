@@ -128,7 +128,7 @@ import { ref, onMounted } from 'vue'
 import type { ProductCategory } from '@/types/supabase'
 import { reqAddCategory } from '@/api/supabase/INSERT'
 import { updateProductCategory } from '@/api/supabase/UPDATE'
-import { reqGetProductList } from '@/api/supabase'
+import { reqGetProductList, reqGetUpSlope } from '@/api/supabase'
 // 引入 CoolSelect 组件
 import CoolSelect from '@/components/cool-select.vue'
 
@@ -179,6 +179,11 @@ onMounted(async () => {
     label: item.product_name,
     value: item.id
   }))
+  // 关联商品
+  if (props.mode == 'edit') {
+    const upSlopeList = await reqGetUpSlope(props.categoryData.id)
+    selectedProductIds.value = upSlopeList.map(item => item.product_id)
+  }
 })
 </script>
 

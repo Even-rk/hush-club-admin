@@ -166,6 +166,15 @@ export const reqGetAllCategory = async (params?: {
   return categoryList as ProductCategory[]
 }
 
+// 查询关联上的上坡
+export const reqGetUpSlope = async (category_id: number) => {
+  const { data, error } = await supabase.from('products').select('*').eq('category_id', category_id)
+  if (error) {
+    return []
+  }
+  return data
+}
+
 // 查全部订单（包含会员信息和商品明细）
 export const reqGetAllOrder = async (params?: {
   // 最近订单
