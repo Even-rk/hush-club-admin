@@ -237,7 +237,6 @@ const openAddMemberModal = () => {
 
 // 刷新会员列表
 const refreshMemberList = async (member: Member, mode: 'add' | 'edit') => {
-  console.log(member)
   if (mode == 'add') {
     memberList.value.push(member)
   } else {
