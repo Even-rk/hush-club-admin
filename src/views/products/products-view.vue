@@ -300,24 +300,28 @@ const success = async (product: Product, mode: 'add' | 'edit') => {
   }) as MemberLevel
   // 金卡会员价格
   const goldMemberPrice = (product.normal_member_price * goldMember?.discount_rate).toFixed(2)
-  if (mode === 'add') {
-    productList.value.push({
-      ...product,
-      // 保留两位小数
-      silver_member_price: Number(silverMemberPrice),
-      gold_member_price: Number(goldMemberPrice)
-    })
-  } else {
-    productList.value = productList.value.map(item => {
-      if (item.id === product.id) {
-        return {
-          ...product,
-          silver_member_price: Number(silverMemberPrice),
-          gold_member_price: Number(goldMemberPrice)
+  try {
+    if (mode === 'add') {
+      productList.value.push({
+        ...product,
+        // 保留两位小数
+        silver_member_price: Number(silverMemberPrice),
+        gold_member_price: Number(goldMemberPrice)
+      })
+    } else {
+      productList.value = productList.value.map(item => {
+        if (item.id === product.id) {
+          return {
+            ...product,
+            silver_member_price: Number(silverMemberPrice),
+            gold_member_price: Number(goldMemberPrice)
+          }
         }
-      }
-      return item
-    })
+        return item
+      })
+    }
+  } catch (error) {
+    message.error(mode === 'add' ? '添加失败' : '更新失败')
   }
   // 关闭弹窗
   productModalVisible.value = false

@@ -237,15 +237,19 @@ const openAddMemberModal = () => {
 
 // 刷新会员列表
 const refreshMemberList = async (member: Member, mode: 'add' | 'edit') => {
-  if (mode == 'add') {
-    memberList.value.push(member)
-  } else {
-    memberList.value = memberList.value.map(item => {
-      if (item.id == member.id) {
-        return member
-      }
-      return item
-    })
+  try {
+    if (mode === 'add') {
+      memberList.value.push(member)
+    } else {
+      memberList.value = memberList.value.map(item => {
+        if (item.id === member.id) {
+          return member
+        }
+        return item
+      })
+    }
+  } catch (error) {
+    message.error(mode === 'add' ? '添加失败' : '更新失败')
   }
   // 关闭弹窗
   showMembersModal.value = false

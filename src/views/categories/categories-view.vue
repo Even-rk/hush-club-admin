@@ -262,7 +262,6 @@ const handleDelete = async (category: ProductCategory) => {
 
 // 分类弹窗成功回调
 const handleModalSuccess = async (data: ProductCategory, mode: 'add' | 'edit') => {
-  console.log(data)
   try {
     if (mode === 'add') {
       categoryList.value.push(data)
