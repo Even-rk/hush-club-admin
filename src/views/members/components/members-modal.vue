@@ -145,7 +145,8 @@ const submit = async () => {
     'level_name',
     'created_at',
     'updated_at',
-    'order_count'
+    'order_count',
+    'coupon_count'
   ])
   if (props.mode == 'add') {
     await reqAddMember(params)

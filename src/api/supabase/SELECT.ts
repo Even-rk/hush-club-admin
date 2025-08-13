@@ -388,7 +388,7 @@ export const reqGetMemberList = async (params?: {
     return {}
   }
 
-  // 查会员等级
+  // 查会员等级 和 优惠券数量
   const memberList = await Promise.all(
     data.map(async item => {
       const { data: member_level, error: member_level_error } = await supabase
@@ -399,8 +399,22 @@ export const reqGetMemberList = async (params?: {
       if (member_level_error) {
         return item
       }
+
+      // 查优惠券数量
+      const { count: coupon_count, error: coupon_count_error } = await supabase
+        .from('member_coupons')
+        .select('*', { count: 'exact', head: true })
+        .eq('member_id', item.id)
+      if (coupon_count_error) {
+        return {
+          ...item,
+          coupon_count: 0
+        }
+      }
+
       return {
         ...item,
+        coupon_count: coupon_count,
         level_name: member_level?.level_name
       }
     })

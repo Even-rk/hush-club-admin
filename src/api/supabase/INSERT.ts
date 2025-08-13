@@ -29,7 +29,14 @@ export const reqAddCategory = async (category: Omit<ProductCategory, 'product_co
 }
 
 // 添加会员
-type NoHave = 'id' | 'member_code' | 'level_name' | 'created_at' | 'updated_at' | 'order_count'
+type NoHave =
+  | 'id'
+  | 'member_code'
+  | 'level_name'
+  | 'created_at'
+  | 'updated_at'
+  | 'order_count'
+  | 'coupon_count'
 export const reqAddMember = async (member: Omit<Member, NoHave>) => {
   const { data, error } = await supabase.from('members').insert(member)
   if (error) {

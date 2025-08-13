@@ -137,6 +137,8 @@ export type Member = {
   total_recharge: number
   // 消费总额
   total_consumption: number
+  // 优惠券数量
+  coupon_count: number
   // 订单数量
   order_count: number
   // 创建时间
