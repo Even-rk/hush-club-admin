@@ -107,20 +107,22 @@
                 </div>
 
                 <!-- 最低消费金额 -->
-                <div class="form-group">
-                  <label class="form-label">最低消费金额</label>
-                  <div class="input-group">
-                    <input
-                      v-model="form.threshold_amount"
-                      type="number"
-                      class="form-control"
-                      placeholder="请输入最低消费金额(0表示无门槛)"
-                      min="0"
-                      step="0.01"
-                    />
-                    <span class="input-suffix">元</span>
+                <template v-if="form.coupon_type == 'reduce'">
+                  <div class="form-group">
+                    <label class="form-label required">最低消费金额</label>
+                    <div class="input-group">
+                      <input
+                        v-model="form.threshold_amount"
+                        type="number"
+                        class="form-control"
+                        placeholder="请输入最低消费金额(0表示无门槛)"
+                        min="0"
+                        step="0.01"
+                      />
+                      <span class="input-suffix">元</span>
+                    </div>
                   </div>
-                </div>
+                </template>
               </template>
 
               <!-- 优惠券描述 -->
@@ -230,15 +232,8 @@ const submit = async () => {
 
 // 优惠券类型改变时
 const couponTypeChange = () => {
-  if (form.value.coupon_type === 'free') {
-    // 免费券不存在优惠金额
-    form.value.discount_value = 0
-    form.value.threshold_amount = 0
-  } else {
-    // 其他类型优惠券存在优惠金额
-    form.value.discount_value = 0.8
-    form.value.threshold_amount = 0
-  }
+  form.value.discount_value = undefined
+  form.value.threshold_amount = undefined
 }
 
 // 初始化表单数据

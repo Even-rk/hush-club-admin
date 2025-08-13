@@ -286,9 +286,9 @@ export type Coupon = {
    */
   coupon_type: 'reduce' | 'discount' | 'free'
   // 优惠券面值 满减 折扣 免费
-  discount_value: number
+  discount_value?: number
   // 优惠券门槛金额
-  threshold_amount: number
+  threshold_amount?: number
   // 优惠券描述
   description: string
   // 有效天数
