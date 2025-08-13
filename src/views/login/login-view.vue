@@ -128,8 +128,8 @@ const router = useRouter()
 const { setUserInfo } = useUserStore()
 
 const loginForm = ref({
-  email: 'kwr011024@163.com',
-  password: 'kwr102466'
+  email: '',
+  password: ''
 })
 
 const showPassword = ref(false)
