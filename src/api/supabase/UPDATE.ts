@@ -53,7 +53,8 @@ export const updateCategoryStatus = async (id: number, status: string) => {
 }
 
 // 更新会员信息
-export const updateMemberInfo = async (params: { id: number; data: Member }) => {
+type NoHave = 'id' | 'member_code' | 'level_name' | 'created_at' | 'updated_at' | 'order_count'
+export const updateMemberInfo = async (params: { id: number; data: Omit<Member, NoHave> }) => {
   const { data, error } = await supabase.from('members').update(params.data).eq('id', params.id)
   if (error) {
     throw error

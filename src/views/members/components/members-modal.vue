@@ -107,10 +107,14 @@
 import { ref, onMounted } from 'vue'
 import CoolSelect from '@/components/cool-select.vue'
 import type { Member } from '@/types/supabase'
+import { reqGetMemberLevels } from '@/api/supabase'
+import { reqAddMember } from '@/api/supabase/INSERT'
+import { updateMemberInfo } from '@/api/supabase/UPDATE'
+import _ from 'lodash'
 
 interface Props {
   visible: boolean
-  mode?: 'add' | 'edit'
+  mode: 'add' | 'edit'
   memberData: Member
 }
 
@@ -119,18 +123,12 @@ interface Emits {
   (e: 'success', data: Member, mode: 'add' | 'edit'): void
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  mode: 'add'
-})
+const props = defineProps<Props>()
 
 const emit = defineEmits<Emits>()
 
 // 会员等级选项
-const memberLevelOptions = [
-  { label: '普通会员', value: '1' },
-  { label: '银卡会员', value: '2' },
-  { label: '金卡会员', value: '3' }
-]
+const memberLevelOptions = ref<{ label: string; value: number }[]>([])
 
 // 表单数据
 const form = ref({} as Member)
@@ -140,27 +138,45 @@ const loading = ref(false)
 
 // 提交表单
 const submit = async () => {
-  if (!form.value.real_name?.trim() || !form.value.phone?.trim()) {
-    return
-  }
-
   loading.value = true
-  try {
-    const submitData = {
+  const params = _.omit(form.value, [
+    'id',
+    'member_code',
+    'level_name',
+    'created_at',
+    'updated_at',
+    'order_count'
+  ])
+  if (props.mode == 'add') {
+    await reqAddMember(params)
+    const addMemberData = {
       ...form.value,
-      real_name: form.value.real_name.trim(),
-      phone: form.value.phone.trim(),
-      balance: Number(form.value.balance) || 0
+      level_name: memberLevelOptions.value.find(item => item.value == form.value.level_id)?.label,
+      total_recharge: 0,
+      total_consumption: 0,
+      order_count: 0,
+      created_at: new Date().toISOString()
     }
-
-    emit('success', submitData as Member, props.mode)
-  } finally {
-    loading.value = false
+    emit('success', addMemberData, props.mode)
+  } else {
+    await updateMemberInfo({
+      id: props.memberData.id,
+      data: params
+    })
+    emit('success', form.value, props.mode)
   }
+  loading.value = false
 }
 
 // 初始化表单数据
-onMounted(() => {
+onMounted(async () => {
+  // 初始化会员等级选项
+  const data = await reqGetMemberLevels()
+  memberLevelOptions.value = data.map(item => ({
+    label: item.level_name,
+    value: item.id
+  }))
+
   if (props.mode === 'add') {
     form.value = {} as Member
   } else if (props.memberData) {

@@ -89,13 +89,15 @@
   </div>
 
   <!-- 会员弹窗 -->
-  <MembersModal
-    :visible="showMembersModal"
-    :mode="modalMode"
-    :member-data="currentMember || ({} as Member)"
-    @close="showMembersModal = false"
-    @success="refreshMemberList"
-  />
+  <template v-if="showMembersModal">
+    <MembersModal
+      :visible="showMembersModal"
+      :mode="modalMode"
+      :member-data="currentMember"
+      @close="showMembersModal = false"
+      @success="refreshMemberList"
+    />
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -126,7 +128,7 @@ const levelOptions = ref<{ label: string; value: number }[]>([])
 // modal相关状态
 const showMembersModal = ref(false)
 const modalMode = ref<'add' | 'edit'>('add')
-const currentMember = ref<Member | null>(null)
+const currentMember = ref({} as Member)
 
 // 表格列配置
 const memberColumns: TableColumn<Member>[] = [
@@ -229,13 +231,25 @@ const resetFilter = () => {
 // 打开添加会员弹窗
 const openAddMemberModal = () => {
   modalMode.value = 'add'
-  currentMember.value = null
+  currentMember.value = {} as Member
   showMembersModal.value = true
 }
 
 // 刷新会员列表
-const refreshMemberList = async () => {
-  await searchMembers()
+const refreshMemberList = async (member: Member, mode: 'add' | 'edit') => {
+  if (mode == 'add') {
+    memberList.value.push(member)
+  } else {
+    const index = memberList.value.findIndex(item => item.id == member.id)
+    if (index != -1) {
+      memberList.value[index] = {
+        ...memberList.value[index],
+        ...member
+      }
+    }
+  }
+  // 关闭弹窗
+  showMembersModal.value = false
 }
 
 // 查询变化

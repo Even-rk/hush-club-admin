@@ -130,7 +130,7 @@ export type Member = {
   // 会员等级ID
   level_id: number
   // 会员等级名称
-  level_name: string
+  level_name?: string
   // 余额
   balance: number
   // 单次最高充值总额
