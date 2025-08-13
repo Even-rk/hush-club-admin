@@ -106,10 +106,9 @@
             <span v-else-if="row.coupon_type === 'discount'">
               {{ (row.discount_value * 10).toFixed(1) }}折
             </span>
-            <span v-else-if="row.coupon_type === 'free'">
-              {{ row.description || '免费获得' }}
+            <span v-else>
+              {{ row.description || '指定商品使用' }}
             </span>
-            <span v-else> ¥{{ row.discount_value }} </span>
           </template>
         </DataTable>
       </div>
