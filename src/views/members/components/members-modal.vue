@@ -182,7 +182,7 @@ onMounted(async () => {
     value: item.id
   }))
 
-  form.value = props.memberData
+  form.value = _.cloneDeep(props.memberData)
 })
 </script>
 

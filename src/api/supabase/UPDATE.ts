@@ -1,4 +1,4 @@
-import { Member, Product, ProductCategory } from '@/types/supabase'
+import { Coupon, Member, Product, ProductCategory } from '@/types/supabase'
 import supabase from '@/utils/supabase'
 
 // 更新商品
@@ -63,6 +63,18 @@ type NoHave =
   | 'coupon_count'
 export const updateMemberInfo = async (params: { id: number; data: Omit<Member, NoHave> }) => {
   const { data, error } = await supabase.from('members').update(params.data).eq('id', params.id)
+  if (error) {
+    throw error
+  }
+  return data
+}
+
+// 更新优惠券
+export const updateCoupon = async (params: { id: number; data: Omit<Coupon, 'id'> }) => {
+  const { data, error } = await supabase
+    .from('coupon_templates')
+    .update(params.data)
+    .eq('id', params.id)
   if (error) {
     throw error
   }

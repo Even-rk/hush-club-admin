@@ -122,7 +122,7 @@
     :mode="modalMode"
     :coupon-data="currentCoupon"
     @close="showCouponsModal = false"
-    @success="refreshCouponList"
+    @success="success"
   />
 </template>
 
@@ -145,6 +145,26 @@ const coupon_count = ref(0)
 const showCouponsModal = ref(false)
 const modalMode = ref<'add' | 'edit'>('add')
 const currentCoupon = ref({} as Coupon)
+
+// 成功回调
+const success = (coupon: Coupon, mode: 'add' | 'edit') => {
+  try {
+    if (mode === 'add') {
+      couponList.value.unshift(coupon)
+    } else {
+      couponList.value = couponList.value.map(item => {
+        if (item.id === coupon.id) {
+          return coupon
+        }
+        return item
+      })
+    }
+  } catch (error) {
+    message.error(mode == 'add' ? '添加失败' : '更新失败')
+  }
+  // 关闭弹窗
+  showCouponsModal.value = false
+}
 
 // 优惠券状态
 const selectedStatus = ref('')
@@ -340,11 +360,6 @@ const openAddCouponModal = () => {
   modalMode.value = 'add'
   currentCoupon.value = {} as Coupon
   showCouponsModal.value = true
-}
-
-// 刷新优惠券列表
-const refreshCouponList = async () => {
-  await searchCoupons()
 }
 </script>
 

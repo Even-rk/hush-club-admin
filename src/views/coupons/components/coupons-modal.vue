@@ -54,68 +54,74 @@
                 <label class="form-label required">优惠类型</label>
                 <div class="radio-group">
                   <label class="radio-item">
-                    <input v-model="form.coupon_type" type="radio" value="discount" />
+                    <input
+                      v-model="form.coupon_type"
+                      type="radio"
+                      value="discount"
+                      @change="couponTypeChange"
+                    />
                     <span class="radio-label">折扣券</span>
                   </label>
                   <label class="radio-item">
-                    <input v-model="form.coupon_type" type="radio" value="reduce" />
+                    <input
+                      v-model="form.coupon_type"
+                      type="radio"
+                      value="reduce"
+                      @change="couponTypeChange"
+                    />
                     <span class="radio-label">满减券</span>
                   </label>
                   <label class="radio-item">
-                    <input v-model="form.coupon_type" type="radio" value="free" />
+                    <input
+                      v-model="form.coupon_type"
+                      type="radio"
+                      value="free"
+                      @change="couponTypeChange"
+                    />
                     <span class="radio-label">免费券</span>
                   </label>
                 </div>
               </div>
 
-              <!-- 优惠金额/百分比 -->
-              <div class="form-group">
-                <label class="form-label required">
-                  {{
-                    form.coupon_type === 'discount'
-                      ? '折扣率'
-                      : form.coupon_type === 'reduce'
-                        ? '减免金额'
-                        : '优惠内容'
-                  }}
-                </label>
-                <div class="input-group">
-                  <input
-                    v-model="form.discount_value"
-                    type="number"
-                    class="form-control"
-                    :placeholder="
-                      form.coupon_type === 'discount'
-                        ? '请输入折扣率(如0.8表示8折)'
-                        : form.coupon_type === 'reduce'
-                          ? '请输入减免金额'
-                          : '请输入优惠金额'
-                    "
-                    :min="form.coupon_type === 'discount' ? 0.01 : 0"
-                    :max="form.coupon_type === 'discount' ? 1 : 99999"
-                    step="0.01"
-                  />
-                  <span class="input-suffix">
-                    {{ form.coupon_type === 'discount' ? '' : '元' }}
-                  </span>
+              <!-- 免费券不存在 -->
+              <template v-if="form.coupon_type !== 'free'">
+                <!-- 优惠金额/百分比 -->
+                <div class="form-group">
+                  <label class="form-label required">
+                    {{ form.coupon_type === 'discount' ? '折扣率' : '减免金额' }}
+                  </label>
+                  <div class="input-group">
+                    <input
+                      v-model="form.discount_value"
+                      type="number"
+                      class="form-control"
+                      :placeholder="disconnectPlaceholder"
+                      :min="form.coupon_type === 'discount' ? 0.01 : 0"
+                      :max="form.coupon_type === 'discount' ? 1 : 99999"
+                      step="0.01"
+                    />
+                    <span class="input-suffix">
+                      {{ form.coupon_type === 'discount' ? '' : '元' }}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 最低消费金额 -->
-              <div class="form-group">
-                <label class="form-label">最低消费金额</label>
-                <div class="input-group">
-                  <input
-                    v-model="form.threshold_amount"
-                    type="number"
-                    class="form-control"
-                    placeholder="请输入最低消费金额(0表示无门槛)"
-                    min="0"
-                    step="0.01"
-                  />
-                  <span class="input-suffix">元</span>
+                <!-- 最低消费金额 -->
+                <div class="form-group">
+                  <label class="form-label">最低消费金额</label>
+                  <div class="input-group">
+                    <input
+                      v-model="form.threshold_amount"
+                      type="number"
+                      class="form-control"
+                      placeholder="请输入最低消费金额(0表示无门槛)"
+                      min="0"
+                      step="0.01"
+                    />
+                    <span class="input-suffix">元</span>
+                  </div>
                 </div>
-              </div>
+              </template>
 
               <!-- 优惠券描述 -->
               <div class="form-group">
@@ -165,8 +171,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import type { Coupon } from '@/types/supabase'
+import { reqAddCoupon } from '@/api/supabase/INSERT'
+import { updateCoupon } from '@/api/supabase/UPDATE'
+import _ from 'lodash'
 
 interface Props {
   visible: boolean
@@ -188,66 +197,53 @@ const emit = defineEmits<Emits>()
 // 表单数据
 const form = ref({} as Coupon)
 
+// 优惠类型对应的占位符
+const disconnectPlaceholder = computed(() => {
+  if (form.value.coupon_type === 'discount') {
+    return '请输入折扣率(如0.8表示8折)'
+  } else if (form.value.coupon_type === 'reduce') {
+    return '请输入减免金额'
+  } else {
+    return '请输入优惠金额'
+  }
+})
+
 // 加载状态
 const loading = ref(false)
 
 // 提交表单
 const submit = async () => {
-  if (!form.value.template_name?.trim()) {
-    return
-  }
-
   loading.value = true
   try {
-    // 根据优惠券类型处理折扣值
-    let processedDiscountValue = Number(form.value.discount_value) || 0
-    if (form.value.coupon_type === 'discount') {
-      // 确保折扣率在合理范围内
-      processedDiscountValue = Math.max(0.01, Math.min(1, processedDiscountValue))
+    const submitData = _.omit(form.value)
+    if (props.mode === 'add') {
+      await reqAddCoupon(submitData)
+      emit('success', submitData, 'add')
+    } else {
+      await updateCoupon({ id: form.value.id, data: submitData })
+      emit('success', submitData, 'edit')
     }
-
-    const submitData: Coupon = {
-      ...form.value,
-      template_name: form.value.template_name.trim(),
-      discount_value: processedDiscountValue,
-      threshold_amount: Number(form.value.threshold_amount) || 0,
-      description: form.value.description || '',
-      status: form.value.status || 'active'
-    }
-
-    emit('success', submitData, props.mode)
   } finally {
     loading.value = false
   }
 }
 
+// 优惠券类型改变时
+const couponTypeChange = () => {
+  if (form.value.coupon_type === 'free') {
+    // 免费券不存在优惠金额
+    form.value.discount_value = 0
+    form.value.threshold_amount = 0
+  } else {
+    // 其他类型优惠券存在优惠金额
+    form.value.discount_value = 0.8
+    form.value.threshold_amount = 0
+  }
+}
+
 // 初始化表单数据
 onMounted(() => {
-  if (props.mode === 'add') {
-    form.value = {
-      id: 0,
-      template_name: '',
-      coupon_type: 'discount',
-      discount_value: 0.8,
-      threshold_amount: 0,
-      description: '',
-      vallid_days: 30,
-      valid_day: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      status: 'active',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }
-  } else if (props.couponData) {
-    form.value = {
-      ...props.couponData,
-      template_name: props.couponData.template_name || '',
-      coupon_type: props.couponData.coupon_type || 'discount',
-      discount_value: props.couponData.discount_value || 0,
-      threshold_amount: props.couponData.threshold_amount || 0,
-      description: props.couponData.description || '',
-      status: props.couponData.status || 'active'
-    }
-  }
+  form.value = _.cloneDeep(props.couponData)
 })
 </script>
 

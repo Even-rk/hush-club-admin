@@ -1,4 +1,4 @@
-import { Member, Product, ProductCategory } from '@/types/supabase'
+import { Coupon, Member, Product, ProductCategory } from '@/types/supabase'
 import supabase from '@/utils/supabase'
 
 // 添加商品
@@ -39,6 +39,15 @@ type NoHave =
   | 'coupon_count'
 export const reqAddMember = async (member: Omit<Member, NoHave>) => {
   const { data, error } = await supabase.from('members').insert(member)
+  if (error) {
+    throw error
+  }
+  return data
+}
+
+// 添加优惠券
+export const reqAddCoupon = async (coupon: Coupon) => {
+  const { data, error } = await supabase.from('coupon_templates').insert(coupon)
   if (error) {
     throw error
   }
