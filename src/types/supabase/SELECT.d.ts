@@ -139,10 +139,6 @@ export type Member = {
   total_consumption: number
   // 订单数量
   order_count: number
-  // 注册时间
-  register_time: string
-  // 最后登录时间
-  last_login_time: string | null
   // 创建时间
   created_at: string
   // 更新时间

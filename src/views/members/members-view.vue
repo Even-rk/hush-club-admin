@@ -137,7 +137,7 @@ const memberColumns: TableColumn<Member>[] = [
   { key: 'total_recharge', title: '单次最高充值', type: 'price' },
   { key: 'total_consumption', title: '累计消费', type: 'price' },
   { key: 'order_count', title: '订单数' },
-  { key: 'register_time', title: '注册时间', type: 'date' }
+  { key: 'created_at', title: '注册时间', type: 'date' }
 ]
 
 // 打开编辑会员弹窗
