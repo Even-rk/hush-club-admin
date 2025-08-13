@@ -163,7 +163,11 @@ const submit = async () => {
       id: props.memberData.id,
       data: params
     })
-    emit('success', form.value, props.mode)
+    const updateMemberData = {
+      ...form.value,
+      level_name: memberLevelOptions.value.find(item => item.value == form.value.level_id)?.label
+    }
+    emit('success', updateMemberData, props.mode)
   }
   loading.value = false
 }
@@ -177,17 +181,7 @@ onMounted(async () => {
     value: item.id
   }))
 
-  if (props.mode === 'add') {
-    form.value = {} as Member
-  } else if (props.memberData) {
-    form.value = {
-      ...form.value,
-      real_name: props.memberData.real_name,
-      level_id: props.memberData.level_id,
-      phone: props.memberData.phone,
-      balance: props.memberData.balance || 0
-    }
-  }
+  form.value = props.memberData
 })
 </script>
 

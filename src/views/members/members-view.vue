@@ -237,16 +237,16 @@ const openAddMemberModal = () => {
 
 // 刷新会员列表
 const refreshMemberList = async (member: Member, mode: 'add' | 'edit') => {
+  console.log(member)
   if (mode == 'add') {
     memberList.value.push(member)
   } else {
-    const index = memberList.value.findIndex(item => item.id == member.id)
-    if (index != -1) {
-      memberList.value[index] = {
-        ...memberList.value[index],
-        ...member
+    memberList.value = memberList.value.map(item => {
+      if (item.id == member.id) {
+        return member
       }
-    }
+      return item
+    })
   }
   // 关闭弹窗
   showMembersModal.value = false
