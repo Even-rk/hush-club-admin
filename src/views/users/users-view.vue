@@ -105,7 +105,7 @@ import route from '@/router/route'
 import CoolSelect from '@/components/cool-select.vue'
 import UserStatsCards from './components/user-stats-cards.vue'
 import RolePermissionsPanel from './components/role-permissions-panel.vue'
-import { ElMessage } from 'element-plus'
+import message from '@/utils/message'
 import UsersModal from './components/users-modal.vue'
 
 // 用户列表
@@ -253,7 +253,7 @@ const resetFilter = () => {
       query: search.value
     })
   } else {
-    ElMessage.warning('没有筛选条件')
+    message.warning('没有筛选条件')
   }
   selectedRole.value = ''
   selectedStatus.value = ''

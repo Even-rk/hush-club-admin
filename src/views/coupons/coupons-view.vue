@@ -133,7 +133,7 @@ import { onMounted, ref } from 'vue'
 import DataTable from '@/components/data-table.vue'
 import { formatDate } from '@/utils/format'
 import CoolSelect from '@/components/cool-select.vue'
-import { ElMessage } from 'element-plus'
+import message from '@/utils/message'
 import CouponsModal from './components/coupons-modal.vue'
 
 // 优惠券列表
@@ -321,7 +321,7 @@ const resetFilter = () => {
       type: ''
     })
   } else {
-    ElMessage.warning('没有筛选条件')
+    message.warning('没有筛选条件')
   }
   selectedStatus.value = ''
   selectedType.value = ''

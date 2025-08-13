@@ -109,7 +109,7 @@ import { supabase } from '@/utils/supabase'
 import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
 import DatePicker from '@/components/date-picker.vue'
-import { ElMessage } from 'element-plus'
+import message from '@/utils/message'
 
 // 数据状态
 const orderList = ref<OrderDetail[]>([])
@@ -228,7 +228,7 @@ const resetFilter = () => {
       payment: ''
     })
   } else {
-    ElMessage.warning('没有筛选条件')
+    message.warning('没有筛选条件')
   }
   selectedStatus.value = ''
   selectedPayment.value = ''

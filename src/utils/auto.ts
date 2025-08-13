@@ -1,5 +1,6 @@
 import { supabase } from './supabase'
 import { formatDate } from './format'
+import message from './message'
 
 /**
  * 登录验证函数
@@ -15,6 +16,7 @@ export const SupabaseLogin = async (data: { email: string; password: string }) =
     password
   })
   if (supabaseError) {
+    message.error('登录失败，账号或密码错误。')
     return null
   }
 

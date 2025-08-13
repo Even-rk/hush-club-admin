@@ -98,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElMessage } from 'element-plus'
+import message from '@/utils/message'
 import { ref, onMounted } from 'vue'
 import { reqGetAllCategory, reqGetMemberLevels, reqGetProductList } from '@/api/supabase'
 import { Product, TableColumn, TableAction, MemberLevel } from '@/types/supabase'
@@ -157,7 +157,7 @@ const resetProducts = () => {
       search: ''
     })
   } else {
-    ElMessage.warning('没有筛选条件')
+    message.warning('没有筛选条件')
   }
   selectedCategory.value = 0
   selectedStatus.value = ''
@@ -244,15 +244,15 @@ const delProduct = async (product: Product) => {
       setTimeout(() => {
         productList.value = productList.value.filter(item => item.id !== product.id)
         delLoading.close()
-        ElMessage.success('删除成功')
+        message.success('删除成功')
       }, 1000)
     } catch (error: unknown) {
       const { details } = error as { details: string }
       delLoading.close()
       if (details == 'Key is still referenced from table "coupon_templates".') {
-        ElMessage.error('商品已被优惠券绑定，请先删除优惠券！！')
+        message.error('商品已被优惠券绑定，请先删除优惠券！！')
       } else {
-        ElMessage.error('删除失败, 请联系系统管理员！！')
+        message.error('删除失败, 请联系系统管理员！！')
       }
     }
   }

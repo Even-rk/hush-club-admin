@@ -144,7 +144,7 @@ import { ProductCategory, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
 import CategoriesModal from './components/categories-modal.vue'
-import { ElMessage } from 'element-plus'
+import message from '@/utils/message'
 import { confirmWarning } from '@/utils/confirm'
 import { showLoading } from '@/utils/loading'
 import { reqDeleteCategory } from '@/api/supabase/DELETE'
@@ -197,7 +197,7 @@ const resetCategories = () => {
       search: ''
     })
   } else {
-    ElMessage.warning('没有筛选条件')
+    message.warning('没有筛选条件')
   }
   selectedStatus.value = ''
   searchQuery.value = ''
@@ -252,10 +252,10 @@ const handleDelete = async (category: ProductCategory) => {
       setTimeout(() => {
         categoryList.value = categoryList.value.filter(item => item.id !== category.id)
         delLoading.close()
-        ElMessage.success('删除成功')
+        message.success('删除成功')
       }, 1000)
     } catch (error) {
-      ElMessage.error('删除失败, 请联系系统管理员！！')
+      message.error('删除失败, 请联系系统管理员！！')
     }
   }
 }
@@ -277,7 +277,7 @@ const handleModalSuccess = async (data: ProductCategory, mode: 'add' | 'edit') =
     }
     categoryModalVisible.value = false
   } catch (error) {
-    ElMessage.error(mode === 'add' ? '添加失败' : '更新失败')
+    message.error(mode === 'add' ? '添加失败' : '更新失败')
   }
 }
 

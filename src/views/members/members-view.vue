@@ -105,7 +105,7 @@ import { Member, TableColumn, TableAction } from '@/types/supabase'
 import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
 import DatePicker from '@/components/date-picker.vue'
-import { ElMessage } from 'element-plus'
+import message from '@/utils/message'
 import MembersModal from './components/members-modal.vue'
 
 // 数据状态
@@ -219,7 +219,7 @@ const resetFilter = () => {
       query: ''
     })
   } else {
-    ElMessage.warning('没有筛选条件')
+    message.warning('没有筛选条件')
   }
   selectedLevel.value = ''
   selectedDate.value = ''

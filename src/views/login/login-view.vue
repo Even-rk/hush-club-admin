@@ -123,6 +123,7 @@ import { ref } from 'vue'
 import { SupabaseLogin } from '@/utils/auto'
 import useUserStore from '@/stores/modules/user-info'
 import { useRouter } from 'vue-router'
+import message from '@/utils/message'
 
 const router = useRouter()
 const { setUserInfo } = useUserStore()
@@ -141,9 +142,12 @@ const login = async () => {
   const data = await SupabaseLogin(loginForm.value)
   if (data) {
     setUserInfo(data)
+    message.success('登录成功')
     router.push('/dashboard')
   }
-  isLoading.value = false
+  setTimeout(() => {
+    isLoading.value = false
+  }, 500)
 }
 </script>
 
