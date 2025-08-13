@@ -83,7 +83,11 @@
           :loading="loading"
           row-key="id"
           class="member-table"
-        />
+        >
+          <template #phone="{ row }">
+            {{ row.phone.replace(/(\d{3})(\d{4})(\d{4})/, '$1****$3') }}
+          </template>
+        </data-table>
       </div>
     </div>
   </div>
@@ -133,7 +137,7 @@ const currentMember = ref({} as Member)
 // 表格列配置
 const memberColumns: TableColumn<Member>[] = [
   { key: 'real_name', title: '姓名' },
-  { key: 'phone', title: '手机号' },
+  { key: 'phone', title: '手机号', slot: 'phone' },
   { key: 'level_name', title: '会员等级' },
   { key: 'balance', title: '当前余额', type: 'price' },
   { key: 'total_recharge', title: '单次最高充值', type: 'price' },
