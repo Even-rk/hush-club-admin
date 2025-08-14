@@ -104,7 +104,10 @@
               满¥{{ row.threshold_amount }}减¥{{ row.discount_value }}
             </span>
             <span v-else-if="row.coupon_type === 'discount'">
-              {{ (row.discount_value * 10).toFixed(1) }}折
+              <template v-if="row.discount_value">
+                {{ (row?.discount_value * 10).toFixed(1) }}折
+              </template>
+              <template v-else>--</template>
             </span>
             <span v-else>
               {{ row.description || '指定商品使用' }}
