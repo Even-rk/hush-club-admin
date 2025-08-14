@@ -70,7 +70,10 @@ export const updateMemberInfo = async (params: { id: number; data: Omit<Member, 
 }
 
 // 更新优惠券
-export const updateCoupon = async (params: { id: number; data: Omit<Coupon, 'id'> }) => {
+export const updateCoupon = async (params: {
+  id: number
+  data: Omit<Coupon, 'id' | 'valid_day' | 'created_at' | 'updated_at'>
+}) => {
   const { data, error } = await supabase
     .from('coupon_templates')
     .update(params.data)

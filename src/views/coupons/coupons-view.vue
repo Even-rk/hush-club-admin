@@ -158,7 +158,20 @@ const currentCoupon = ref({} as Coupon)
 const success = (coupon: Coupon, mode: 'add' | 'edit') => {
   try {
     if (mode === 'add') {
-      couponList.value.unshift(coupon)
+      if (coupon.valid_days == 0 || !coupon.valid_days) {
+        couponList.value.unshift({
+          ...coupon,
+          valid_day: '长期有效'
+        })
+      } else {
+        // 创建时间加天数
+        const valid_day_date = new Date()
+        valid_day_date.setDate(valid_day_date.getDate() + coupon.valid_days)
+        couponList.value.unshift({
+          ...coupon,
+          valid_day: valid_day_date.toISOString()
+        })
+      }
     } else {
       couponList.value = couponList.value.map(item => {
         if (item.id === coupon.id) {
@@ -254,7 +267,7 @@ const columns: TableColumn<Coupon>[] = [
     type: 'status',
     statusMap: {
       active: { text: '正常', className: 'status-success' },
-      inactive: { text: '已禁用', className: 'status-info' }
+      inactive: { text: '已禁用', className: 'status-error' }
     }
   }
 ]
@@ -314,8 +327,7 @@ const actions: TableAction<Coupon>[] = [
   {
     text: '编辑',
     type: 'secondary',
-    onClick: (row: Coupon) => openEditCouponModal(row),
-    visible: (row: Coupon) => row.status === 'active'
+    onClick: (row: Coupon) => openEditCouponModal(row)
   },
   {
     text: '禁用',

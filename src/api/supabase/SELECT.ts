@@ -549,7 +549,7 @@ export const reqGetCouponList = async (params?: {
     } else {
       // 创建时间加天数
       const valid_day_date = new Date(item.created_at)
-      valid_day_date.setDate(valid_day_date.getDate() + parseInt(item.valid_days))
+      valid_day_date.setDate(valid_day_date.getDate() + item.valid_days)
       return { ...item, valid_day: valid_day_date.toISOString() }
     }
   })

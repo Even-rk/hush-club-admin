@@ -49,6 +49,18 @@
                 />
               </div>
 
+              <!-- 有效天数 -->
+              <div class="form-group">
+                <label class="form-label required">有效天数</label>
+                <input
+                  v-model="form.valid_days"
+                  type="number"
+                  class="form-control"
+                  placeholder="请输入有效天数"
+                  min="1"
+                />
+              </div>
+
               <!-- 优惠类型 -->
               <div class="form-group">
                 <label class="form-label required">优惠类型</label>
@@ -232,13 +244,13 @@ const loading = ref(false)
 const submit = async () => {
   loading.value = true
   try {
-    const submitData = _.omit(form.value)
+    const submitData = _.omit(form.value, ['id', 'valid_day', 'created_at', 'updated_at'])
     if (props.mode === 'add') {
       await reqAddCoupon(submitData)
-      emit('success', submitData, 'add')
+      emit('success', form.value, 'add')
     } else {
       await updateCoupon({ id: form.value.id, data: submitData })
-      emit('success', submitData, 'edit')
+      emit('success', form.value, 'edit')
     }
   } finally {
     loading.value = false

@@ -294,7 +294,7 @@ export type Coupon = {
   // 优惠券描述
   description: string
   // 有效天数
-  vallid_days: number
+  valid_days: number
   // 有效截止时间
   valid_day: string
   // 优惠券状态

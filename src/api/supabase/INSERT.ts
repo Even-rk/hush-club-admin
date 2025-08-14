@@ -46,7 +46,9 @@ export const reqAddMember = async (member: Omit<Member, NoHave>) => {
 }
 
 // 添加优惠券
-export const reqAddCoupon = async (coupon: Coupon) => {
+export const reqAddCoupon = async (
+  coupon: Omit<Coupon, 'id' | 'valid_day' | 'created_at' | 'updated_at'>
+) => {
   const { data, error } = await supabase.from('coupon_templates').insert(coupon)
   if (error) {
     throw error
