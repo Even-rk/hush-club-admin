@@ -1,12 +1,12 @@
 <template>
-  <!-- 等级管理页面 -->
+  <!-- 等级概览页面 -->
   <div class="member-level-page">
     <!-- 页面头部 -->
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">
           <span class="title-icon">🏆</span>
-          会员等级管理
+          会员等级概览
         </h1>
         <p class="page-subtitle">查看和管理不同会员等级的权益和升级记录</p>
       </div>

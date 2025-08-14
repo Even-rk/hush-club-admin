@@ -83,7 +83,7 @@
             :class="{ active: $route.name === 'member-levels' }"
           >
             <span class="nav-icon">🏆</span>
-            等级管理
+            等级概览
           </router-link>
         </div>
 

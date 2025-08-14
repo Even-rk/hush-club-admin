@@ -264,7 +264,8 @@ const handleDelete = async (category: ProductCategory) => {
 const handleModalSuccess = async (data: ProductCategory, mode: 'add' | 'edit') => {
   try {
     if (mode === 'add') {
-      categoryList.value.push(data)
+      // 刷新列表
+      categoryList.value = await reqGetAllCategory()
     } else {
       // 这里应该调用更新分类的API
       categoryList.value = categoryList.value.map(item => {

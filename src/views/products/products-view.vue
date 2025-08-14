@@ -302,12 +302,8 @@ const success = async (product: Product, mode: 'add' | 'edit') => {
   const goldMemberPrice = (product.normal_member_price * goldMember?.discount_rate).toFixed(2)
   try {
     if (mode === 'add') {
-      productList.value.push({
-        ...product,
-        // 保留两位小数
-        silver_member_price: Number(silverMemberPrice),
-        gold_member_price: Number(goldMemberPrice)
-      })
+      // 刷新列表
+      productList.value = await reqGetProductList()
     } else {
       productList.value = productList.value.map(item => {
         if (item.id === product.id) {

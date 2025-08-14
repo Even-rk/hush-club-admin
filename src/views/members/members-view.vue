@@ -183,10 +183,12 @@ onMounted(async () => {
   loading.value = true
   try {
     const data = await reqGetMemberList()
-    memberList.value = data.memberList || []
-    memberTotal.value = data.memberTotal || 0
-    totalRecharge.value = data.totalRecharge || 0
-    maxRecharge.value = data.maxRecharge || 0
+    if (data) {
+      memberList.value = data.memberList || []
+      memberTotal.value = data.memberTotal || 0
+      totalRecharge.value = data.totalRecharge || 0
+      maxRecharge.value = data.maxRecharge || 0
+    }
 
     // 查会员等级
     const levelList = await reqGetMemberLevels()
@@ -244,7 +246,17 @@ const openAddMemberModal = () => {
 const refreshMemberList = async (member: Member, mode: 'add' | 'edit') => {
   try {
     if (mode === 'add') {
-      memberList.value.push(member)
+      const data = await reqGetMemberList({
+        level: selectedLevel.value || '',
+        date: selectedDate.value || '',
+        query: searchQuery.value || ''
+      })
+      if (data) {
+        memberList.value = data.memberList || []
+        memberTotal.value = data.memberTotal || 0
+        totalRecharge.value = data.totalRecharge || 0
+        maxRecharge.value = data.maxRecharge || 0
+      }
     } else {
       memberList.value = memberList.value.map(item => {
         if (item.id === member.id) {

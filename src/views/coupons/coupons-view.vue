@@ -154,23 +154,25 @@ const showCouponsModal = ref(false)
 const modalMode = ref<'add' | 'edit' | 'view'>('add')
 const currentCoupon = ref({} as Coupon)
 
+// 正常状态数量
+const active_count = ref(0)
+// 已禁用数量
+const inactive_count = ref(0)
+// 累计发送数量
+const send_count = ref(0)
+const loading = ref(false)
+
 // 成功回调
-const success = (coupon: Coupon, mode: 'add' | 'edit') => {
+const success = async (coupon: Coupon, mode: 'add' | 'edit') => {
   try {
     if (mode === 'add') {
-      if (coupon.valid_days == 0 || !coupon.valid_days) {
-        couponList.value.unshift({
-          ...coupon,
-          valid_day: '长期有效'
-        })
-      } else {
-        // 创建时间加天数
-        const valid_day_date = new Date()
-        valid_day_date.setDate(valid_day_date.getDate() + coupon.valid_days)
-        couponList.value.unshift({
-          ...coupon,
-          valid_day: valid_day_date.toISOString()
-        })
+      const data = await reqGetCouponList()
+      if (data) {
+        couponList.value = data.couponList || []
+        coupon_count.value = data.coupon_count || 0
+        active_count.value = data.active_count || 0
+        inactive_count.value = data.inactive_count || 0
+        send_count.value = data.send_count || 0
       }
     } else {
       couponList.value = couponList.value.map(item => {
@@ -206,13 +208,6 @@ const typeOptions = [
   { label: '折扣券', value: 'percentage' },
   { label: '免费券', value: 'free' }
 ]
-// 正常状态数量
-const active_count = ref(0)
-// 已禁用数量
-const inactive_count = ref(0)
-// 累计发送数量
-const send_count = ref(0)
-const loading = ref(false)
 
 // 表格列配置
 const columns: TableColumn<Coupon>[] = [
