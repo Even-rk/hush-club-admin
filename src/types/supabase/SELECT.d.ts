@@ -278,6 +278,8 @@ export type Coupon = {
   id: number
   // 优惠券名称
   template_name: string
+  // 适用商品
+  product_id: number
   // 优惠券类型
   /**
    * reduce 满减

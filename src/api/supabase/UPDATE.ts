@@ -80,3 +80,15 @@ export const updateCoupon = async (params: { id: number; data: Omit<Coupon, 'id'
   }
   return data
 }
+
+// 更新优惠券状态
+export const updateCouponStatus = async (id: number, status: string) => {
+  const { data, error } = await supabase
+    .from('coupon_templates')
+    .update({ status: status === 'active' ? 'inactive' : 'active' })
+    .eq('id', id)
+  if (error) {
+    throw error
+  }
+  return data
+}

@@ -29,3 +29,12 @@ export const reqDeleteCategory = async (id: number) => {
   }
   return true
 }
+
+// 删除优惠券
+export const reqDeleteCoupon = async (id: number) => {
+  const { error } = await supabase.from('coupons_template').delete().eq('id', id)
+  if (error) {
+    throw error
+  }
+  return true
+}

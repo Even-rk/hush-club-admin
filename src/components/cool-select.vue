@@ -89,7 +89,7 @@
             </div>
             <div v-if="filteredOptions.length === 0" class="cool-select__empty">
               <span class="cool-select__empty-text">
-                {{ searchQuery ? '没有找到匹配的结果' : '暂无数据' }}
+                {{ searchQuery ? '没有找到匹配的结果' : emptyText }}
               </span>
             </div>
           </div>
@@ -109,6 +109,7 @@ interface SelectOption {
 }
 
 interface Props {
+  emptyText?: string
   modelValue: string | number | (string | number)[] | undefined
   options: SelectOption[]
   placeholder?: string
@@ -130,7 +131,8 @@ const props = withDefaults(defineProps<Props>(), {
   multiple: false,
   maxSelect: Infinity,
   maxDisplayTags: 3,
-  searchable: false
+  searchable: false,
+  emptyText: '暂无数据'
 })
 
 const emit = defineEmits<Emits>()

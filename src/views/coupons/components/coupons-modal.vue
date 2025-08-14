@@ -125,6 +125,18 @@
                 </template>
               </template>
 
+              <!-- 商品选择 -->
+              <template v-else>
+                <div class="form-group">
+                  <label class="form-label required">适用商品</label>
+                  <CoolSelect
+                    v-model="form.product_id"
+                    :options="productList"
+                    empty-text="请先添加商品"
+                  />
+                </div>
+              </template>
+
               <!-- 优惠券描述 -->
               <div class="form-group">
                 <label class="form-label">优惠券描述</label>
@@ -134,7 +146,7 @@
                   placeholder="请输入优惠券描述信息"
                   rows="3"
                   maxlength="200"
-                ></textarea>
+                />
               </div>
 
               <!-- 优惠券状态 -->
@@ -178,10 +190,12 @@ import type { Coupon } from '@/types/supabase'
 import { reqAddCoupon } from '@/api/supabase/INSERT'
 import { updateCoupon } from '@/api/supabase/UPDATE'
 import _ from 'lodash'
+import { reqGetProductList } from '@/api/supabase'
+import CoolSelect from '@/components/cool-select.vue'
 
 interface Props {
   visible: boolean
-  mode?: 'add' | 'edit'
+  mode: 'add' | 'edit'
   couponData: Coupon
 }
 
@@ -190,14 +204,15 @@ interface Emits {
   (e: 'success', data: Coupon, mode: 'add' | 'edit'): void
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  mode: 'add'
-})
+const props = defineProps<Props>()
 
 const emit = defineEmits<Emits>()
 
 // 表单数据
 const form = ref({} as Coupon)
+
+// 商品列表
+const productList = ref<{ label: string; value: number }[]>([])
 
 // 优惠类型对应的占位符
 const disconnectPlaceholder = computed(() => {
@@ -237,7 +252,14 @@ const couponTypeChange = () => {
 }
 
 // 初始化表单数据
-onMounted(() => {
+onMounted(async () => {
+  // 商品列表
+  const products = await reqGetProductList()
+  productList.value = products.map(item => ({
+    label: item.product_name,
+    value: item.id
+  }))
+
   form.value = _.cloneDeep(props.couponData)
 })
 </script>

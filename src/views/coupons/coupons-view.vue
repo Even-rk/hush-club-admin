@@ -119,13 +119,15 @@
   </div>
 
   <!-- 优惠券弹窗 -->
-  <CouponsModal
-    :visible="showCouponsModal"
-    :mode="modalMode"
-    :coupon-data="currentCoupon"
-    @close="showCouponsModal = false"
-    @success="success"
-  />
+  <template v-if="showCouponsModal">
+    <CouponsModal
+      :visible="showCouponsModal"
+      :mode="modalMode"
+      :coupon-data="currentCoupon"
+      @close="showCouponsModal = false"
+      @success="success"
+    />
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -137,6 +139,10 @@ import { formatDate } from '@/utils/format'
 import CoolSelect from '@/components/cool-select.vue'
 import message from '@/utils/message'
 import CouponsModal from './components/coupons-modal.vue'
+import { updateCouponStatus } from '@/api/supabase/UPDATE'
+import { showLoading } from '@/utils/loading'
+import { confirmWarning } from '@/utils/confirm'
+import { reqDeleteCoupon } from '@/api/supabase/DELETE'
 
 // 优惠券列表
 const couponList = ref<Coupon[]>([])
@@ -260,30 +266,67 @@ const openEditCouponModal = (coupon: Coupon) => {
   showCouponsModal.value = true
 }
 
+// 切换优惠券状态 禁用/启用
+const toggleCouponStatus = async (coupon: Coupon) => {
+  const toggleLoading = showLoading('正在切换优惠券状态...')
+  // 更新优惠券状态
+  await updateCouponStatus(coupon.id, coupon.status)
+  // 刷新列表
+  setTimeout(() => {
+    // 更新优惠券状态
+    couponList.value = couponList.value.map(item => {
+      if (item.id === coupon.id) {
+        return { ...item, status: coupon.status === 'active' ? 'inactive' : 'active' }
+      }
+      return item
+    })
+    toggleLoading.close()
+  }, 1000)
+}
+
+// 删除优惠券
+const delCoupon = async (coupon: Coupon) => {
+  const confirmed = await confirmWarning('确定删除该优惠券吗？')
+  if (confirmed) {
+    const delLoading = showLoading('正在删除优惠券...')
+    try {
+      // 执行删除操作
+      await reqDeleteCoupon(coupon.id)
+      setTimeout(() => {
+        couponList.value = couponList.value.filter(item => item.id !== coupon.id)
+        delLoading.close()
+        message.success('删除成功')
+      }, 1000)
+    } catch (error: unknown) {
+      const { details } = error as { details: string }
+      delLoading.close()
+      if (details == 'Key is still referenced from table "coupon_templates".') {
+        message.error('优惠券已被绑定，请先删除商品！！')
+      } else {
+        message.error('删除失败, 请联系系统管理员！！')
+      }
+    }
+  }
+}
+
 // 表格操作配置
 const actions: TableAction<Coupon>[] = [
   {
     text: '编辑',
     type: 'secondary',
-    onClick: (row: Coupon) => {
-      openEditCouponModal(row)
-    },
+    onClick: (row: Coupon) => openEditCouponModal(row),
     visible: (row: Coupon) => row.status === 'active'
   },
   {
     text: '禁用',
     type: 'warning',
-    onClick: (row: Coupon) => {
-      console.log('禁用优惠券', row)
-    },
+    onClick: async (row: Coupon) => toggleCouponStatus(row),
     visible: (row: Coupon) => row.status === 'active'
   },
   {
     text: '启用',
     type: 'success',
-    onClick: (row: Coupon) => {
-      console.log('启用优惠券', row)
-    },
+    onClick: async (row: Coupon) => toggleCouponStatus(row),
     visible: (row: Coupon) => row.status === 'inactive'
   },
   {
@@ -296,9 +339,7 @@ const actions: TableAction<Coupon>[] = [
   {
     text: '删除',
     type: 'error',
-    onClick: (row: Coupon) => {
-      console.log('删除优惠券', row)
-    }
+    onClick: (row: Coupon) => delCoupon(row)
   }
 ]
 
