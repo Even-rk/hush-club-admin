@@ -75,13 +75,15 @@
   </div>
 
   <!-- 用户弹窗 -->
-  <UsersModal
-    :visible="showUsersModal"
-    :mode="modalMode"
-    :user-data="currentUser || ({} as User)"
-    @close="showUsersModal = false"
-    @success="refreshUserList"
-  />
+  <template v-if="showUsersModal">
+    <UsersModal
+      :visible="showUsersModal"
+      :mode="modalMode"
+      :user-data="currentUser || ({} as User)"
+      @close="showUsersModal = false"
+      @success="refreshUserList"
+    />
+  </template>
 
   <!-- 权限管理卡片 -->
   <RolePermissionsPanel
