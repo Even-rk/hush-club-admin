@@ -234,7 +234,9 @@ onMounted(() => {
 /* 管理后台布局 */
 .admin-layout {
   display: flex;
+  width: 100vw;
   min-height: 100vh;
+  overflow: hidden;
 }
 
 /* 侧边栏 */
@@ -419,7 +421,7 @@ onMounted(() => {
 
 /* 内容区域 */
 .content-area {
-  padding: 36px;
+  padding: 36px 36px 0;
   position: relative;
   overflow-x: hidden;
 }
