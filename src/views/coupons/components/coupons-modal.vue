@@ -13,10 +13,10 @@
           <div class="coupon-modal-header">
             <div class="header-content">
               <div class="header-icon">
-                {{ mode === 'add' ? '🎫' : '✏️' }}
+                {{ mode === 'add' ? '🎫' : mode === 'edit' ? '✏️' : '👀' }}
               </div>
               <h3 class="modal-title">
-                {{ mode === 'add' ? '添加优惠券' : '编辑优惠券' }}
+                {{ mode === 'add' ? '添加优惠券' : mode === 'edit' ? '编辑优惠券' : '查看优惠券' }}
               </h3>
             </div>
             <button class="modal-close" @click="emit('close')">
@@ -36,7 +36,48 @@
 
           <!-- 弹窗内容 -->
           <div class="coupon-modal-body">
-            <form class="coupon-form">
+            <!-- 查看模式 -->
+            <div v-if="mode === 'view'" class="view-mode">
+              <div class="view-grid">
+                <div class="view-item">
+                  <label class="view-label">优惠券名称</label>
+                  <p class="view-value">{{ form.template_name }}</p>
+                </div>
+                <div class="view-item">
+                  <label class="view-label">有效天数</label>
+                  <p class="view-value">{{ form.valid_days }} 天</p>
+                </div>
+                <div class="view-item">
+                  <label class="view-label">优惠类型</label>
+                  <p class="view-value">{{ formatCouponType(form.coupon_type) }}</p>
+                </div>
+                <div v-if="form.coupon_type === 'discount'" class="view-item">
+                  <label class="view-label">折扣率</label>
+                  <p v-if="form.discount_value" class="view-value">
+                    {{ form.discount_value * 10 }}折
+                  </p>
+                </div>
+                <div v-if="form.coupon_type === 'reduce'" class="view-item">
+                  <label class="view-label">减免金额</label>
+                  <p class="view-value">{{ form.discount_value }} 元</p>
+                </div>
+                <div v-if="form.coupon_type === 'reduce'" class="view-item">
+                  <label class="view-label">最低消费</label>
+                  <p class="view-value">{{ form.threshold_amount }} 元</p>
+                </div>
+                <div v-if="form.coupon_type === 'free'" class="view-item">
+                  <label class="view-label">适用商品</label>
+                  <p class="view-value">{{ getProductName(form.product_id) }}</p>
+                </div>
+                <div class="view-item full-width">
+                  <label class="view-label">描述</label>
+                  <p class="view-value description">{{ form.description || '暂无描述' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 添加/编辑模式 -->
+            <form v-else class="coupon-form">
               <!-- 优惠券名称 -->
               <div class="form-group">
                 <label class="form-label required">优惠券名称</label>
@@ -180,15 +221,20 @@
 
           <!-- 弹窗底部 -->
           <div class="coupon-modal-footer">
-            <button class="btn btn-secondary" @click="emit('close')">
-              <span class="btn-icon">❌</span>
-              取消
+            <button v-if="mode === 'view'" class="btn btn-secondary" @click="emit('close')">
+              关闭
             </button>
-            <button class="btn btn-primary" :disabled="loading" @click="submit">
-              <span v-if="!loading" class="btn-icon">✅</span>
-              <span v-if="loading" class="loading-spinner"></span>
-              {{ loading ? '提交中...' : '确定' }}
-            </button>
+            <template v-else>
+              <button class="btn btn-secondary" @click="emit('close')">
+                <span class="btn-icon">❌</span>
+                取消
+              </button>
+              <button class="btn btn-primary" :disabled="loading" @click="submit">
+                <span v-if="!loading" class="btn-icon">✅</span>
+                <span v-if="loading" class="loading-spinner"></span>
+                {{ loading ? '提交中...' : '确定' }}
+              </button>
+            </template>
           </div>
         </div>
       </transition>
@@ -207,7 +253,7 @@ import CoolSelect from '@/components/cool-select.vue'
 
 interface Props {
   visible: boolean
-  mode: 'add' | 'edit'
+  mode: 'add' | 'edit' | 'view'
   couponData: Coupon
 }
 
@@ -239,6 +285,31 @@ const disconnectPlaceholder = computed(() => {
 
 // 加载状态
 const loading = ref(false)
+
+// 格式化优惠券类型
+const formatCouponType = (type: string) => {
+  const typeMap: { [key: string]: string } = {
+    discount: '折扣券',
+    reduce: '满减券',
+    free: '免费券'
+  }
+  return typeMap[type] || '未知'
+}
+
+// 格式化状态
+const formatStatus = (status: string) => {
+  const statusMap: { [key: string]: string } = {
+    active: '启用',
+    inactive: '禁用'
+  }
+  return statusMap[status] || '未知'
+}
+
+// 获取商品名称
+const getProductName = (productId: number) => {
+  const product = productList.value.find(p => p.value === productId)
+  return product ? product.label : '未知商品'
+}
 
 // 提交表单
 const submit = async () => {
@@ -730,6 +801,80 @@ onMounted(async () => {
         color: var(--text-primary);
         font-weight: 500;
       }
+    }
+  }
+}
+
+// 查看模式样式
+.view-mode {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+
+  .view-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .view-item {
+    background: var(--bg-white);
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .view-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .view-value {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+
+    &.description {
+      font-size: 14px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.status-active {
+      color: #28a745;
+      background: rgba(40, 167, 69, 0.1);
+    }
+
+    &.status-inactive {
+      color: #6c757d;
+      background: rgba(108, 117, 125, 0.1);
     }
   }
 }

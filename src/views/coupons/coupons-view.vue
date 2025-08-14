@@ -151,7 +151,7 @@ const coupon_count = ref(0)
 
 // modal相关状态
 const showCouponsModal = ref(false)
-const modalMode = ref<'add' | 'edit'>('add')
+const modalMode = ref<'add' | 'edit' | 'view'>('add')
 const currentCoupon = ref({} as Coupon)
 
 // 成功回调
@@ -279,6 +279,13 @@ const openEditCouponModal = (coupon: Coupon) => {
   showCouponsModal.value = true
 }
 
+// 打开查看优惠券弹窗
+const openViewCouponModal = (coupon: Coupon) => {
+  modalMode.value = 'view'
+  currentCoupon.value = coupon
+  showCouponsModal.value = true
+}
+
 // 切换优惠券状态 禁用/启用
 const toggleCouponStatus = async (coupon: Coupon) => {
   const toggleLoading = showLoading('正在切换优惠券状态...')
@@ -344,9 +351,7 @@ const actions: TableAction<Coupon>[] = [
   {
     text: '查看',
     type: 'secondary',
-    onClick: (row: Coupon) => {
-      console.log('查看优惠券', row)
-    }
+    onClick: (row: Coupon) => openViewCouponModal(row)
   },
   {
     text: '删除',

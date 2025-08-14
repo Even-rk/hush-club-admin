@@ -262,6 +262,12 @@ onMounted(() => {
       table: 'orders'
     },
     payload => {
+      // 创建 SpeechSynthesisUtterance 对象
+      const speechUtterance = new SpeechSynthesisUtterance('您有新的订单')
+      // 创建 SpeechSynthesis 对象
+      const synthesis = window.speechSynthesis
+      // 播放语音
+      synthesis.speak(speechUtterance)
       // 添加订单
       orderList.value.push({
         ...payload.new,
