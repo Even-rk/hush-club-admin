@@ -32,7 +32,7 @@ export const reqDeleteCategory = async (id: number) => {
 
 // 删除优惠券
 export const reqDeleteCoupon = async (id: number) => {
-  const { error } = await supabase.from('coupons_template').delete().eq('id', id)
+  const { error } = await supabase.from('coupon_templates').delete().eq('id', id)
   if (error) {
     throw error
   }
