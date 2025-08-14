@@ -69,6 +69,14 @@
                   <label class="view-label">适用商品</label>
                   <p class="view-value">{{ getProductName(form.product_id) }}</p>
                 </div>
+                <div class="view-item">
+                  <label class="view-label">状态</label>
+                  <p class="view-value">
+                    <span :class="['status-badge', `status-${form.status}`]">
+                      {{ formatStatus(form.status) }}
+                    </span>
+                  </p>
+                </div>
                 <div class="view-item full-width">
                   <label class="view-label">描述</label>
                   <p class="view-value description">{{ form.description || '暂无描述' }}</p>
