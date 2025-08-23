@@ -51,6 +51,11 @@ export const reqDeleteMember = async (id: number) => {
   if (orderError) {
     throw orderError
   }
+  // 再删除会员关联反馈
+  const { error: feedbackError } = await supabase.from('feedback').delete().eq('member_id', id)
+  if (feedbackError) {
+    throw feedbackError
+  }
   // 再删除会员
   const { error } = await supabase.from('members').delete().eq('id', id)
   if (error) {
