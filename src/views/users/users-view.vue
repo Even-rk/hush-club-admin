@@ -81,7 +81,7 @@
       :mode="modalMode"
       :user-data="currentUser || ({} as User)"
       @close="showUsersModal = false"
-      @success="refreshUserList"
+      @success="successCallback"
     />
   </template>
 
@@ -96,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import { reqGetRolePermissionList, reqGetUserList } from '@/api/supabase'
+import { reqAddUser, reqGetRolePermissionList, reqGetUserList } from '@/api/supabase'
 import { User } from '@/types/supabase'
 import type { TableColumn, TableAction, RolePermission } from '@/types/supabase'
 import { formatDate } from '@/utils/format'
@@ -146,7 +146,7 @@ const userColumns: TableColumn<User>[] = [
     key: 'role_name',
     title: '角色'
   },
-  { key: 'email', title: '邮箱' },
+  { key: 'phone', title: '手机号' },
   {
     key: 'created_at',
     title: '最后登录',
@@ -226,9 +226,23 @@ const openAddUserModal = () => {
   showUsersModal.value = true
 }
 
-// 刷新用户列表
-const refreshUserList = async () => {
-  await searchUser()
+// 添加或者编辑用户成功回调
+const successCallback = async (user: User, mode: 'add' | 'edit') => {
+  try {
+    if (mode == 'add') {
+      await reqAddUser(user)
+      await searchUser()
+      message.success('添加成功')
+    } else {
+      const index = userList.value.findIndex(i => i.id == user.id)
+      if (index !== -1) {
+        userList.value[index] = user
+        message.success('更新成功')
+      }
+    }
+  } catch {
+    message.success('操作失败')
+  }
 }
 
 // 重置筛选

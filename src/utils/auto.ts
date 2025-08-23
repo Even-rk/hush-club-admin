@@ -7,13 +7,13 @@ import message from './message'
  * @param data 登录数据
  * @returns token 字符串，失败返回 null
  */
-export const SupabaseLogin = async (data: { email: string; password: string }) => {
-  const { email, password } = data
+export const SupabaseLogin = async (data: { phone: string; password: string }) => {
+  const { phone, password } = data
 
   // 登录鉴权
   const { data: supabaseUser, error: supabaseError } = await supabase.auth.signInWithPassword({
-    email,
-    password
+    email: 'kwr011024@163.com',
+    password: 'kwr102466'
   })
   if (supabaseError) {
     message.error('登录失败，账号或密码错误。')
@@ -24,10 +24,16 @@ export const SupabaseLogin = async (data: { email: string; password: string }) =
   const { data: user, error } = await supabase
     .from('system_users')
     .select('*')
-    .eq('email', email)
+    .eq('phone', phone)
     .single()
 
   if (error || !user) {
+    message.error('登录失败，手机号不存在。')
+    return null
+  }
+
+  if (user.password !== password) {
+    message.error('登录失败，密码错误。')
     return null
   }
 

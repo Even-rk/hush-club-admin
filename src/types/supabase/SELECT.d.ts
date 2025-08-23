@@ -239,14 +239,14 @@ export type User = {
   id: number
   // 用户名
   username: string
+  // 手机号
+  phone: string
   // 密码
   password: string
   // 创建时间
   created_at: string
   // 更新时间
   updated_at: string
-  // 邮箱
-  email: string
   // 状态
   status: 'active' | 'inactive'
   // 角色

@@ -70,13 +70,13 @@
         <div class="form-group">
           <input
             id="email"
-            v-model="loginForm.email"
+            v-model="loginForm.phone"
             placeholder=" "
-            type="email"
+            type="text"
             class="form-control"
             required
           />
-          <label for="email" class="form-label">邮箱地址</label>
+          <label for="email" class="form-label">手机号</label>
           <span class="form-highlight"></span>
         </div>
 
@@ -129,7 +129,7 @@ const router = useRouter()
 const { setUserInfo } = useUserStore()
 
 const loginForm = ref({
-  email: '',
+  phone: '',
   password: ''
 })
 
