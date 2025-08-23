@@ -307,19 +307,21 @@ const delCoupon = async (coupon: Coupon) => {
     try {
       // 执行删除操作
       await reqDeleteCoupon(coupon.id)
-      setTimeout(() => {
-        couponList.value = couponList.value.filter(item => item.id !== coupon.id)
+      setTimeout(async () => {
+        const data = await reqGetCouponList()
+        if (data) {
+          couponList.value = data.couponList || []
+          coupon_count.value = data.coupon_count || 0
+          active_count.value = data.active_count || 0
+          inactive_count.value = data.inactive_count || 0
+          send_count.value = data.send_count || 0
+        }
         delLoading.close()
         message.success('删除成功')
-      }, 1000)
+      }, 500)
     } catch (error: unknown) {
-      const { details } = error as { details: string }
       delLoading.close()
-      if (details == 'Key is still referenced from table "coupon_templates".') {
-        message.error('优惠券已被绑定，请先删除商品！！')
-      } else {
-        message.error('删除失败, 请联系系统管理员！！')
-      }
+      message.error('删除失败')
     }
   }
 }
