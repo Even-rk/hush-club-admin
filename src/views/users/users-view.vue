@@ -149,9 +149,9 @@ const userColumns: TableColumn<User>[] = [
   },
   { key: 'phone', title: '手机号' },
   {
-    key: 'created_at',
+    key: 'last_login_time',
     title: '最后登录',
-    formatter: (value: Date) => formatDate(value, 'YYYY-MM-DD HH:mm')
+    formatter: (value: Date) => formatDate(value || new Date(), 'YYYY-MM-DD HH:mm')
   },
   {
     key: 'updated_at',
@@ -180,15 +180,6 @@ const editUser = (user: User) => {
   currentUser.value = user
   showUsersModal.value = true
 }
-
-const resetPassword = (user: User) => {
-  if (user.phone == '17600014466') {
-    message.warning('系统帐号不可重置密码')
-    return
-  }
-  console.log('重置密码:', user)
-}
-
 // 删除用户
 const deleteUser = async (user: User) => {
   if (user.phone == '17600014466') {
@@ -213,11 +204,6 @@ const userActions: TableAction<User>[] = [
     text: '编辑',
     type: 'secondary',
     onClick: user => editUser(user)
-  },
-  {
-    text: '重置密码',
-    type: 'warning',
-    onClick: user => resetPassword(user)
   },
   {
     text: '删除',

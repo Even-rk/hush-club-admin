@@ -50,6 +50,12 @@ export const SupabaseLogin = async (data: { phone: string; password: string }) =
     .eq('id', user.role_id)
     .single()
 
+  // 更新表最后一次登录时间
+  await supabase
+    .from('system_users')
+    .update({ last_login_time: formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss') })
+    .eq('id', user.id)
+
   return {
     id: user.id as number,
     token: supabaseUser.session?.access_token as string,
