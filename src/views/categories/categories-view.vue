@@ -266,6 +266,7 @@ const handleModalSuccess = async (data: ProductCategory, mode: 'add' | 'edit') =
     if (mode === 'add') {
       // 刷新列表
       categoryList.value = await reqGetAllCategory()
+      message.success('添加成功')
     } else {
       // 这里应该调用更新分类的API
       categoryList.value = categoryList.value.map(item => {
@@ -274,6 +275,7 @@ const handleModalSuccess = async (data: ProductCategory, mode: 'add' | 'edit') =
         }
         return item
       })
+      message.success('更新成功')
     }
     categoryModalVisible.value = false
   } catch (error) {

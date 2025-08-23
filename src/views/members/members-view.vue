@@ -257,6 +257,7 @@ const refreshMemberList = async (member: Member, mode: 'add' | 'edit') => {
         totalRecharge.value = data.totalRecharge || 0
         maxRecharge.value = data.maxRecharge || 0
       }
+      message.success('添加成功')
     } else {
       memberList.value = memberList.value.map(item => {
         if (item.id === member.id) {
@@ -264,6 +265,7 @@ const refreshMemberList = async (member: Member, mode: 'add' | 'edit') => {
         }
         return item
       })
+      message.success('更新成功')
     }
   } catch (error) {
     message.error(mode === 'add' ? '添加失败' : '更新失败')

@@ -174,6 +174,7 @@ const success = async (coupon: Coupon, mode: 'add' | 'edit') => {
         inactive_count.value = data.inactive_count || 0
         send_count.value = data.send_count || 0
       }
+      message.success('添加成功')
     } else {
       couponList.value = couponList.value.map(item => {
         if (item.id === coupon.id) {
@@ -181,6 +182,7 @@ const success = async (coupon: Coupon, mode: 'add' | 'edit') => {
         }
         return item
       })
+      message.success('更新成功')
     }
   } catch (error) {
     message.error(mode == 'add' ? '添加失败' : '更新失败')

@@ -304,6 +304,7 @@ const success = async (product: Product, mode: 'add' | 'edit') => {
     if (mode === 'add') {
       // 刷新列表
       productList.value = await reqGetProductList()
+      message.success('添加成功')
     } else {
       productList.value = productList.value.map(item => {
         if (item.id === product.id) {
@@ -315,6 +316,7 @@ const success = async (product: Product, mode: 'add' | 'edit') => {
         }
         return item
       })
+      message.success('更新成功')
     }
   } catch (error) {
     message.error(mode === 'add' ? '添加失败' : '更新失败')
