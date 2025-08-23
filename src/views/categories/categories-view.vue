@@ -147,8 +147,7 @@ import CategoriesModal from './components/categories-modal.vue'
 import message from '@/utils/message'
 import { confirmWarning } from '@/utils/confirm'
 import { showLoading } from '@/utils/loading'
-import { reqDeleteCategory } from '@/api/supabase/DELETE'
-import { updateCategoryStatus } from '@/api/supabase/UPDATE'
+import { reqDeleteCategory, updateCategoryStatus } from '@/api/supabase'
 
 // 数据状态
 const categoryList = ref<ProductCategory[]>([])

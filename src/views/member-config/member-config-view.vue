@@ -164,7 +164,7 @@
 </template>
 
 <script setup lang="ts">
-import { reqGetMemberLevels } from '@/api/supabase/SELECT'
+import { reqGetMemberLevels } from '@/api/supabase'
 import { MemberLevel } from '@/types/supabase/SELECT'
 import { onMounted, ref } from 'vue'
 

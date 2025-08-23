@@ -108,8 +108,7 @@ import { ref, onMounted } from 'vue'
 import CoolSelect from '@/components/cool-select.vue'
 import type { Member } from '@/types/supabase'
 import { reqGetMemberLevels } from '@/api/supabase'
-import { reqAddMember } from '@/api/supabase/INSERT'
-import { updateMemberInfo } from '@/api/supabase/UPDATE'
+import { reqAddMember, updateMemberInfo } from '@/api/supabase'
 import _ from 'lodash'
 
 interface Props {

@@ -103,11 +103,29 @@
     />
   </template>
   <!-- 会员详情 -->
-  <template v-if="showDetailDrawer">
-    <MemberDetailDrawer
-      :visible="showDetailDrawer"
+  <template v-if="showDetailModal">
+    <MemberDetailModal
+      :visible="showDetailModal"
       :member="selectedMember"
-      @close="showDetailDrawer = false"
+      @close="showDetailModal = false"
+    />
+  </template>
+  <!-- 充值弹窗 -->
+  <template v-if="showRechargeModal">
+    <MemberRechargeModal
+      :visible="showRechargeModal"
+      :member-data="currentMember"
+      @close="showRechargeModal = false"
+      @success="refreshMemberList"
+    />
+  </template>
+  <!-- 优惠券弹窗 -->
+  <template v-if="showCouponGrantModal">
+    <MemberCouponGrantModal
+      :visible="showCouponGrantModal"
+      :member-data="currentMember"
+      @close="showCouponGrantModal = false"
+      @success="refreshMemberList"
     />
   </template>
 </template>
@@ -121,9 +139,11 @@ import CoolSelect from '@/components/cool-select.vue'
 import DatePicker from '@/components/date-picker.vue'
 import message from '@/utils/message'
 import MembersModal from './components/members-modal.vue'
-import MemberDetailDrawer from './components/member-detail-drawer.vue'
+import MemberRechargeModal from './components/member-recharge-modal.vue'
+import MemberCouponGrantModal from './components/member-coupon-grant-modal.vue'
 import { confirmWarning } from '@/utils/confirm'
-import { reqDeleteMember } from '@/api/supabase/DELETE'
+import { reqDeleteMember } from '@/api/supabase'
+import MemberDetailModal from './components/member-detail-modal.vue'
 
 // 数据状态
 const memberList = ref<Member[]>([])
@@ -144,8 +164,14 @@ const levelOptions = ref<{ label: string; value: number }[]>([])
 const showMembersModal = ref(false)
 const modalMode = ref<'add' | 'edit'>('add')
 const currentMember = ref({} as Member)
-const showDetailDrawer = ref(false)
+const showDetailModal = ref(false)
 const selectedMember = ref<Member | null>(null)
+
+// 充值弹窗
+const showRechargeModal = ref(false)
+
+// 发放优惠券弹窗
+const showCouponGrantModal = ref(false)
 
 // 表格列配置
 const memberColumns: TableColumn<Member>[] = [
@@ -163,7 +189,7 @@ const memberColumns: TableColumn<Member>[] = [
 // 打开详情
 const openDetailDrawer = (member: Member) => {
   selectedMember.value = member
-  showDetailDrawer.value = true
+  showDetailModal.value = true
 }
 
 // 打开编辑会员弹窗
@@ -171,6 +197,38 @@ const openEditMemberModal = (member: Member) => {
   modalMode.value = 'edit'
   currentMember.value = member
   showMembersModal.value = true
+}
+
+// 打开充值弹窗
+const openRechargeModal = (member: Member) => {
+  currentMember.value = member
+  showRechargeModal.value = true
+}
+
+// 打开发放优惠券弹窗
+const openCouponGrantModal = (member: Member) => {
+  currentMember.value = member
+  showCouponGrantModal.value = true
+}
+
+// 删除会员
+const deleteMember = async (member: Member) => {
+  const confirmed = await confirmWarning('确定删除该会员吗？')
+  if (confirmed) {
+    try {
+      await reqDeleteMember(member.id)
+      message.success('删除成功')
+      const data = await reqGetMemberList()
+      if (data) {
+        memberList.value = data.memberList || []
+        memberTotal.value = data.memberTotal || 0
+        totalRecharge.value = data.totalRecharge || 0
+        maxRecharge.value = data.maxRecharge || 0
+      }
+    } catch (error) {
+      message.error('删除失败')
+    }
+  }
 }
 
 // 表格操作配置
@@ -188,34 +246,17 @@ const memberActions: TableAction<Member>[] = [
   {
     text: '充值',
     type: 'primary',
-    onClick: member => console.log(member)
+    onClick: member => openRechargeModal(member)
   },
   {
     text: '优惠券',
     type: 'warning',
-    onClick: member => console.log(member)
+    onClick: member => openCouponGrantModal(member)
   },
   {
     text: '删除',
     type: 'error',
-    onClick: async member => {
-      const confirmed = await confirmWarning('确定删除该会员吗？')
-      if (confirmed) {
-        try {
-          await reqDeleteMember(member.id)
-          message.success('删除成功')
-          const data = await reqGetMemberList()
-          if (data) {
-            memberList.value = data.memberList || []
-            memberTotal.value = data.memberTotal || 0
-            totalRecharge.value = data.totalRecharge || 0
-            maxRecharge.value = data.maxRecharge || 0
-          }
-        } catch (error) {
-          message.error('删除失败')
-        }
-      }
-    }
+    onClick: member => deleteMember(member)
   }
 ]
 

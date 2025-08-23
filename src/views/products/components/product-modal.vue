@@ -161,8 +161,7 @@ import { reqGetProductCategory } from '@/api/supabase'
 import type { Product, ProductCategory } from '@/types/supabase'
 import CoolSelect from '@/components/cool-select.vue'
 import { delProductImg, uploadProductImg } from '@/api/upload-img/upload-img'
-import { updateProduct } from '@/api/supabase/UPDATE'
-import { reqAddProduct } from '@/api/supabase/INSERT'
+import { updateProduct, reqAddProduct } from '@/api/supabase'
 import _ from 'lodash'
 
 interface UploadImg {

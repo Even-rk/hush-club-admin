@@ -95,3 +95,50 @@ export const updateCouponStatus = async (id: number, status: string) => {
   }
   return data
 }
+
+// 会员充值
+export const reqRechargeMember = async (params: { member_id: number; amount: number }) => {
+  // 1. 查询会员信息
+  const { data: member, error: memberError } = await supabase
+    .from('members')
+    .select('balance, total_recharge')
+    .eq('id', params.member_id)
+    .single()
+
+  if (memberError) {
+    throw memberError
+  }
+
+  // 2. 更新会员余额和总充值金额
+  const { data, error } = await supabase
+    .from('members')
+    .update({
+      balance: member.balance + params.amount,
+      total_recharge: member.total_recharge + params.amount
+    })
+    .eq('id', params.member_id)
+
+  if (error) {
+    throw error
+  }
+
+  return data
+}
+
+// 发放优惠券
+export const reqGrantCouponToMember = async (params: {
+  member_id: number
+  template_id: number
+}) => {
+  const { data, error } = await supabase.from('member_coupons').insert({
+    member_id: params.member_id,
+    template_id: params.template_id,
+    status: 'unused'
+  })
+
+  if (error) {
+    throw error
+  }
+
+  return data
+}

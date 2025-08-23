@@ -132,17 +132,15 @@
 
 <script setup lang="ts">
 import { Coupon, TableColumn, TableAction } from '@/types/supabase'
-import { reqGetCouponList } from '@/api/supabase/SELECT'
+import { reqGetCouponList, updateCouponStatus, reqDeleteCoupon } from '@/api/supabase'
 import { onMounted, ref } from 'vue'
 import DataTable from '@/components/data-table.vue'
 import { formatDate } from '@/utils/format'
 import CoolSelect from '@/components/cool-select.vue'
 import message from '@/utils/message'
 import CouponsModal from './components/coupons-modal.vue'
-import { updateCouponStatus } from '@/api/supabase/UPDATE'
 import { showLoading } from '@/utils/loading'
 import { confirmWarning } from '@/utils/confirm'
-import { reqDeleteCoupon } from '@/api/supabase/DELETE'
 
 // 优惠券列表
 const couponList = ref<Coupon[]>([])

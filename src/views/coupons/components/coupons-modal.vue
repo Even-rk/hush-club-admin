@@ -253,8 +253,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import type { Coupon } from '@/types/supabase'
-import { reqAddCoupon } from '@/api/supabase/INSERT'
-import { updateCoupon } from '@/api/supabase/UPDATE'
+import { reqAddCoupon, updateCoupon } from '@/api/supabase'
 import _ from 'lodash'
 import { reqGetProductList } from '@/api/supabase'
 import CoolSelect from '@/components/cool-select.vue'

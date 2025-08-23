@@ -126,8 +126,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { ProductCategory } from '@/types/supabase'
-import { reqAddCategory } from '@/api/supabase/INSERT'
-import { updateProductCategory } from '@/api/supabase/UPDATE'
+import { reqAddCategory, updateProductCategory } from '@/api/supabase'
 import { reqGetProductList, reqGetUpSlope } from '@/api/supabase'
 // 引入 CoolSelect 组件
 import CoolSelect from '@/components/cool-select.vue'

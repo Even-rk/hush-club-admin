@@ -105,10 +105,9 @@ import { Product, TableColumn, TableAction, MemberLevel } from '@/types/supabase
 import DataTable from '@/components/data-table.vue'
 import ProductModal from './components/product-modal.vue'
 import CoolSelect from '@/components/cool-select.vue'
-import { updateProductStatus } from '@/api/supabase/UPDATE'
+import { updateProductStatus, reqDeleteProduct } from '@/api/supabase'
 import { confirmWarning } from '@/utils/confirm'
 import { showLoading } from '@/utils/loading'
-import { reqDeleteProduct } from '@/api/supabase/DELETE'
 
 // 数据状态
 const productList = ref<Product[]>([])
