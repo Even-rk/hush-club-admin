@@ -143,6 +143,17 @@ export const reqGrantCouponToMember = async (params: {
   return data
 }
 
+// 更新订单状态
+export const updateOrderStatus = async (orderId: number, status: string) => {
+  const { data, error } = await supabase.from('orders').update({ status }).eq('id', orderId)
+
+  if (error) {
+    throw error
+  }
+
+  return data
+}
+
 // 更新用户权限
 export const updateUserPermission = async (params: {
   role_id: number

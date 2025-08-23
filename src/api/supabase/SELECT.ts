@@ -732,6 +732,39 @@ export const reqGetOrderStatistics = async (params?: {
   }
 }
 
+// 查询订单详情
+export const reqGetOrderDetail = async (orderId: number): Promise<OrderDetail | null> => {
+  // 查询订单基本信息
+  const { data: order, error: orderError } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('id', orderId)
+    .single()
+
+  if (orderError || !order) {
+    return null
+  }
+
+  // 查询会员信息
+  const { data: member, error: memberError } = await supabase
+    .from('members')
+    .select('*')
+    .eq('id', order.member_id)
+    .single()
+
+  // 查询订单商品明细
+  const { data: orderItems, error: itemsError } = await supabase
+    .from('order_items')
+    .select('*')
+    .eq('order_id', order.id)
+
+  return {
+    ...order,
+    member: memberError ? null : member,
+    order_items: itemsError ? [] : orderItems
+  } as OrderDetail
+}
+
 // 查询储值
 export const reqGetRecharge = async (): Promise<Recharge> => {
   const { data, error } = await supabase.from('members').select('total_recharge, balance')

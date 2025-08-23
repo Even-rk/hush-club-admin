@@ -96,11 +96,16 @@
         </data-table>
       </div>
     </div>
+
+    <!-- 订单详情弹窗 -->
+    <template v-if="showOrderDetail">
+      <OrderDetailModal :order-id="selectedOrderId" @close="showOrderDetail = false" />
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reqGetAllOrder } from '@/api/supabase'
+import { reqGetAllOrder, updateOrderStatus } from '@/api/supabase'
 import { OrderDetail } from '@/types/supabase'
 import type { TableColumn, TableAction } from '@/types/supabase'
 import { formatDate } from '@/utils/format'
@@ -110,6 +115,7 @@ import DataTable from '@/components/data-table.vue'
 import CoolSelect from '@/components/cool-select.vue'
 import DatePicker from '@/components/date-picker.vue'
 import message from '@/utils/message'
+import OrderDetailModal from './components/order-detail-modal.vue'
 
 // 数据状态
 const orderList = ref<OrderDetail[]>([])
@@ -123,6 +129,10 @@ const selectedPayment = ref('')
 const selectedDate = ref('')
 // 搜索框
 const searchQuery = ref('')
+
+// 订单详情弹窗相关
+const showOrderDetail = ref(false)
+const selectedOrderId = ref<number | undefined>(undefined)
 
 // 订单状态选项
 const statusOptions = [
@@ -174,17 +184,9 @@ const orderColumns: TableColumn<OrderDetail>[] = [
 
 // 操作函数
 const viewOrderDetail = (order: OrderDetail) => {
-  console.log('查看订单详情:', order)
+  selectedOrderId.value = order.id
+  showOrderDetail.value = true
 }
-
-// 表格操作配置
-const orderActions: TableAction<OrderDetail>[] = [
-  {
-    text: '查看详情',
-    type: 'secondary',
-    onClick: order => viewOrderDetail(order)
-  }
-]
 
 // 搜索订单
 const searchOrders = async (params?: {
@@ -211,6 +213,36 @@ const searchOrders = async (params?: {
     loading.value = false
   }
 }
+
+// 处理订单状态变更
+const changeOrderStatus = async (order: OrderDetail) => {
+  try {
+    await updateOrderStatus(order.id, 'completed')
+    message.success('订单状态更新成功')
+    // 重新加载订单列表
+    searchOrders()
+  } catch (error) {
+    message.error('更新订单状态失败')
+  }
+}
+
+// 表格操作配置
+const orderActions: TableAction<OrderDetail>[] = [
+  {
+    text: '查看详情',
+    type: 'secondary',
+    onClick: order => viewOrderDetail(order)
+  },
+  {
+    text: '完成',
+    type: 'primary',
+    visible: (row: OrderDetail) => {
+      return row.status === 'processing'
+    },
+    onClick: order => changeOrderStatus(order)
+  }
+]
+
 // 查询变化
 const queryChange = () => {
   if (!searchQuery.value) {
