@@ -89,7 +89,7 @@
             class="form-control"
             required
           />
-          <label for="password" class="form-label">登录密码</label>
+          <label for="password" class="form-label">密码</label>
           <span class="form-highlight"></span>
           <button
             type="button"
@@ -97,7 +97,8 @@
             tabindex="-1"
             @click="showPassword = !showPassword"
           >
-            {{ showPassword ? '隐藏' : '显示' }}
+            <img v-if="showPassword" src="@/assets/icons/eye-open.svg" alt="Hide password" />
+            <img v-else src="@/assets/icons/eye-closed.svg" alt="Show password" />
           </button>
         </div>
 

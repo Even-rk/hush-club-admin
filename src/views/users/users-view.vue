@@ -172,17 +172,29 @@ const userColumns: TableColumn<User>[] = [
 
 // 操作函数
 const editUser = (user: User) => {
+  if (user.phone == '17600014466') {
+    message.warning('系统帐号不可编辑')
+    return
+  }
   modalMode.value = 'edit'
   currentUser.value = user
   showUsersModal.value = true
 }
 
 const resetPassword = (user: User) => {
+  if (user.phone == '17600014466') {
+    message.warning('系统帐号不可重置密码')
+    return
+  }
   console.log('重置密码:', user)
 }
 
 // 删除用户
 const deleteUser = async (user: User) => {
+  if (user.phone == '17600014466') {
+    message.warning('系统帐号不可删除')
+    return
+  }
   try {
     const confirmed = await confirmWarning('确定删除该用户吗？')
     if (confirmed) {
@@ -191,7 +203,7 @@ const deleteUser = async (user: User) => {
       message.success('删除成功')
     }
   } catch {
-    message.success('删除失败')
+    message.error('删除失败')
   }
 }
 
