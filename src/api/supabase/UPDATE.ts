@@ -109,12 +109,16 @@ export const reqRechargeMember = async (params: { member_id: number; amount: num
     throw memberError
   }
 
+  // 计算新的总充值金额
+  const isNewRecharge = member.total_recharge > params.amount
+  const amount = isNewRecharge ? member.total_recharge : params.amount
+
   // 2. 更新会员余额和总充值金额
   const { data, error } = await supabase
     .from('members')
     .update({
       balance: member.balance + params.amount,
-      total_recharge: member.total_recharge + params.amount
+      total_recharge: amount
     })
     .eq('id', params.member_id)
 

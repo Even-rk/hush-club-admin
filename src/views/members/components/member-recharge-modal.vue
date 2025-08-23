@@ -93,10 +93,7 @@ const submit = async () => {
   try {
     await reqRechargeMember({ member_id: props.memberData.id, amount: rechargeAmount.value })
     message.success('充值成功')
-    emit('success', {
-      ...props.memberData,
-      balance: props.memberData.balance + rechargeAmount.value
-    })
+    emit('success', { member_id: props.memberData.id, balance: rechargeAmount.value }, 'recharge')
     close()
   } catch (error) {
     message.error('充值失败')

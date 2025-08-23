@@ -164,6 +164,7 @@ const loading = ref(false)
 const success = async (coupon: Coupon, mode: 'add' | 'edit') => {
   try {
     if (mode === 'add') {
+      // 刷新优惠券列表
       const data = await reqGetCouponList()
       if (data) {
         couponList.value = data.couponList || []

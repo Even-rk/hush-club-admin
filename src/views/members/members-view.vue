@@ -325,9 +325,9 @@ const openAddMemberModal = () => {
 }
 
 // 刷新会员列表
-const refreshMemberList = async (member: Member, mode: 'add' | 'edit') => {
+const refreshMemberList = async (member: Member, mode: 'add' | 'edit' | 'recharge') => {
   try {
-    if (mode === 'add') {
+    if (mode === 'add' || mode === 'recharge') {
       const data = await reqGetMemberList({
         level: selectedLevel.value || '',
         date: selectedDate.value || '',
@@ -339,7 +339,9 @@ const refreshMemberList = async (member: Member, mode: 'add' | 'edit') => {
         totalRecharge.value = data.totalRecharge || 0
         maxRecharge.value = data.maxRecharge || 0
       }
-      message.success('添加成功')
+      if (mode == 'add') {
+        message.success('添加成功')
+      }
     } else {
       memberList.value = memberList.value.map(item => {
         if (item.id === member.id) {
