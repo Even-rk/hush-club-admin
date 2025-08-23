@@ -5,8 +5,11 @@
         v-for="coupon in coupons"
         :key="coupon.id"
         class="coupon-card"
-        :class="coupon.use_status"
+        :class="getCouponDisplayInfo(coupon).className"
       >
+        <div v-if="getCouponDisplayInfo(coupon).status === '已过期'" class="coupon-corner-tag">
+          已过期
+        </div>
         <div class="coupon-visual">
           <div class="coupon-icon">🎟️</div>
         </div>
@@ -14,7 +17,7 @@
           <div class="coupon-header">
             <h4 class="coupon-title">{{ coupon.template_name }}</h4>
             <span class="coupon-status">
-              {{ coupon.use_status === 'used' ? '已使用' : '未使用' }}
+              {{ getCouponDisplayInfo(coupon).status }}
             </span>
           </div>
           <div class="coupon-body">
@@ -69,6 +72,19 @@ import { formatDate } from '@/utils/format'
 defineProps<{
   coupons: MemberCoupon[]
 }>()
+
+const getCouponDisplayInfo = (coupon: MemberCoupon) => {
+  const now = new Date()
+  const validDay = coupon.valid_day ? new Date(coupon.valid_day) : null
+
+  if (coupon.use_status === 'used') {
+    return { status: '已使用', className: 'used' }
+  }
+  if (validDay && validDay < now) {
+    return { status: '已过期', className: 'expired' }
+  }
+  return { status: '未使用', className: 'unused' }
+}
 </script>
 
 <style scoped lang="scss">
@@ -85,7 +101,7 @@ defineProps<{
 .coupon-card {
   display: flex;
   background: var(--bg-white);
-  border-radius: 12px; /* smaller radius */
+  border-radius: 12px;
   border: 1px solid transparent;
   box-shadow:
     0 8px 15px -5px rgba(0, 0, 0, 0.08),
@@ -98,12 +114,12 @@ defineProps<{
     content: '';
     position: absolute;
     top: 50%;
-    left: 68px; /* adjusted */
+    left: 68px;
     transform: translateY(-50%);
-    width: 2px; /* thinner */
-    height: calc(100% - 32px); /* adjusted */
+    width: 2px;
+    height: calc(100% - 32px);
     background-image: linear-gradient(to bottom, var(--border-light) 50%, transparent 50%);
-    background-size: 100% 8px; /* adjusted */
+    background-size: 100% 8px;
   }
 
   &:hover {
@@ -114,7 +130,8 @@ defineProps<{
     border-color: var(--primary-color);
   }
 
-  &.used {
+  &.used,
+  &.expired {
     .coupon-visual {
       background: linear-gradient(135deg, #bdc3c7, #2c3e50);
     }
@@ -135,20 +152,34 @@ defineProps<{
   }
 }
 
+.coupon-corner-tag {
+  position: absolute;
+  top: 10px;
+  left: -30px;
+  background-color: #e74c3c;
+  color: white;
+  padding: 4px 30px;
+  font-size: 12px;
+  font-weight: 600;
+  transform: rotate(-45deg);
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .coupon-visual {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 70px; /* smaller */
+  width: 70px;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   color: white;
-  font-size: 32px; /* smaller */
+  font-size: 32px;
   position: relative;
 }
 
 .coupon-details {
   flex: 1;
-  padding: 16px; /* smaller */
+  padding: 16px;
   display: flex;
   flex-direction: column;
   background-color: var(--bg-white);
@@ -158,11 +189,11 @@ defineProps<{
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 10px; /* smaller */
+  margin-bottom: 10px;
 }
 
 .coupon-title {
-  font-size: 16px; /* smaller */
+  font-size: 16px;
   font-weight: 700;
   margin: 0;
   color: var(--text-heading);
@@ -170,25 +201,25 @@ defineProps<{
 }
 
 .coupon-status {
-  font-size: 10px; /* smaller */
+  font-size: 10px;
   font-weight: 600;
-  padding: 4px 10px; /* smaller */
-  border-radius: 12px; /* smaller */
+  padding: 4px 10px;
+  border-radius: 12px;
   color: white;
   background-color: var(--success-color);
   flex-shrink: 0;
-  margin-left: 8px; /* smaller */
+  margin-left: 8px;
 }
 
 .coupon-body {
   flex: 1;
-  margin-bottom: 12px; /* smaller */
+  margin-bottom: 12px;
 }
 
 .coupon-info {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* smaller */
+  gap: 8px;
 
   p {
     margin: 0;
@@ -197,14 +228,14 @@ defineProps<{
   }
 
   span {
-    font-size: 12px; /* smaller */
+    font-size: 12px;
     color: var(--text-subtitle);
     margin-right: 8px;
     flex-shrink: 0;
   }
 
   strong {
-    font-size: 14px; /* smaller */
+    font-size: 14px;
     font-weight: 600;
     color: var(--primary-dark);
   }
@@ -212,12 +243,12 @@ defineProps<{
 
 .coupon-footer {
   border-top: 1px solid var(--border-light);
-  padding-top: 10px; /* smaller */
+  padding-top: 10px;
   margin-top: auto;
 }
 
 .coupon-expiry {
-  font-size: 12px; /* smaller */
+  font-size: 12px;
   color: var(--text-subtitle);
   margin: 0;
   text-align: right;
@@ -225,10 +256,10 @@ defineProps<{
 
 .no-coupons {
   text-align: center;
-  padding: 40px 20px; /* smaller */
+  padding: 40px 20px;
   color: var(--text-subtitle);
   background-color: var(--bg-light);
-  border-radius: 12px; /* smaller */
+  border-radius: 12px;
   border: 2px dashed var(--border-light);
 }
 </style>
