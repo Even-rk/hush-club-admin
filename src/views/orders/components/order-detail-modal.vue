@@ -1,105 +1,132 @@
 <template>
-  <div class="modal-overlay" @click="handleOverlayClick">
-    <div class="modal-container" @click.stop>
-      <div class="modal-header">
-        <h2 class="modal-title">订单详情</h2>
-        <button class="close-btn" @click="closeModal">
-          <span>&times;</span>
-        </button>
-      </div>
-
-      <div v-if="orderDetail" class="modal-body">
-        <!-- 订单基本信息 -->
-        <div class="info-section">
-          <h3 class="section-title">订单信息</h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <label>订单号：</label>
-              <span>{{ orderDetail.order_no }}</span>
-            </div>
-            <div class="info-item">
-              <label>订单状态：</label>
-              <span class="status-badge" :class="getStatusClass(orderDetail.status)">
-                {{ getStatusText(orderDetail.status) }}
-              </span>
-            </div>
-            <div class="info-item">
-              <label>支付方式：</label>
-              <span>{{ getPaymentText(orderDetail.payment_method) }}</span>
-            </div>
-            <div class="info-item">
-              <label>订单金额：</label>
-              <span class="amount">¥{{ orderDetail.final_amount }}</span>
-            </div>
-            <div class="info-item">
-              <label>下单时间：</label>
-              <span>{{ formatDate(orderDetail.created_at, 'YYYY-MM-DD HH:mm:ss') }}</span>
-            </div>
-            <div v-if="orderDetail.remark" class="info-item full-width">
-              <label>订单备注：</label>
-              <span>{{ orderDetail.remark }}</span>
-            </div>
+  <transition name="modal-fade">
+    <div v-if="orderDetail" class="order-modal-overlay" @click="handleOverlayClick">
+      <transition name="modal-scale">
+        <div v-if="orderDetail" class="order-modal" @click.stop>
+          <!-- 装饰性背景 -->
+          <div class="modal-decoration">
+            <div class="decoration-circle decoration-circle-1"></div>
+            <div class="decoration-circle decoration-circle-2"></div>
           </div>
-        </div>
 
-        <!-- 客户信息 -->
-        <div v-if="orderDetail.member" class="info-section">
-          <h3 class="section-title">客户信息</h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <label>客户姓名：</label>
-              <span>{{ orderDetail.member.real_name }}</span>
+          <!-- 弹窗头部 -->
+          <div class="order-modal-header">
+            <div class="header-content">
+              <div class="header-icon">📋</div>
+              <h3 class="modal-title">订单详情</h3>
             </div>
-            <div class="info-item">
-              <label>手机号码：</label>
-              <span>{{ orderDetail.member.phone }}</span>
-            </div>
-            <div class="info-item">
-              <label>会员等级：</label>
-              <span>{{ orderDetail.member.level_name || '普通会员' }}</span>
-            </div>
-            <div class="info-item">
-              <label>账户余额：</label>
-              <span class="amount">¥{{ orderDetail.member.balance }}</span>
-            </div>
+            <button class="modal-close" @click="closeModal">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
           </div>
-        </div>
 
-        <!-- 商品明细 -->
-        <div class="info-section">
-          <h3 class="section-title">商品明细</h3>
-          <div class="items-table">
-            <div class="table-header">
-              <div class="col-name">商品名称</div>
-              <div class="col-price">单价</div>
-              <div class="col-quantity">数量</div>
-              <div class="col-total">小计</div>
-            </div>
-            <div class="table-body">
-              <div v-for="item in orderDetail.order_items" :key="item.id" class="table-row">
-                <div class="col-name">{{ item.product_name }}</div>
-                <div class="col-price">¥{{ item.unit_price }}</div>
-                <div class="col-quantity">{{ item.quantity }}</div>
-                <div class="col-total">¥{{ (item.unit_price * item.quantity).toFixed(2) }}</div>
+          <!-- 弹窗内容 -->
+          <div class="order-modal-body">
+            <!-- 订单基本信息 -->
+            <div class="info-section">
+              <h3 class="section-title">订单信息</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label class="info-label">订单号</label>
+                  <span class="info-value">{{ orderDetail.order_no }}</span>
+                </div>
+                <div class="info-item">
+                  <label class="info-label">订单状态</label>
+                  <div class="status-badge">
+                    <div class="status-text" :class="getStatusClass(orderDetail.status)">
+                      {{ getStatusText(orderDetail.status) }}
+                    </div>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <label class="info-label">支付方式</label>
+                  <span class="info-value">{{ getPaymentText(orderDetail.payment_method) }}</span>
+                </div>
+                <div class="info-item">
+                  <label class="info-label">订单金额</label>
+                  <span class="info-value amount">¥{{ orderDetail.final_amount }}</span>
+                </div>
+                <div class="info-item">
+                  <label class="info-label">下单时间</label>
+                  <span class="info-value">{{
+                    formatDate(orderDetail.created_at, 'YYYY-MM-DD HH:mm:ss')
+                  }}</span>
+                </div>
+                <div v-if="orderDetail.remark" class="info-item full-width">
+                  <label class="info-label">订单备注</label>
+                  <span class="info-value">{{ orderDetail.remark }}</span>
+                </div>
               </div>
             </div>
+
+            <!-- 客户信息 -->
+            <div v-if="orderDetail.member" class="info-section">
+              <h3 class="section-title">客户信息</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label class="info-label">客户姓名</label>
+                  <span class="info-value">{{ orderDetail.member.real_name }}</span>
+                </div>
+                <div class="info-item">
+                  <label class="info-label">手机号码</label>
+                  <span class="info-value">{{ orderDetail.member.phone }}</span>
+                </div>
+                <div class="info-item">
+                  <label class="info-label">会员等级</label>
+                  <span class="info-value">{{ orderDetail.member.level_name || '普通会员' }}</span>
+                </div>
+                <div class="info-item">
+                  <label class="info-label">账户余额</label>
+                  <span class="info-value amount">¥{{ orderDetail.member.balance }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 商品明细 -->
+            <div class="info-section">
+              <h3 class="section-title">商品明细</h3>
+              <DataTable
+                :data="orderDetail.order_items"
+                :columns="itemColumns"
+                :show-actions="false"
+                :loading="false"
+                empty-text="暂无商品"
+                size="small"
+              />
+            </div>
+          </div>
+
+          <!-- 弹窗底部 -->
+          <div class="order-modal-footer">
+            <button class="btn btn-secondary" @click="closeModal">
+              <span class="btn-icon">❌</span>
+              关闭
+            </button>
           </div>
         </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-secondary" @click="closeModal">关闭</button>
-      </div>
+      </transition>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { OrderDetail } from '@/types/supabase'
 import { reqGetOrderDetail } from '@/api/supabase/SELECT'
 import { formatDate } from '@/utils/format'
 import message from '@/utils/message'
+import DataTable from '@/components/data-table.vue'
+import type { OrderItem, TableColumn } from '@/types/supabase'
 
 interface Props {
   orderId?: number
@@ -113,6 +140,33 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const orderDetail = ref<OrderDetail | null>(null)
+
+// 商品明细表格列配置
+const itemColumns = computed<TableColumn<OrderItem>[]>(() => [
+  {
+    key: 'product_name',
+    title: '商品名称',
+    width: '40%'
+  },
+  {
+    key: 'unit_price',
+    title: '单价',
+    type: 'price',
+    width: '20%'
+  },
+  {
+    key: 'quantity',
+    title: '数量',
+    width: '20%'
+  },
+  {
+    key: 'subtotal',
+    title: '小计',
+    type: 'price',
+    width: '20%',
+    formatter: (_, row: OrderItem) => `¥${(row.unit_price * row.quantity).toFixed(2)}`
+  }
+])
 
 // 获取状态文本
 const getStatusText = (status: string) => {
@@ -172,211 +226,383 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.modal-overlay {
+/* 模态框动画 */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 过渡效果 */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-scale-enter-active {
+  animation: modalScaleIn 0.3s ease-out;
+}
+
+.modal-scale-leave-active {
+  animation: modalScaleIn 0.2s ease-in reverse;
+}
+
+/* 模态框背景 */
+.order-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 20px;
+  animation: modalFadeIn 0.2s ease;
 }
 
-.modal-container {
-  background: var(--bg-white);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xl);
-  width: 90%;
-  max-width: 800px;
+/* 模态框容器 */
+.order-modal {
+  background: linear-gradient(135deg, var(--bg-white) 0%, #fafafa 100%);
+  border-radius: 20px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 900px;
   max-height: 90vh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  position: relative;
 }
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border-light);
-  background: var(--bg-light);
+/* 装饰性背景 */
+.modal-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
 
-  .modal-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text-heading);
-    margin: 0;
-  }
+  .decoration-circle {
+    position: absolute;
+    border-radius: 50%;
 
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-subtitle);
-    cursor: pointer;
-    padding: 4px;
-    border-radius: var(--radius);
-    transition: all 0.2s;
+    &.decoration-circle-1 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+      top: -150px;
+      right: -150px;
+      animation: float 20s infinite ease-in-out;
+    }
 
-    &:hover {
-      background: var(--bg-hover);
-      color: var(--text-heading);
+    &.decoration-circle-2 {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 140, 97, 0.08) 0%, transparent 70%);
+      bottom: -100px;
+      left: -100px;
+      animation: float 15s infinite ease-in-out reverse;
     }
   }
 }
 
-.modal-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px;
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
 }
 
-.info-section {
-  margin-bottom: 32px;
+/* 模态框头部 */
+.order-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+  position: relative;
 
-  &:last-child {
-    margin-bottom: 0;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   }
 
-  .section-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-heading);
-    margin: 0 0 16px 0;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--primary-color);
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .header-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+  }
+
+  .modal-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--bg-white);
+  }
+
+  .modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--bg-white);
+    cursor: pointer;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg);
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+/* 模态框主体 */
+.order-modal-body {
+  padding: 28px;
+  max-height: calc(90vh - 200px);
+  overflow-y: auto;
+  flex: 1;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+
+    &:hover {
+      background: var(--text-light);
+    }
+  }
+}
+
+/* 信息区域 */
+.info-section {
+  margin-bottom: 28px;
+  background: var(--bg-white);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--primary-light);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: var(--primary-color);
   }
 }
 
 .info-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 16px;
+}
 
-  .info-item {
-    display: flex;
-    align-items: center;
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-    &.full-width {
-      grid-column: 1 / -1;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
+.info-item.full-width {
+  grid-column: 1 / -1;
+}
 
-    label {
-      font-weight: 500;
-      color: var(--text-subtitle);
-      margin-right: 8px;
-      min-width: 80px;
-    }
+.info-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
 
-    span {
-      color: var(--text-heading);
+.info-value {
+  font-size: 15px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
 
-      &.amount {
-        font-weight: 600;
-        color: var(--primary-color);
-      }
-    }
-  }
+.info-value.amount {
+  color: var(--primary-color);
+  font-weight: 700;
 }
 
 .status-badge {
-  padding: 4px 12px;
-  border-radius: var(--radius);
-  font-size: 12px;
-  font-weight: 500;
-
-  &.status-success {
-    background: #f0f9ff;
-    color: #0369a1;
-  }
-
-  &.status-warning {
-    background: #fffbeb;
-    color: #d97706;
-  }
-
-  &.status-info {
-    background: #f0f9ff;
-    color: #0284c7;
-  }
-
-  &.status-error {
-    background: #fef2f2;
-    color: #dc2626;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  .status-text {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    border: 1px solid;
+    width: 150px;
   }
 }
 
-.items-table {
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  overflow: hidden;
-
-  .table-header {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    background: var(--bg-light);
-    font-weight: 600;
-    color: var(--text-heading);
-
-    > div {
-      padding: 12px 16px;
-      border-right: 1px solid var(--border-light);
-
-      &:last-child {
-        border-right: none;
-      }
-    }
-  }
-
-  .table-body {
-    .table-row {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
-      border-bottom: 1px solid var(--border-light);
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      > div {
-        padding: 12px 16px;
-        border-right: 1px solid var(--border-light);
-        color: var(--text-body);
-
-        &:last-child {
-          border-right: none;
-          font-weight: 500;
-        }
-      }
-    }
-  }
+.status-success {
+  background-color: rgba(46, 204, 113, 0.1);
+  border-color: #2ecc71;
+  color: #27ae60;
 }
 
-.status-change-area {
-  padding: 16px;
-  background: var(--bg-light);
-  border-radius: var(--radius);
-  border-left: 4px solid var(--primary-color);
+.status-warning {
+  background-color: rgba(241, 196, 15, 0.1);
+  border-color: #f1c40f;
+  color: #f39c12;
 }
 
-.modal-footer {
-  padding: 16px 24px;
-  border-top: 1px solid var(--border-light);
-  background: var(--bg-light);
+.status-info {
+  background-color: rgba(52, 152, 219, 0.1);
+  border-color: #3498db;
+  color: #2980b9;
+}
+
+.status-error {
+  background-color: rgba(231, 76, 60, 0.1);
+  border-color: #e74c3c;
+  color: #c0392b;
+}
+
+/* 模态框底部 */
+.order-modal-footer {
   display: flex;
-  justify-content: flex-end;
   gap: 12px;
+  justify-content: flex-end;
+  padding: 20px 28px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.02) 100%);
+  border-top: 1px solid var(--border-light);
+
+  .btn {
+    min-width: 100px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+
+    .btn-icon {
+      font-size: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover .btn-icon {
+      transform: scale(1.2);
+    }
+
+    &.btn-secondary {
+      background: var(--bg-white);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+
+      &:hover {
+        background: #f5f5f5;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
 }
 
 @media (max-width: 768px) {
-  .modal-container {
+  .order-modal {
     width: 95%;
     max-height: 95vh;
   }
@@ -385,18 +611,16 @@ onMounted(async () => {
     grid-template-columns: 1fr;
   }
 
-  .table-header,
-  .table-row {
-    grid-template-columns: 1fr;
+  .order-modal-header {
+    padding: 20px 24px;
+  }
 
-    > div {
-      border-right: none;
-      border-bottom: 1px solid var(--border-light);
+  .order-modal-body {
+    padding: 24px;
+  }
 
-      &:last-child {
-        border-bottom: none;
-      }
-    }
+  .order-modal-footer {
+    padding: 20px 24px;
   }
 }
 </style>

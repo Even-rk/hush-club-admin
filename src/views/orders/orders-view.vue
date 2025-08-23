@@ -234,7 +234,7 @@ const orderActions: TableAction<OrderDetail>[] = [
     onClick: order => viewOrderDetail(order)
   },
   {
-    text: '完成',
+    text: '制作完成',
     type: 'primary',
     visible: (row: OrderDetail) => {
       return row.status === 'processing'
