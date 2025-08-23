@@ -748,7 +748,7 @@ export const reqGetRecharge = async (): Promise<Recharge> => {
 }
 
 // 查询优惠券列表
-export const reqGetMemberCoupon = async (params: { member_id: number }) => {
+export const reqGetMemberCoupon = async (params: { member_id?: number }) => {
   const { data, error } = await supabase
     .from('member_coupons')
     .select('*')

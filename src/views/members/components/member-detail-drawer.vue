@@ -100,7 +100,7 @@ import MemberCouponList from './member-coupon-list.vue'
 
 const props = defineProps<{
   visible: boolean
-  member: Member
+  member: Member | null
 }>()
 
 const emit = defineEmits(['close'])
@@ -115,7 +115,7 @@ const isLoadingCoupons = ref(false)
 onMounted(async () => {
   isLoadingCoupons.value = true
   const data = await reqGetMemberCoupon({
-    member_id: props.member.id
+    member_id: props.member?.id
   })
   memberCoupons.value = data
   isLoadingCoupons.value = false
@@ -361,6 +361,10 @@ onMounted(async () => {
   }
   .detail-item-full {
     grid-column: 1 / -1;
+  }
+
+  .coupons-section {
+    margin-top: 20px;
   }
 }
 

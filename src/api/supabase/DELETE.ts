@@ -38,3 +38,23 @@ export const reqDeleteCoupon = async (id: number) => {
   }
   return true
 }
+
+// 删除会员
+export const reqDeleteMember = async (id: number) => {
+  // 先删除会员关联优惠券
+  const { error: couponError } = await supabase.from('member_coupons').delete().eq('member_id', id)
+  if (couponError) {
+    throw couponError
+  }
+  // 再删除会员关联订单
+  const { error: orderError } = await supabase.from('orders').delete().eq('member_id', id)
+  if (orderError) {
+    throw orderError
+  }
+  // 再删除会员
+  const { error } = await supabase.from('members').delete().eq('id', id)
+  if (error) {
+    throw error
+  }
+  return true
+}

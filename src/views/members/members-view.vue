@@ -122,6 +122,8 @@ import DatePicker from '@/components/date-picker.vue'
 import message from '@/utils/message'
 import MembersModal from './components/members-modal.vue'
 import MemberDetailDrawer from './components/member-detail-drawer.vue'
+import { confirmWarning } from '@/utils/confirm'
+import { reqDeleteMember } from '@/api/supabase/DELETE'
 
 // 数据状态
 const memberList = ref<Member[]>([])
@@ -192,6 +194,28 @@ const memberActions: TableAction<Member>[] = [
     text: '优惠券',
     type: 'warning',
     onClick: member => console.log(member)
+  },
+  {
+    text: '删除',
+    type: 'error',
+    onClick: async member => {
+      const confirmed = await confirmWarning('确定删除该会员吗？')
+      if (confirmed) {
+        try {
+          await reqDeleteMember(member.id)
+          message.success('删除成功')
+          const data = await reqGetMemberList()
+          if (data) {
+            memberList.value = data.memberList || []
+            memberTotal.value = data.memberTotal || 0
+            totalRecharge.value = data.totalRecharge || 0
+            maxRecharge.value = data.maxRecharge || 0
+          }
+        } catch (error) {
+          message.error('删除失败')
+        }
+      }
+    }
   }
 ]
 
