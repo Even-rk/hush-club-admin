@@ -60,17 +60,6 @@
                 />
               </div>
 
-              <!-- 手机号 -->
-              <div class="form-group">
-                <label class="form-label">手机号</label>
-                <input
-                  v-model="form.phone"
-                  type="tel"
-                  class="form-control"
-                  placeholder="请输入手机号"
-                />
-              </div>
-
               <!-- 用户状态 -->
               <div class="form-group">
                 <label class="form-label">用户状态</label>
@@ -144,8 +133,7 @@ const submit = async () => {
     const submitData = {
       ...form.value,
       username: form.value.username.trim(),
-      email: form.value.email.trim(),
-      phone: form.value.phone?.trim() || ''
+      email: form.value.email.trim()
     }
 
     emit('success', submitData as User, props.mode)
@@ -163,7 +151,6 @@ onMounted(() => {
       ...form.value,
       username: props.userData.username,
       email: props.userData.email,
-      phone: props.userData.phone || '',
       status: props.userData.status || 'active'
     }
   }

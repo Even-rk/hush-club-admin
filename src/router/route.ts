@@ -60,7 +60,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         // 订单统计
         path: '/order-stats',
-        name: 'order-stats',
+        name: 'order_stats',
         meta: {
           title: '订单统计'
         },
@@ -78,7 +78,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         // 会员等级
         path: '/member-levels',
-        name: 'member-levels',
+        name: 'member_levels',
         meta: {
           title: '会员等级'
         },
@@ -96,7 +96,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         // 会员配置
         path: '/member-config',
-        name: 'member-config',
+        name: 'member_config',
         meta: {
           title: '会员配置'
         },

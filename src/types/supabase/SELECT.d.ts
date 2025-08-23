@@ -245,8 +245,6 @@ export type User = {
   created_at: string
   // 更新时间
   updated_at: string
-  // 手机号
-  phone: string
   // 邮箱
   email: string
   // 状态

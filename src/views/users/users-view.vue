@@ -85,12 +85,13 @@
     />
   </template>
 
+  {{ routeList }}
   <!-- 权限管理卡片 -->
   <RolePermissionsPanel
     v-if="!loading"
     :role-permission-list="rolePermissionList"
     :user-list="userList"
-    :route-list="routeList"
+    :route-list="routeList.filter(i => i.permission_code !== 'member_config')"
     @edit-permission="editPermissionFn"
     @save-permission="savePermission"
   />
