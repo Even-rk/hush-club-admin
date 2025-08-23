@@ -103,7 +103,7 @@
             <div class="card-subtitle">热销TOP4</div>
           </div>
           <div class="card-body">
-            <div class="hot-products-list">
+            <div v-if="hotProducts.length" class="hot-products-list">
               <div
                 v-for="(product, index) in hotProducts"
                 :key="product.id"
@@ -121,6 +121,10 @@
                   ¥{{ product.normal_member_price * product.sales_count }}
                 </div>
               </div>
+            </div>
+            <div v-else class="empty-state">
+              <div class="empty-icon">🤷</div>
+              <div class="empty-text">暂无热门商品</div>
             </div>
           </div>
         </div>
@@ -600,6 +604,24 @@ onMounted(async () => {
     font-size: 12px;
     color: var(--text-muted);
     margin-top: 4px;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  text-align: center;
+  color: var(--text-muted);
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  .empty-text {
+    font-size: 16px;
+    font-weight: 500;
   }
 }
 
