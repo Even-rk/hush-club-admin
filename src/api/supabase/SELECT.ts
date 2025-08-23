@@ -14,7 +14,8 @@ import {
   DatabaseMemoryUsage,
   DataOverview,
   OrderStatistics,
-  Recharge
+  Recharge,
+  MemberCoupon
 } from '@/types/supabase'
 import { getPublicUrl } from '@/utils/storage'
 import { formatDate } from '@/utils/format'
@@ -744,4 +745,42 @@ export const reqGetRecharge = async (): Promise<Recharge> => {
     // 剩余储值金额
     remaining_balance: data.reduce((acc, item) => acc + item.balance, 0)
   }
+}
+
+// 查询优惠券列表
+export const reqGetMemberCoupon = async (params: { member_id: number }) => {
+  const { data, error } = await supabase
+    .from('member_coupons')
+    .select('*')
+    .eq('member_id', params.member_id)
+    .eq('status', 'unused')
+  if (error) {
+    return []
+  }
+
+  // 优惠券详情
+  const coupon_details = await Promise.all(
+    data.map(async item => {
+      const { data: coupon_data } = await supabase
+        .from('coupon_templates')
+        .select('*')
+        .eq('id', item.template_id)
+        .single()
+      if (coupon_data.valid_days == '0' || !coupon_data.valid_days) {
+        return { ...item, ...coupon_data, valid_day: '长期有效', use_status: item.status }
+      } else {
+        // 创建时间加天数
+        const valid_day_date = new Date(coupon_data.created_at)
+        valid_day_date.setDate(valid_day_date.getDate() + coupon_data.valid_days)
+        return {
+          ...item,
+          ...coupon_data,
+          valid_day: valid_day_date.toISOString(),
+          use_status: item.status
+        }
+      }
+    })
+  )
+
+  return coupon_details as MemberCoupon[]
 }

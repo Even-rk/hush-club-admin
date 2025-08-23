@@ -324,3 +324,38 @@ export type DataOverview = {
   // 昨日客单价格
   yesterday_order_price?: number
 }
+
+// 优惠券
+export type MemberCoupon = {
+  // 优惠券ID
+  id: number
+  // 优惠券名称
+  template_name: string
+  // 适用商品
+  product_id: number
+  // 优惠券类型
+  /**
+   * reduce 满减
+   * discount 折扣
+   * free 免费
+   */
+  coupon_type: 'reduce' | 'discount' | 'free'
+  // 优惠券面值 满减 折扣 免费
+  discount_value?: number
+  // 优惠券门槛金额
+  threshold_amount?: number
+  // 优惠券描述
+  description: string
+  // 有效天数
+  valid_days: number
+  // 有效截止时间
+  valid_day: string
+  // 优惠券状态
+  status: 'active' | 'inactive'
+  // 优惠券使用状态
+  use_status: 'unused' | 'used'
+  // 创建时间
+  created_at: string
+  // 更新时间
+  updated_at: string
+}

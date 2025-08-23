@@ -102,6 +102,14 @@
       @success="refreshMemberList"
     />
   </template>
+  <!-- 会员详情 -->
+  <template v-if="showDetailDrawer">
+    <MemberDetailDrawer
+      :visible="showDetailDrawer"
+      :member="selectedMember"
+      @close="showDetailDrawer = false"
+    />
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -113,6 +121,7 @@ import CoolSelect from '@/components/cool-select.vue'
 import DatePicker from '@/components/date-picker.vue'
 import message from '@/utils/message'
 import MembersModal from './components/members-modal.vue'
+import MemberDetailDrawer from './components/member-detail-drawer.vue'
 
 // 数据状态
 const memberList = ref<Member[]>([])
@@ -133,6 +142,8 @@ const levelOptions = ref<{ label: string; value: number }[]>([])
 const showMembersModal = ref(false)
 const modalMode = ref<'add' | 'edit'>('add')
 const currentMember = ref({} as Member)
+const showDetailDrawer = ref(false)
+const selectedMember = ref<Member | null>(null)
 
 // 表格列配置
 const memberColumns: TableColumn<Member>[] = [
@@ -147,6 +158,12 @@ const memberColumns: TableColumn<Member>[] = [
   { key: 'created_at', title: '注册时间', type: 'date' }
 ]
 
+// 打开详情
+const openDetailDrawer = (member: Member) => {
+  selectedMember.value = member
+  showDetailDrawer.value = true
+}
+
 // 打开编辑会员弹窗
 const openEditMemberModal = (member: Member) => {
   modalMode.value = 'edit'
@@ -159,7 +176,7 @@ const memberActions: TableAction<Member>[] = [
   {
     text: '查看',
     type: 'secondary',
-    onClick: member => console.log(member)
+    onClick: member => openDetailDrawer(member)
   },
   {
     text: '编辑',
