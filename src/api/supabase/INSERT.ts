@@ -1,4 +1,4 @@
-import { Coupon, Member, Product, User } from '@/types/supabase'
+import { Coupon, Member, Product, ProductCategory, User } from '@/types/supabase'
 import supabase from '@/utils/supabase'
 
 // 添加商品
@@ -19,6 +19,15 @@ export const reqAddUser = async (user: User) => {
     status: user.status,
     role_id: user.role_id
   })
+  if (error) {
+    throw error
+  }
+  return data
+}
+
+// 添加分类
+export const reqAddCategory = async (category: Omit<ProductCategory, 'product_count'>) => {
+  const { data, error } = await supabase.from('product_categories').insert(category)
   if (error) {
     throw error
   }
