@@ -213,7 +213,7 @@ const logout = async () => {
 const permissionList = ref<string[]>([])
 onMounted(async () => {
   const permissions = await reqGetUserPermission(userInfo.value.id)
-  permissionList.value = permissions
+  permissionList.value = permissions.filter(i => i !== 'member_config')
 
   const memoryUsageData = await reqGetDatabaseMemoryUsage()
   memoryUsage.value = memoryUsageData
