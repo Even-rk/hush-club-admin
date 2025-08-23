@@ -92,12 +92,11 @@
     :role-permission-list="rolePermissionList"
     :user-list="userList"
     :route-list="routeList.filter(i => i.permission_code !== 'member_config')"
-    @save-permission="savePermission"
   />
 </template>
 
 <script setup lang="ts">
-import { reqAddUser, reqGetRolePermissionList, reqGetUserList } from '@/api/supabase'
+import { reqAddUser, reqDeleteUser, reqGetRolePermissionList, reqGetUserList } from '@/api/supabase'
 import { User } from '@/types/supabase'
 import type { TableColumn, TableAction, RolePermission } from '@/types/supabase'
 import { formatDate } from '@/utils/format'
@@ -109,6 +108,7 @@ import UserStatsCards from './components/user-stats-cards.vue'
 import RolePermissionsPanel from './components/role-permissions-panel.vue'
 import message from '@/utils/message'
 import UsersModal from './components/users-modal.vue'
+import { confirmWarning } from '@/utils/confirm'
 
 // 用户列表
 const userList = ref<User[]>([])
@@ -170,25 +170,29 @@ const userColumns: TableColumn<User>[] = [
   }
 ]
 
-// 打开编辑用户弹窗
-const openEditUserModal = (user: User) => {
+// 操作函数
+const editUser = (user: User) => {
   modalMode.value = 'edit'
   currentUser.value = user
   showUsersModal.value = true
-}
-
-// 操作函数
-const editUser = (user: User) => {
-  openEditUserModal(user)
 }
 
 const resetPassword = (user: User) => {
   console.log('重置密码:', user)
 }
 
-// 保存权限
-const savePermission = (roleId: number) => {
-  console.log('保存权限:', roleId)
+// 删除用户
+const deleteUser = async (user: User) => {
+  try {
+    const confirmed = await confirmWarning('确定删除该用户吗？')
+    if (confirmed) {
+      await reqDeleteUser(user.id)
+      userList.value = userList.value.filter(i => i.id !== user.id)
+      message.success('删除成功')
+    }
+  } catch {
+    message.success('删除失败')
+  }
 }
 
 // 表格操作配置
@@ -202,6 +206,11 @@ const userActions: TableAction<User>[] = [
     text: '重置密码',
     type: 'warning',
     onClick: user => resetPassword(user)
+  },
+  {
+    text: '删除',
+    type: 'error',
+    onClick: user => deleteUser(user)
   }
 ]
 

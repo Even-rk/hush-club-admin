@@ -63,12 +63,22 @@
               <!-- 邮箱 -->
               <div class="form-group">
                 <label class="form-label required">密码</label>
-                <input
-                  v-model="form.password"
-                  type="password"
-                  class="form-control"
-                  placeholder="请输入帐号密码"
-                />
+                <div class="password-input-wrapper">
+                  <input
+                    v-model="form.password"
+                    :type="passwordVisible ? 'text' : 'password'"
+                    class="form-control"
+                    placeholder="请输入帐号密码"
+                  />
+                  <button type="button" class="toggle-password" @click="togglePasswordVisibility">
+                    <img
+                      v-if="passwordVisible"
+                      src="@/assets/icons/eye-open.svg"
+                      alt="Hide password"
+                    />
+                    <img v-else src="@/assets/icons/eye-closed.svg" alt="Show password" />
+                  </button>
+                </div>
               </div>
 
               <!-- 邮箱 -->
@@ -120,6 +130,7 @@
 import { ref, onMounted } from 'vue'
 import type { User } from '@/types/supabase'
 import CoolSelect from '@/components/cool-select.vue'
+import _ from 'lodash'
 
 interface Props {
   visible: boolean
@@ -148,6 +159,12 @@ const form = ref({} as User)
 // 加载状态
 const loading = ref(false)
 
+const passwordVisible = ref(false)
+
+const togglePasswordVisibility = () => {
+  passwordVisible.value = !passwordVisible.value
+}
+
 // 提交表单
 const submit = async () => {
   if (!form.value.username?.trim() || !form.value.phone?.trim()) {
@@ -170,16 +187,7 @@ const submit = async () => {
 
 // 初始化表单数据
 onMounted(() => {
-  if (props.mode === 'add') {
-    form.value = {} as User
-  } else if (props.userData) {
-    form.value = {
-      ...form.value,
-      username: props.userData.username,
-      phone: props.userData.phone,
-      status: props.userData.status || 'active'
-    }
-  }
+  form.value = _.cloneDeep(props.userData)
 })
 </script>
 
@@ -570,6 +578,35 @@ onMounted(() => {
 
     &:hover:not(:focus) {
       border-color: var(--border-hover);
+    }
+  }
+
+  .password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .form-control {
+      padding-right: 40px; /* 为图标留出空间 */
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light);
+
+      &:hover {
+        color: var(--text-primary);
+      }
     }
   }
 

@@ -63,3 +63,12 @@ export const reqDeleteMember = async (id: number) => {
   }
   return true
 }
+
+// 删除用户
+export const reqDeleteUser = async (id: number) => {
+  const { error } = await supabase.from('system_users').delete().eq('id', id)
+  if (error) {
+    throw error
+  }
+  return true
+}
