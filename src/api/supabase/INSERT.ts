@@ -1,4 +1,4 @@
-import { Coupon, Member, Product, ProductCategory, User } from '@/types/supabase'
+import { Coupon, Member, Product, User } from '@/types/supabase'
 import supabase from '@/utils/supabase'
 
 // 添加商品
@@ -12,7 +12,13 @@ export const reqAddProduct = async (product: Omit<Product, 'image_path' | 'image
 
 // 注册用户
 export const reqAddUser = async (user: User) => {
-  const { data, error } = await supabase.auth.signUp({ email: user.email, password: user.password })
+  const { data, error } = await supabase.from('system_users').insert({
+    phone: user.phone,
+    password: user.password,
+    username: user.username,
+    status: user.status,
+    role_id: user.role_id
+  })
   if (error) {
     throw error
   }

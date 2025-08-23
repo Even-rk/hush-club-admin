@@ -79,6 +79,7 @@
     <UsersModal
       :visible="showUsersModal"
       :mode="modalMode"
+      :role-options="roleOptions"
       :user-data="currentUser || ({} as User)"
       @close="showUsersModal = false"
       @success="successCallback"
@@ -233,10 +234,12 @@ const successCallback = async (user: User, mode: 'add' | 'edit') => {
       await reqAddUser(user)
       await searchUser()
       message.success('添加成功')
+      showUsersModal.value = false
     } else {
       const index = userList.value.findIndex(i => i.id == user.id)
       if (index !== -1) {
         userList.value[index] = user
+        showUsersModal.value = false
         message.success('更新成功')
       }
     }

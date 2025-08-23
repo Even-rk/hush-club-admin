@@ -71,6 +71,16 @@
                 />
               </div>
 
+              <!-- 邮箱 -->
+              <div class="form-group">
+                <label class="form-label required">权限</label>
+                <CoolSelect
+                  v-model="form.role_id"
+                  :options="roleOptions"
+                  placeholder="请选择权限"
+                />
+              </div>
+
               <!-- 用户状态 -->
               <div class="form-group">
                 <label class="form-label">用户状态</label>
@@ -109,11 +119,16 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { User } from '@/types/supabase'
+import CoolSelect from '@/components/cool-select.vue'
 
 interface Props {
   visible: boolean
   mode?: 'add' | 'edit'
   userData: User
+  roleOptions: {
+    label: string
+    value: number
+  }[]
 }
 
 interface Emits {
