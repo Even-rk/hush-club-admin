@@ -85,14 +85,12 @@
     />
   </template>
 
-  {{ routeList }}
   <!-- 权限管理卡片 -->
   <RolePermissionsPanel
     v-if="!loading"
     :role-permission-list="rolePermissionList"
     :user-list="userList"
     :route-list="routeList.filter(i => i.permission_code !== 'member_config')"
-    @edit-permission="editPermissionFn"
     @save-permission="savePermission"
   />
 </template>
@@ -187,15 +185,6 @@ const resetPassword = (user: User) => {
   console.log('重置密码:', user)
 }
 
-const viewUser = (user: User) => {
-  console.log('查看用户详情:', user)
-}
-
-// 编辑权限
-const editPermissionFn = (roleId: number, editIndex: number) => {
-  console.log('编辑权限:', roleId, editIndex)
-}
-
 // 保存权限
 const savePermission = (roleId: number) => {
   console.log('保存权限:', roleId)
@@ -212,11 +201,6 @@ const userActions: TableAction<User>[] = [
     text: '重置密码',
     type: 'warning',
     onClick: user => resetPassword(user)
-  },
-  {
-    text: '查看详情',
-    type: 'primary',
-    onClick: user => viewUser(user)
   }
 ]
 

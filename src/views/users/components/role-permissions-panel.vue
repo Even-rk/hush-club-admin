@@ -45,7 +45,7 @@
                   <span>❌</span>
                   取消
                 </button>
-                <button class="btn-icon-text save" @click="onSavePermission(role.id)">
+                <button class="btn-icon-text save" @click="onSavePermission(role.id, index)">
                   <span>✅</span>
                   保存
                 </button>
@@ -112,7 +112,9 @@
 </template>
 
 <script setup lang="ts">
+import { updateUserPermission } from '@/api/supabase'
 import type { User, RolePermission } from '@/types/supabase'
+import message from '@/utils/message'
 import { ref } from 'vue'
 
 interface Props {
@@ -148,14 +150,26 @@ const onEditPermission = (roleId: number, editIndex: number) => {
   editPermission.value = editPermission.value.map(() => ({ isEdit: false }))
   // 打开当前的
   editPermission.value[editIndex].isEdit = true
-
-  emit('editPermission', roleId, editIndex)
 }
 
 // 保存权限
-const onSavePermission = (roleId: number) => {
-  emit('savePermission', roleId)
-  console.log('保存权限:', roleId, selectedPermission.value)
+const onSavePermission = async (roleId: number, editIndex: number) => {
+  try {
+    const selectList = selectedPermission.value.filter(i => i !== 'member_config')
+    await updateUserPermission({
+      role_id: roleId,
+      permission_list: selectList.map(i => ({
+        permission_code: i,
+        menu_name: props.routeList.find(j => j.permission_code === i)?.menu_name || ''
+      }))
+    })
+    message.success('保存权限成功')
+    editPermission.value[editIndex].isEdit = false
+    emit('savePermission', roleId)
+  } catch (error) {
+    message.error('保存权限失败')
+    emit('savePermission', roleId)
+  }
 }
 </script>
 

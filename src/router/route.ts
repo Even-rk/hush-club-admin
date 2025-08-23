@@ -107,7 +107,7 @@ const routes: Array<RouteRecordRaw> = [
         path: '/users',
         name: 'users',
         meta: {
-          title: '用户列表'
+          title: '用户管理'
         },
         component: () => import('@/views/users/users-view.vue')
       }

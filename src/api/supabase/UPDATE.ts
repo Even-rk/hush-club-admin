@@ -142,3 +142,32 @@ export const reqGrantCouponToMember = async (params: {
 
   return data
 }
+
+// 更新用户权限
+export const updateUserPermission = async (params: {
+  role_id: number
+  permission_list: { permission_code: string; menu_name: string }[]
+}) => {
+  // 先删除所有的
+  const { error: deleteError } = await supabase
+    .from('role_permissions')
+    .delete()
+    .eq('role_id', params.role_id)
+  if (deleteError) {
+    throw deleteError
+  }
+
+  // 再插入新的
+  params.permission_list.forEach(async item => {
+    const { error } = await supabase.from('role_permissions').insert({
+      role_id: params.role_id,
+      permission_code: item.permission_code,
+      menu_name: item.menu_name
+    })
+    if (error) {
+      throw error
+    }
+  })
+
+  return true
+}
